@@ -26,7 +26,9 @@ const FootballField = ({
     x: number;
     y: number;
     hasBall: boolean;
-    role: string;
+    baseX: number;
+    baseY: number;
+    isDefending: boolean;
   }[]>([]);
   
   const [ballPosition, setBallPosition] = useState({ x: 50, y: 50 });
@@ -34,25 +36,27 @@ const FootballField = ({
   const [activeBall, setActiveBall] = useState(false);
   const fieldRef = useRef<HTMLDivElement>(null);
   const animationRef = useRef<number | null>(null);
+  const lastAiMoveRef = useRef<number>(0);
+  const gameSpeedRef = useRef<number>(1); // 1 = normal speed
   
   // Initialize players based on formation
   useEffect(() => {
     // For team A (5 players including GK)
     const teamAPositions = [
-      { role: 'GK', x: 50, y: 10 },
-      { role: 'DEF', x: 30, y: 30 },
-      { role: 'DEF', x: 70, y: 30 },
-      { role: 'MID', x: 50, y: 50 },
-      { role: 'FWD', x: 50, y: 70 }
+      { x: 50, y: 10 }, // GK
+      { x: 30, y: 30 }, // DEF
+      { x: 70, y: 30 }, // DEF
+      { x: 40, y: 60 }, // MID/FWD
+      { x: 60, y: 60 }  // MID/FWD
     ];
     
     // For team B (5 players including GK)
     const teamBPositions = [
-      { role: 'GK', x: 50, y: 90 },
-      { role: 'DEF', x: 30, y: 70 },
-      { role: 'DEF', x: 70, y: 70 },
-      { role: 'MID', x: 50, y: 50 },
-      { role: 'FWD', x: 50, y: 30 }
+      { x: 50, y: 90 }, // GK
+      { x: 30, y: 70 }, // DEF
+      { x: 70, y: 70 }, // DEF
+      { x: 40, y: 40 }, // MID/FWD
+      { x: 60, y: 40 }  // MID/FWD
     ];
     
     // Create actual players
@@ -66,8 +70,10 @@ const FootballField = ({
         team: 'A' as const,
         x: teamAPositions[i].x,
         y: teamAPositions[i].y,
+        baseX: teamAPositions[i].x,
+        baseY: teamAPositions[i].y,
         hasBall: false,
-        role: teamAPositions[i].role
+        isDefending: false
       });
     }
     
@@ -78,8 +84,10 @@ const FootballField = ({
         team: 'B' as const,
         x: teamBPositions[i].x,
         y: teamBPositions[i].y,
+        baseX: teamBPositions[i].x,
+        baseY: teamBPositions[i].y,
         hasBall: false,
-        role: teamBPositions[i].role
+        isDefending: false
       });
     }
     
@@ -94,8 +102,8 @@ const FootballField = ({
     
     setPlayers(initialPlayers);
     
-    // Start AI movement
-    startAutoMovement();
+    // Start game simulation
+    startGameSimulation();
     
     return () => {
       if (animationRef.current) {
@@ -159,7 +167,7 @@ const FootballField = ({
     onComplete: () => void
   ) => {
     const startTime = performance.now();
-    const duration = 500; // ms
+    const duration = 500 / gameSpeedRef.current; // ms
     
     const animate = (currentTime: number) => {
       const elapsed = currentTime - startTime;
@@ -200,7 +208,7 @@ const FootballField = ({
     
     const startPos = { x: player.x, y: player.y };
     const startTime = performance.now();
-    const duration = 800; // ms
+    const duration = 800 / gameSpeedRef.current; // ms
     
     const animate = (currentTime: number) => {
       const elapsed = currentTime - startTime;
@@ -229,58 +237,135 @@ const FootballField = ({
     requestAnimationFrame(animate);
   };
   
-  // Auto movement for non-selected players
-  const startAutoMovement = () => {
-    const moveInterval = 5000; // ms
-    let lastMove = performance.now();
-    
-    const randomizeMovement = (time: number) => {
-      if (time - lastMove > moveInterval) {
-        lastMove = time;
-        
-        // Team B movements - simple AI to move toward the ball
-        setPlayers(prevPlayers => {
-          // Find the player with the ball
-          const playerWithBall = prevPlayers.find(p => p.hasBall);
-          if (!playerWithBall) return prevPlayers;
-          
-          return prevPlayers.map(player => {
-            // Only move team B players autonomously
-            if (player.team === 'B' && player.id !== selectedPlayer) {
-              let deltaX = 0;
-              let deltaY = 0;
-              
-              // Goalkeeper stays near the goal
-              if (player.role === 'GK') {
-                deltaX = (50 - player.x) * 0.1;
-                deltaY = (90 - player.y) * 0.1;
-              } 
-              // Other players move toward the ball with some randomness
-              else {
-                // Move toward the ball
-                deltaX = (playerWithBall.x - player.x) * 0.3;
-                deltaY = (playerWithBall.y - player.y) * 0.3;
-                
-                // Add some randomness
-                deltaX += (Math.random() - 0.5) * 5;
-                deltaY += (Math.random() - 0.5) * 5;
-              }
-              
-              // Keep within field bounds
-              const newX = Math.max(10, Math.min(90, player.x + deltaX));
-              const newY = Math.max(10, Math.min(90, player.y + deltaY));
-              
-              return { ...player, x: newX, y: newY };
-            }
-            return player;
-          });
-        });
+  // Game simulation logic
+  const startGameSimulation = () => {
+    const gameLoop = (time: number) => {
+      // AI decision making - run every 100ms
+      if (time - lastAiMoveRef.current > 100) {
+        lastAiMoveRef.current = time;
+        simulateAI();
       }
       
-      animationRef.current = requestAnimationFrame(randomizeMovement);
+      animationRef.current = requestAnimationFrame(gameLoop);
     };
     
-    animationRef.current = requestAnimationFrame(randomizeMovement);
+    animationRef.current = requestAnimationFrame(gameLoop);
+  };
+  
+  // AI decision making
+  const simulateAI = () => {
+    // Find player with ball
+    const playerWithBall = players.find(p => p.hasBall);
+    if (!playerWithBall) return;
+    
+    setPlayers(prevPlayers => {
+      const newPlayers = [...prevPlayers];
+      
+      // For each player without the ball
+      for (const player of newPlayers) {
+        if (player.id === playerWithBall.id || player.id === selectedPlayer) continue;
+        
+        // Opposing team behavior - press the ball
+        if (player.team !== playerWithBall.team) {
+          // Closest defenders should press
+          const distToBall = getDistance(player, playerWithBall);
+          
+          // If player is close to the ball holder, press them
+          if (distToBall < 30) {
+            player.isDefending = true;
+            
+            // Move toward ball holder
+            const dx = (playerWithBall.x - player.x) * 0.05;
+            const dy = (playerWithBall.y - player.y) * 0.05;
+            
+            player.x += dx;
+            player.y += dy;
+          } 
+          // Otherwise return to position gradually
+          else {
+            player.isDefending = false;
+            returnToPosition(player, 0.02);
+          }
+        } 
+        // Same team behavior - maintain formation and offer passing options
+        else {
+          // Make supporting runs when team has possession
+          const distToBall = getDistance(player, playerWithBall);
+          
+          // If not too close to ball holder, make supporting runs
+          if (distToBall > 15 && distToBall < 40) {
+            // Find space away from opposing players
+            const opponentPositions = players.filter(p => p.team !== player.team);
+            let targetX = player.baseX;
+            let targetY = player.baseY;
+            
+            // Simple offensive movement - move forward
+            if (player.team === 'A') {
+              targetY = Math.min(player.baseY + 15, 80);
+            } else {
+              targetY = Math.max(player.baseY - 15, 20);
+            }
+            
+            // Move slightly toward the calculated position
+            const dx = (targetX - player.x) * 0.04;
+            const dy = (targetY - player.y) * 0.04;
+            
+            player.x += dx;
+            player.y += dy;
+          } else {
+            // Return to base position if far from play
+            returnToPosition(player, 0.02);
+          }
+        }
+      }
+      
+      // AI team may occasionally attempt a pass
+      if (playerWithBall.team === 'B' && Math.random() < 0.01) {
+        // Find a teammate to pass to
+        const teammates = newPlayers.filter(p => p.team === 'B' && p.id !== playerWithBall.id);
+        if (teammates.length > 0) {
+          // Find a good passing option (not closely marked)
+          let bestPassOption = teammates[0];
+          let lowestPressure = 100;
+          
+          for (const teammate of teammates) {
+            // Calculate pressure on this teammate from opposing players
+            let pressure = 0;
+            const opponents = newPlayers.filter(p => p.team === 'A');
+            for (const opponent of opponents) {
+              const dist = getDistance(teammate, opponent);
+              pressure += dist < 15 ? (15 - dist) : 0;
+            }
+            
+            if (pressure < lowestPressure) {
+              lowestPressure = pressure;
+              bestPassOption = teammate;
+            }
+          }
+          
+          // Execute the pass
+          setTimeout(() => {
+            passBall(playerWithBall.id, bestPassOption.id);
+          }, Math.random() * 1000); // Random delay to make it seem more natural
+        }
+      }
+      
+      return newPlayers;
+    });
+  };
+  
+  // Helper to return player to base position
+  const returnToPosition = (player: typeof players[0], speed: number) => {
+    const dx = (player.baseX - player.x) * speed;
+    const dy = (player.baseY - player.y) * speed;
+    
+    player.x += dx;
+    player.y += dy;
+  };
+  
+  // Helper to calculate distance between players
+  const getDistance = (p1: {x: number, y: number}, p2: {x: number, y: number}) => {
+    return Math.sqrt(Math.pow(p1.x - p2.x, 2) + Math.pow(p1.y - p2.y, 2));
   };
   
   return (
@@ -325,7 +410,7 @@ const FootballField = ({
           style={{ 
             left: `${ballPosition.x}%`, 
             top: `${ballPosition.y}%`,
-            transition: !activeBall ? 'left 0.5s ease-out, top 0.5s ease-out' : 'none',
+            transition: !activeBall ? 'left 0.3s ease-out, top 0.3s ease-out' : 'none',
             boxShadow: '0 0 5px rgba(0,0,0,0.3)'
           }}
         ></div>
@@ -335,26 +420,23 @@ const FootballField = ({
           <div 
             key={player.id}
             className={cn(
-              "absolute w-5 h-5 rounded-full transform -translate-x-1/2 -translate-y-1/2 cursor-pointer transition-all duration-300",
+              "absolute w-5 h-5 rounded-full transform -translate-x-1/2 -translate-y-1/2 cursor-pointer",
               player.team === 'A' ? "bg-team-home" : "bg-team-away",
               selectedPlayer === player.id ? "ring-2 ring-white ring-opacity-70 scale-125" : "",
-              player.hasBall ? "ring-1 ring-white ring-opacity-70" : ""
+              player.hasBall ? "ring-1 ring-white ring-opacity-70" : "",
+              player.isDefending ? "animate-pulse-gentle" : ""
             )}
             style={{ 
               left: `${player.x}%`, 
               top: `${player.y}%`,
-              zIndex: selectedPlayer === player.id ? 10 : 5
+              zIndex: selectedPlayer === player.id ? 10 : 5,
+              transition: 'transform 0.2s ease-out'
             }}
             onClick={(e) => {
               e.stopPropagation();
               handlePlayerClick(player.id);
             }}
-          >
-            {/* Player role indicator */}
-            <span className="absolute inset-0 flex items-center justify-center text-[8px] text-white font-bold">
-              {player.role}
-            </span>
-          </div>
+          />
         ))}
       </div>
     </div>
