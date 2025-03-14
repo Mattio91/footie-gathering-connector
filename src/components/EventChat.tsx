@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { format } from 'date-fns';
 import { MessageCircle, Send } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 interface ChatMessage {
   id: string;
@@ -22,6 +23,7 @@ interface EventChatProps {
 }
 
 const EventChat = ({ messages, onSendMessage }: EventChatProps) => {
+  const { t } = useTranslation();
   const [newMessage, setNewMessage] = useState('');
   
   const handleSendMessage = () => {
@@ -43,7 +45,7 @@ const EventChat = ({ messages, onSendMessage }: EventChatProps) => {
       <div className="p-4 border-b">
         <h3 className="font-semibold flex items-center">
           <MessageCircle className="h-4 w-4 mr-2" />
-          Event Chat
+          {t('event.eventChat')}
         </h3>
       </div>
       
@@ -51,8 +53,8 @@ const EventChat = ({ messages, onSendMessage }: EventChatProps) => {
         {messages.length === 0 ? (
           <div className="h-full flex flex-col items-center justify-center text-center text-muted-foreground">
             <MessageCircle className="h-12 w-12 mb-2 opacity-20" />
-            <p>No messages yet</p>
-            <p className="text-sm">Be the first to say something!</p>
+            <p>{t('event.noMessages')}</p>
+            <p className="text-sm">{t('event.beFirst')}</p>
           </div>
         ) : (
           <div className="space-y-4">
@@ -86,7 +88,7 @@ const EventChat = ({ messages, onSendMessage }: EventChatProps) => {
             value={newMessage}
             onChange={(e) => setNewMessage(e.target.value)}
             onKeyDown={handleKeyDown}
-            placeholder="Type a message..."
+            placeholder={t('event.typeMessage')}
             className="flex-grow"
           />
           <Button 

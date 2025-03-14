@@ -13,6 +13,7 @@ import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import EventFormStep1 from './EventFormStep1';
 import EventFormStep2 from './EventFormStep2';
+import { useTranslation } from 'react-i18next';
 
 interface Group {
   id: string;
@@ -20,6 +21,7 @@ interface Group {
 }
 
 const CreateEventForm = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [step, setStep] = useState(1);
   const [date, setDate] = useState<Date>();
@@ -82,7 +84,7 @@ const CreateEventForm = () => {
     console.log('Form submitted:', { ...formData, date, groups: finalGroups });
     
     // Show a success message
-    toast.success("Event created successfully!");
+    toast.success(t('createEvent.eventCreated'));
     
     // Navigate to the event page (in a real app, you would navigate to the newly created event)
     navigate('/');
@@ -91,9 +93,9 @@ const CreateEventForm = () => {
   return (
     <Card className="w-full max-w-2xl mx-auto shadow-lg animate-fade-in">
       <CardHeader>
-        <CardTitle className="text-2xl">Create Football Event</CardTitle>
+        <CardTitle className="text-2xl">{t('createEvent.title')}</CardTitle>
         <CardDescription>
-          Set up a match and invite players to join your game.
+          {t('createEvent.subtitle')}
         </CardDescription>
       </CardHeader>
       
@@ -128,7 +130,7 @@ const CreateEventForm = () => {
             variant="outline"
             onClick={handleBack}
           >
-            Back
+            {t('common.back')}
           </Button>
         )}
         {step === 1 && <div />}
@@ -139,7 +141,7 @@ const CreateEventForm = () => {
             onClick={handleNext}
             disabled={!formData.title || !date || !formData.time}
           >
-            Continue
+            {t('common.continue')}
           </Button>
         ) : (
           <Button
@@ -147,7 +149,7 @@ const CreateEventForm = () => {
             onClick={handleSubmit}
             disabled={!formData.location.address}
           >
-            Create Event
+            {t('common.createEvent')}
           </Button>
         )}
       </CardFooter>

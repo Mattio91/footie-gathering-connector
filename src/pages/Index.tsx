@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/input';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import EventCard, { EventCardProps } from '@/components/EventCard';
+import { useTranslation } from 'react-i18next';
 
 // Mock data for demonstration
 const mockEvents: EventCardProps[] = [
@@ -69,6 +70,7 @@ const mockEvents: EventCardProps[] = [
 ];
 
 const Index = () => {
+  const { t } = useTranslation();
   const [isLoaded, setIsLoaded] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [filteredEvents, setFilteredEvents] = useState(mockEvents);
@@ -111,27 +113,27 @@ const Index = () => {
         <div className="container max-w-6xl mx-auto text-center">
           <span className="tag bg-primary/10 text-primary mb-4 animate-fade-in">
             <CalendarClock className="h-3 w-3 mr-1" />
-            Organizing football matches made simple
+            {t('index.heroSubtitle')}
           </span>
           
           <h1 className="h1 md:text-5xl lg:text-6xl mb-6 animate-fade-in" style={{ animationDelay: '150ms' }}>
-            Connect with players.<br />Organize matches.<br />Play football.
+            {t('index.heroTitle')}
           </h1>
           
           <p className="text-muted-foreground text-lg max-w-2xl mx-auto mb-10 animate-fade-in" style={{ animationDelay: '300ms' }}>
-            PitchMatch makes it easy to organize football games, find players, and manage your teams all in one place.
+            {t('index.heroSubtitle')}
           </p>
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center animate-fade-in" style={{ animationDelay: '450ms' }}>
             <Link to="/create-event">
               <Button size="lg" className="w-full sm:w-auto">
                 <Plus className="h-4 w-4 mr-2" />
-                Create Event
+                {t('common.createEvent')}
               </Button>
             </Link>
             <Button variant="outline" size="lg" className="w-full sm:w-auto">
               <MapPin className="h-4 w-4 mr-2" />
-              Find Local Games
+              {t('common.findLocalGames')}
             </Button>
           </div>
         </div>
@@ -142,8 +144,8 @@ const Index = () => {
         <div className="container max-w-6xl mx-auto">
           <div className="flex flex-col md:flex-row md:items-center justify-between mb-10">
             <div>
-              <h2 className="h2 mb-2">Upcoming Events</h2>
-              <p className="text-muted-foreground">Join a match and play football with others.</p>
+              <h2 className="h2 mb-2">{t('index.upcomingEvents')}</h2>
+              <p className="text-muted-foreground">{t('index.upcomingEventsSubtitle')}</p>
             </div>
             
             {/* Search Bar */}
@@ -151,7 +153,7 @@ const Index = () => {
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
                 type="text"
-                placeholder="Search by title, location, or format..."
+                placeholder={t('index.searchPlaceholder')}
                 className="pl-10 pr-4 w-full"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
@@ -172,11 +174,11 @@ const Index = () => {
           {/* Show this when no events match search */}
           {filteredEvents.length === 0 && (
             <div className="text-center py-12">
-              <p className="text-muted-foreground mb-4">No events match your search criteria.</p>
+              <p className="text-muted-foreground mb-4">{t('index.noEventsFound')}</p>
               <Link to="/create-event">
                 <Button>
                   <Plus className="h-4 w-4 mr-2" />
-                  Create a New Event
+                  {t('index.createNewEvent')}
                 </Button>
               </Link>
             </div>
@@ -186,7 +188,7 @@ const Index = () => {
           {filteredEvents.length > 0 && (
             <div className="flex justify-center mt-12">
               <Button variant="outline" size="sm" className="mr-2">
-                Previous
+                {t('common.back')}
               </Button>
               <Button variant="outline" size="sm" className="mx-1 bg-primary text-white">
                 1
@@ -198,7 +200,7 @@ const Index = () => {
                 3
               </Button>
               <Button variant="outline" size="sm" className="ml-2">
-                Next
+                {t('common.continue')}
               </Button>
             </div>
           )}
@@ -208,16 +210,16 @@ const Index = () => {
       {/* Features Section */}
       <section className="py-16 px-4 bg-secondary/30">
         <div className="container max-w-6xl mx-auto">
-          <h2 className="h2 text-center mb-12">How It Works</h2>
+          <h2 className="h2 text-center mb-12">{t('index.howItWorks')}</h2>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div className="flex flex-col items-center text-center p-6 rounded-lg bg-white shadow-sm">
               <div className="w-16 h-16 flex items-center justify-center rounded-full bg-primary/10 text-primary mb-4">
                 <CalendarClock className="h-8 w-8" />
               </div>
-              <h3 className="h4 mb-2">Create or Join</h3>
+              <h3 className="h4 mb-2">{t('index.createOrJoin')}</h3>
               <p className="text-muted-foreground">
-                Create your own football event or join existing ones in your area.
+                {t('index.createOrJoinDesc')}
               </p>
             </div>
             
@@ -225,9 +227,9 @@ const Index = () => {
               <div className="w-16 h-16 flex items-center justify-center rounded-full bg-primary/10 text-primary mb-4">
                 <Users className="h-8 w-8" />
               </div>
-              <h3 className="h4 mb-2">Find Players</h3>
+              <h3 className="h4 mb-2">{t('index.findPlayers')}</h3>
               <p className="text-muted-foreground">
-                Invite friends or let others discover and join your event.
+                {t('index.findPlayersDesc')}
               </p>
             </div>
             
@@ -235,9 +237,9 @@ const Index = () => {
               <div className="w-16 h-16 flex items-center justify-center rounded-full bg-primary/10 text-primary mb-4">
                 <MapPin className="h-8 w-8" />
               </div>
-              <h3 className="h4 mb-2">Play Football</h3>
+              <h3 className="h4 mb-2">{t('index.playFootball')}</h3>
               <p className="text-muted-foreground">
-                Meet up at the pitch, play the game, and track scores and stats.
+                {t('index.playFootballDesc')}
               </p>
             </div>
           </div>
@@ -249,15 +251,15 @@ const Index = () => {
         <div className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_bottom,_var(--tw-gradient-stops))] from-primary/5 via-background to-background"></div>
         
         <div className="container max-w-4xl mx-auto text-center">
-          <h2 className="h2 md:text-4xl mb-6">Ready to organize your first football match?</h2>
+          <h2 className="h2 md:text-4xl mb-6">{t('index.ctaTitle')}</h2>
           <p className="text-muted-foreground text-lg max-w-2xl mx-auto mb-10">
-            Create an event, invite players, and get ready for kickoff. It only takes a few minutes to set up.
+            {t('index.ctaDesc')}
           </p>
           
           <Link to="/create-event">
             <Button size="lg" className="px-8">
               <Plus className="h-4 w-4 mr-2" />
-              Create Your First Event
+              {t('index.ctaButton')}
             </Button>
           </Link>
         </div>

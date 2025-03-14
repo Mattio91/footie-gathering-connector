@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { useTranslation } from 'react-i18next';
 
 interface EventFormStep1Props {
   formData: {
@@ -31,22 +32,24 @@ const EventFormStep1 = ({
   handleChange, 
   handleSelect 
 }: EventFormStep1Props) => {
+  const { t } = useTranslation();
+
   return (
     <div className="space-y-6 animate-slide-up">
       <div className="space-y-3">
-        <Label htmlFor="title" className="input-label">Event Title</Label>
+        <Label htmlFor="title" className="input-label">{t('createEvent.eventTitle')}</Label>
         <Input
           id="title"
           name="title"
           value={formData.title}
           onChange={handleChange}
-          placeholder="e.g., Saturday Morning Kickabout"
+          placeholder={t('createEvent.titlePlaceholder')}
           required
         />
       </div>
       
       <div className="space-y-3">
-        <Label htmlFor="date" className="input-label">Date</Label>
+        <Label htmlFor="date" className="input-label">{t('common.date')}</Label>
         <Popover>
           <PopoverTrigger asChild>
             <Button
@@ -57,7 +60,7 @@ const EventFormStep1 = ({
               )}
             >
               <CalendarIcon className="mr-2 h-4 w-4" />
-              {date ? format(date, "PPP") : <span>Select date</span>}
+              {date ? format(date, "PPP") : <span>{t('createEvent.selectDate')}</span>}
             </Button>
           </PopoverTrigger>
           <PopoverContent className="w-auto p-0">
@@ -73,7 +76,7 @@ const EventFormStep1 = ({
       </div>
       
       <div className="space-y-3">
-        <Label htmlFor="occurrence" className="input-label">Occurrence</Label>
+        <Label htmlFor="occurrence" className="input-label">{t('createEvent.occurrence')}</Label>
         <div className="relative">
           <Repeat className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Select 
@@ -81,13 +84,13 @@ const EventFormStep1 = ({
             onValueChange={(value) => handleSelect('occurrence', value)}
           >
             <SelectTrigger className="pl-10">
-              <SelectValue placeholder="How often?" />
+              <SelectValue placeholder={t('createEvent.howOften')} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="once">One time only</SelectItem>
-              <SelectItem value="weekly">Weekly</SelectItem>
-              <SelectItem value="biweekly">Every two weeks</SelectItem>
-              <SelectItem value="monthly">Monthly</SelectItem>
+              <SelectItem value="once">{t('createEvent.oneTime')}</SelectItem>
+              <SelectItem value="weekly">{t('createEvent.weekly')}</SelectItem>
+              <SelectItem value="biweekly">{t('createEvent.biweekly')}</SelectItem>
+              <SelectItem value="monthly">{t('createEvent.monthly')}</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -95,7 +98,7 @@ const EventFormStep1 = ({
       
       <div className="grid grid-cols-2 gap-4">
         <div className="space-y-3">
-          <Label htmlFor="time" className="input-label">Start Time</Label>
+          <Label htmlFor="time" className="input-label">{t('createEvent.startTime')}</Label>
           <div className="relative">
             <Clock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
@@ -111,18 +114,18 @@ const EventFormStep1 = ({
         </div>
         
         <div className="space-y-3">
-          <Label htmlFor="duration" className="input-label">Duration (mins)</Label>
+          <Label htmlFor="duration" className="input-label">{t('createEvent.durationMinutes')}</Label>
           <Select 
             value={formData.duration} 
             onValueChange={(value) => handleSelect('duration', value)}
           >
             <SelectTrigger>
-              <SelectValue placeholder="Select duration" />
+              <SelectValue placeholder={t('common.duration')} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="60">60 minutes</SelectItem>
-              <SelectItem value="90">90 minutes</SelectItem>
-              <SelectItem value="120">120 minutes</SelectItem>
+              <SelectItem value="60">{t('createEvent.minutes60')}</SelectItem>
+              <SelectItem value="90">{t('createEvent.minutes90')}</SelectItem>
+              <SelectItem value="120">{t('createEvent.minutes120')}</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -130,7 +133,7 @@ const EventFormStep1 = ({
       
       <div className="grid grid-cols-2 gap-4">
         <div className="space-y-3">
-          <Label htmlFor="format" className="input-label">Format</Label>
+          <Label htmlFor="format" className="input-label">{t('common.format')}</Label>
           <div className="relative">
             <Flag className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Select 
@@ -138,20 +141,20 @@ const EventFormStep1 = ({
               onValueChange={(value) => handleSelect('format', value)}
             >
               <SelectTrigger className="pl-10">
-                <SelectValue placeholder="Format" />
+                <SelectValue placeholder={t('common.format')} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="5v5">5-a-side</SelectItem>
-                <SelectItem value="6v6">6-a-side</SelectItem>
-                <SelectItem value="7v7">7-a-side</SelectItem>
-                <SelectItem value="11v11">11-a-side</SelectItem>
+                <SelectItem value="5v5">{t('createEvent.format5v5')}</SelectItem>
+                <SelectItem value="6v6">{t('createEvent.format6v6')}</SelectItem>
+                <SelectItem value="7v7">{t('createEvent.format7v7')}</SelectItem>
+                <SelectItem value="11v11">{t('createEvent.format11v11')}</SelectItem>
               </SelectContent>
             </Select>
           </div>
         </div>
         
         <div className="space-y-3">
-          <Label htmlFor="maxPlayers" className="input-label">Max Players</Label>
+          <Label htmlFor="maxPlayers" className="input-label">{t('createEvent.maxPlayers')}</Label>
           <div className="relative">
             <Users className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input

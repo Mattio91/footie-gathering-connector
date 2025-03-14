@@ -2,6 +2,7 @@
 import { format } from 'date-fns';
 import { CalendarIcon, Clock, MapPin, Flag, DollarSign } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
+import { useTranslation } from 'react-i18next';
 
 interface EventHeaderProps {
   title: string;
@@ -24,7 +25,8 @@ const EventHeader = ({
   format: eventFormat,
   price
 }: EventHeaderProps) => {
-  // Format date
+  const { t, i18n } = useTranslation();
+  // Format date based on current language
   const formattedDate = format(date, 'EEEE, MMMM d, yyyy');
 
   return (
@@ -37,7 +39,7 @@ const EventHeader = ({
         {price > 0 && (
           <span className="tag bg-muted text-muted-foreground border-none">
             <DollarSign className="h-3 w-3 mr-1" />
-            ${price} per player
+            ${price} {t('event.perPlayer')}
           </span>
         )}
       </div>
