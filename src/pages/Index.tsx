@@ -120,8 +120,8 @@ const Index = () => {
               </span>
               
               <h1 className="font-oswald text-5xl md:text-6xl lg:text-7xl uppercase tracking-tight mb-6 animate-fade-in leading-none" style={{ animationDelay: '150ms' }}>
-                <span className="block">Gather</span>
-                <span className="text-primary">to play</span>
+                <span className="block">GATHER</span>
+                <span className="text-emerald-500">to play</span>
               </h1>
               
               <p className="text-muted-foreground text-lg max-w-md mb-10 animate-fade-in" style={{ animationDelay: '300ms' }}>
