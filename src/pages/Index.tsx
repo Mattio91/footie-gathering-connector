@@ -1,7 +1,7 @@
 
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Plus, CalendarClock, MapPin, Search, Users, ArrowRight } from 'lucide-react';
+import { Plus, CalendarClock, MapPin, Search, Users, ArrowRight, Clock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import Header from '@/components/Header';
@@ -9,6 +9,16 @@ import Footer from '@/components/Footer';
 import EventCard, { EventCardProps } from '@/components/EventCard';
 import { useTranslation } from 'react-i18next';
 import FootballField from '@/components/FootballField';
+import { 
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow 
+} from '@/components/ui/table';
+import { format } from 'date-fns';
+import { Card } from '@/components/ui/card';
 
 // Mock data for demonstration
 const mockEvents: EventCardProps[] = [
@@ -68,13 +78,57 @@ const mockEvents: EventCardProps[] = [
     isPrivate: false,
     imageUrl: 'https://images.unsplash.com/photo-1431324155629-1a6deb1dec8d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
   },
+  {
+    id: '5',
+    title: 'Weekend Tournament',
+    location: 'Greenwich Park, London',
+    date: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000), // 5 days from now
+    time: '10:00',
+    duration: '4 hours',
+    format: '5v5',
+    playerCount: 25,
+    maxPlayers: 30,
+    price: 10,
+    isPrivate: false,
+    imageUrl: 'https://images.unsplash.com/photo-1560272564-c83b66b1ad12?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
+  },
+  {
+    id: '6',
+    title: 'Charity Football Match',
+    location: 'Finsbury Park, London',
+    date: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days from now
+    time: '13:00',
+    duration: '2 hours',
+    format: '11v11',
+    playerCount: 20,
+    maxPlayers: 22,
+    price: 15,
+    isPrivate: false,
+    imageUrl: 'https://images.unsplash.com/photo-1577223625816-7546f13df25d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
+  },
+  {
+    id: '7',
+    title: 'Community Cup',
+    location: 'Hampstead Heath, London',
+    date: new Date(Date.now() + 8 * 24 * 60 * 60 * 1000), // 8 days from now
+    time: '15:00',
+    duration: '3 hours',
+    format: '7v7',
+    playerCount: 10,
+    maxPlayers: 14,
+    price: 8,
+    isPrivate: false,
+    imageUrl: 'https://images.unsplash.com/photo-1516731415730-0c607149933a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
+  }
 ];
 
 const Index = () => {
   const { t } = useTranslation();
   const [isLoaded, setIsLoaded] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const [filteredEvents, setFilteredEvents] = useState(mockEvents);
+  const [filteredEvents, setFilteredEvents] = useState<EventCardProps[]>([]);
+  const [featuredEvents, setFeaturedEvents] = useState<EventCardProps[]>([]);
+  const [tableEvents, setTableEvents] = useState<EventCardProps[]>([]);
   
   // Simulate loading
   useEffect(() => {
@@ -85,30 +139,36 @@ const Index = () => {
     return () => clearTimeout(timer);
   }, []);
   
-  // Filter events based on search query
+  // Process and sort events
   useEffect(() => {
-    if (!searchQuery.trim()) {
-      setFilteredEvents(mockEvents);
-      return;
-    }
+    // Sort events by date (ascending)
+    const sortedEvents = [...mockEvents].sort((a, b) => a.date.getTime() - b.date.getTime());
     
-    const query = searchQuery.toLowerCase();
-    const filtered = mockEvents.filter(
-      event => 
-        event.title.toLowerCase().includes(query) ||
-        event.location.toLowerCase().includes(query) ||
-        event.format.toLowerCase().includes(query)
-    );
+    // Apply search filter if query exists
+    const filtered = searchQuery.trim() 
+      ? sortedEvents.filter(event => {
+          const query = searchQuery.toLowerCase();
+          return event.title.toLowerCase().includes(query) ||
+                 event.location.toLowerCase().includes(query) ||
+                 event.format.toLowerCase().includes(query);
+        })
+      : sortedEvents;
     
     setFilteredEvents(filtered);
-  }, [searchQuery]);
+    
+    // First 3 events go to the featured section
+    setFeaturedEvents(filtered.slice(0, 3));
+    
+    // Next 10 events go to the table
+    setTableEvents(filtered.slice(3, 13));
+  }, [searchQuery, mockEvents]);
   
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
       
       {/* Hero Section */}
-      <section className="pt-32 pb-16 px-4 relative overflow-hidden">
+      <section className="pt-28 pb-14 px-4 relative overflow-hidden">
         <div className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-primary/5 via-background to-background"></div>
         
         <div className="container max-w-6xl mx-auto">
@@ -142,12 +202,12 @@ const Index = () => {
               </div>
             </div>
             
-            <div className="hidden md:block">
+            <div className="hidden md:flex md:justify-center md:items-center">
               <FootballField 
                 teamAPlayers={5} 
                 teamBPlayers={5} 
                 maxPlayers={10} 
-                className="transform scale-110" 
+                className="transform scale-90 w-3/4 aspect-[2/2.5]" 
               />
             </div>
           </div>
@@ -155,7 +215,7 @@ const Index = () => {
       </section>
       
       {/* Upcoming Events Section */}
-      <section className="py-16 px-4">
+      <section className="py-16 px-4 bg-slate-50 dark:bg-slate-900/30">
         <div className="container max-w-6xl mx-auto">
           <div className="flex flex-col md:flex-row md:items-center justify-between mb-10">
             <div>
@@ -164,7 +224,7 @@ const Index = () => {
             </div>
             
             {/* Search Bar */}
-            <div className="mt-4 md:mt-0 relative max-w-md">
+            <div className="mt-4 md:mt-0 relative max-w-md w-full">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
                 type="text"
@@ -176,15 +236,74 @@ const Index = () => {
             </div>
           </div>
           
-          {/* Events Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {filteredEvents.map((event, index) => (
-              <EventCard 
-                key={event.id} 
-                {...event} 
-              />
-            ))}
-          </div>
+          {/* Featured Events Grid */}
+          {featuredEvents.length > 0 && (
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+              {featuredEvents.map((event, index) => (
+                <EventCard 
+                  key={event.id} 
+                  {...event} 
+                />
+              ))}
+            </div>
+          )}
+          
+          {/* Events Table */}
+          {tableEvents.length > 0 && (
+            <Card className="mt-8 overflow-hidden">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Date & Time</TableHead>
+                    <TableHead>Event</TableHead>
+                    <TableHead>Location</TableHead>
+                    <TableHead>Format</TableHead>
+                    <TableHead>Players</TableHead>
+                    <TableHead>Price</TableHead>
+                    <TableHead className="text-right">Action</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {tableEvents.map((event) => (
+                    <TableRow key={event.id}>
+                      <TableCell>
+                        <div className="font-medium">{format(event.date, 'EEE, MMM d')}</div>
+                        <div className="text-sm text-muted-foreground flex items-center">
+                          <Clock className="h-3 w-3 mr-1" />
+                          {event.time}
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <div className="font-medium">{event.title}</div>
+                        <div className="text-sm text-muted-foreground">{event.duration}</div>
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex items-center">
+                          <MapPin className="h-3 w-3 mr-1 text-muted-foreground" />
+                          <span>{event.location}</span>
+                        </div>
+                      </TableCell>
+                      <TableCell>{event.format}</TableCell>
+                      <TableCell>
+                        <div className="flex items-center">
+                          <Users className="h-3 w-3 mr-1 text-muted-foreground" />
+                          <span>{event.playerCount}/{event.maxPlayers}</span>
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        {event.price > 0 ? `£${event.price}` : 'Free'}
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <Link to={`/event/${event.id}`}>
+                          <Button variant="outline" size="sm">View</Button>
+                        </Link>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </Card>
+          )}
           
           {/* Show this when no events match search */}
           {filteredEvents.length === 0 && (
