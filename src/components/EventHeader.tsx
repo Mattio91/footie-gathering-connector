@@ -21,7 +21,7 @@ const EventHeader = ({
   duration,
   location,
   locationDetails,
-  format,
+  format: eventFormat,
   price
 }: EventHeaderProps) => {
   // Format date
@@ -32,7 +32,7 @@ const EventHeader = ({
       <div className="flex items-center space-x-2">
         <span className="tag bg-primary/10 text-primary border-none">
           <Flag className="h-3 w-3 mr-1" />
-          {format}
+          {eventFormat}
         </span>
         {price > 0 && (
           <span className="tag bg-muted text-muted-foreground border-none">

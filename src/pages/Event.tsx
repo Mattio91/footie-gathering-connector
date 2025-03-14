@@ -1,7 +1,6 @@
-
 import { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { ChevronLeft, Share2, Label as LabelIcon } from 'lucide-react';
+import { ChevronLeft, Share2, Tag } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
