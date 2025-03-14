@@ -80,10 +80,12 @@ const Header = () => {
             <User className="h-4 w-4 mr-2" />
             {t('common.signIn')}
           </Button>
-          <Button className="rounded-full">
-            <Plus className="h-4 w-4 mr-2" />
-            {t('common.createEvent')}
-          </Button>
+          <Link to="/create-event">
+            <Button className="rounded-full">
+              <Plus className="h-4 w-4 mr-2" />
+              {t('common.createEvent')}
+            </Button>
+          </Link>
         </div>
 
         {/* Mobile menu button */}

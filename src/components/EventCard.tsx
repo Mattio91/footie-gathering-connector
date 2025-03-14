@@ -135,9 +135,13 @@ const EventCard = ({
             <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
               <Button
                 className="bg-primary/90 hover:bg-primary text-white rounded-full shadow-lg transform transition-transform duration-300 hover:scale-105"
-                onClick={(e) => e.preventDefault()}
+                onClick={(e) => {
+                  // Prevent the Link's onClick from triggering
+                  e.stopPropagation();
+                }}
+                asChild
               >
-                View Event
+                <Link to={`/event/${id}`}>View Event</Link>
               </Button>
             </div>
           </div>
