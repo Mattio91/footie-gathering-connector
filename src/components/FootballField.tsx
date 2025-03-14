@@ -19,7 +19,7 @@ const FootballField = ({
   const displayTeamAPlayers = Math.min(teamAPlayers, maxPlayersPerTeam);
   const displayTeamBPlayers = Math.min(teamBPlayers, maxPlayersPerTeam);
   
-  // State for interactive players
+  // State for players
   const [players, setPlayers] = useState<{
     id: number;
     team: 'A' | 'B';
@@ -29,15 +29,15 @@ const FootballField = ({
     baseX: number;
     baseY: number;
     isDefending: boolean;
+    lastMoveTime: number;
   }[]>([]);
   
   const [ballPosition, setBallPosition] = useState({ x: 50, y: 50 });
-  const [selectedPlayer, setSelectedPlayer] = useState<number | null>(null);
-  const [activeBall, setActiveBall] = useState(false);
   const fieldRef = useRef<HTMLDivElement>(null);
   const animationRef = useRef<number | null>(null);
-  const lastAiMoveRef = useRef<number>(0);
+  const lastPassTimeRef = useRef<number>(0);
   const gameSpeedRef = useRef<number>(1); // 1 = normal speed
+  const lastMoveRef = useRef<number>(0);
   
   // Initialize players based on formation
   useEffect(() => {
@@ -73,7 +73,8 @@ const FootballField = ({
         baseX: teamAPositions[i].x,
         baseY: teamAPositions[i].y,
         hasBall: false,
-        isDefending: false
+        isDefending: false,
+        lastMoveTime: 0
       });
     }
     
@@ -87,7 +88,8 @@ const FootballField = ({
         baseX: teamBPositions[i].x,
         baseY: teamBPositions[i].y,
         hasBall: false,
-        isDefending: false
+        isDefending: false,
+        lastMoveTime: 0
       });
     }
     
@@ -112,36 +114,8 @@ const FootballField = ({
     };
   }, [displayTeamAPlayers, displayTeamBPlayers]);
   
-  // Handle clicking on a player
-  const handlePlayerClick = (playerId: number) => {
-    const playerWithBall = players.find(p => p.hasBall);
-    const clickedPlayer = players.find(p => p.id === playerId);
-    
-    if (!clickedPlayer) return;
-    
-    // If the clicked player has the ball, make them active for passing
-    if (clickedPlayer.hasBall) {
-      setSelectedPlayer(playerId);
-      setActiveBall(true);
-      return;
-    }
-    
-    // If we have a selected player with the ball, pass to the clicked player
-    if (selectedPlayer && playerWithBall && playerWithBall.id === selectedPlayer) {
-      // Only allow passing to players on the same team
-      if (playerWithBall.team === clickedPlayer.team) {
-        passBall(selectedPlayer, playerId);
-      }
-    }
-  };
-  
   // Pass the ball between players
-  const passBall = (fromId: number, toId: number) => {
-    const fromPlayer = players.find(p => p.id === fromId);
-    const toPlayer = players.find(p => p.id === toId);
-    
-    if (!fromPlayer || !toPlayer) return;
-    
+  const passBall = (fromPlayer: typeof players[0], toPlayer: typeof players[0]) => {
     // Animate the ball movement
     animateBallMovement(
       { x: fromPlayer.x, y: fromPlayer.y },
@@ -150,12 +124,10 @@ const FootballField = ({
         // After animation completes, update the ball possession
         const updatedPlayers = players.map(p => ({
           ...p,
-          hasBall: p.id === toId
+          hasBall: p.id === toPlayer.id
         }));
         
         setPlayers(updatedPlayers);
-        setSelectedPlayer(null);
-        setActiveBall(false);
       }
     );
   };
@@ -173,11 +145,19 @@ const FootballField = ({
       const elapsed = currentTime - startTime;
       const progress = Math.min(elapsed / duration, 1);
       
-      // Simple linear interpolation
+      // Add slight arc to the ball path for realism
       const newX = start.x + (end.x - start.x) * progress;
       const newY = start.y + (end.y - start.y) * progress;
       
-      setBallPosition({ x: newX, y: newY });
+      // Add a slight arc for the ball movement
+      // Higher in the middle of the pass
+      const arcHeight = 5; // Maximum arc height
+      const arcY = Math.sin(progress * Math.PI) * arcHeight;
+      
+      setBallPosition({ 
+        x: newX, 
+        y: newY - arcY // Subtract to make ball go up (Y is inverted)
+      });
       
       if (progress < 1) {
         animationRef.current = requestAnimationFrame(animate);
@@ -189,61 +169,13 @@ const FootballField = ({
     animationRef.current = requestAnimationFrame(animate);
   };
   
-  // Field click handler - move selected player
-  const handleFieldClick = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!selectedPlayer || !fieldRef.current) return;
-    
-    const rect = fieldRef.current.getBoundingClientRect();
-    const x = ((e.clientX - rect.left) / rect.width) * 100;
-    const y = ((e.clientY - rect.top) / rect.height) * 100;
-    
-    // Move the selected player
-    movePlayerTo(selectedPlayer, x, y);
-  };
-  
-  // Move a player to a new position with animation
-  const movePlayerTo = (playerId: number, targetX: number, targetY: number) => {
-    const player = players.find(p => p.id === playerId);
-    if (!player) return;
-    
-    const startPos = { x: player.x, y: player.y };
-    const startTime = performance.now();
-    const duration = 800 / gameSpeedRef.current; // ms
-    
-    const animate = (currentTime: number) => {
-      const elapsed = currentTime - startTime;
-      const progress = Math.min(elapsed / duration, 1);
-      
-      setPlayers(prevPlayers => prevPlayers.map(p => {
-        if (p.id === playerId) {
-          const newX = startPos.x + (targetX - startPos.x) * progress;
-          const newY = startPos.y + (targetY - startPos.y) * progress;
-          
-          // If this player has the ball, move the ball with them
-          if (p.hasBall) {
-            setBallPosition({ x: newX, y: newY });
-          }
-          
-          return { ...p, x: newX, y: newY };
-        }
-        return p;
-      }));
-      
-      if (progress < 1) {
-        requestAnimationFrame(animate);
-      }
-    };
-    
-    requestAnimationFrame(animate);
-  };
-  
   // Game simulation logic
   const startGameSimulation = () => {
     const gameLoop = (time: number) => {
-      // AI decision making - run every 100ms
-      if (time - lastAiMoveRef.current > 100) {
-        lastAiMoveRef.current = time;
-        simulateAI();
+      // Update players every ~16ms (60fps)
+      if (time - lastMoveRef.current > 16) {
+        lastMoveRef.current = time;
+        updatePlayerPositions(time);
       }
       
       animationRef.current = requestAnimationFrame(gameLoop);
@@ -252,106 +184,141 @@ const FootballField = ({
     animationRef.current = requestAnimationFrame(gameLoop);
   };
   
-  // AI decision making
-  const simulateAI = () => {
-    // Find player with ball
-    const playerWithBall = players.find(p => p.hasBall);
-    if (!playerWithBall) return;
-    
+  // Update player positions and handle AI
+  const updatePlayerPositions = (time: number) => {
     setPlayers(prevPlayers => {
       const newPlayers = [...prevPlayers];
+      const playerWithBall = newPlayers.find(p => p.hasBall);
       
-      // For each player without the ball
-      for (const player of newPlayers) {
-        if (player.id === playerWithBall.id || player.id === selectedPlayer) continue;
+      if (!playerWithBall) return newPlayers;
+      
+      // Check for passing the ball (based on time and randomness)
+      if (time - lastPassTimeRef.current > 2000 && Math.random() < 0.03) {
+        const possibleReceivers = newPlayers.filter(p => 
+          p.team === playerWithBall.team && 
+          p.id !== playerWithBall.id &&
+          !isPlayerMarkedTightly(p, newPlayers.filter(op => op.team !== p.team))
+        );
         
-        // Opposing team behavior - press the ball
-        if (player.team !== playerWithBall.team) {
-          // Closest defenders should press
+        if (possibleReceivers.length > 0) {
+          // Find best passing option
+          let bestReceiver = possibleReceivers[0];
+          let bestScore = -Infinity;
+          
+          for (const receiver of possibleReceivers) {
+            // Calculate how good this passing option is
+            const distToBall = getDistance(playerWithBall, receiver);
+            const isForward = (playerWithBall.team === 'A' && receiver.y > playerWithBall.y) ||
+                              (playerWithBall.team === 'B' && receiver.y < playerWithBall.y);
+            
+            // Prefer forward passes that aren't too far
+            const forwardBonus = isForward ? 20 : 0;
+            const distanceScore = 100 - Math.min(distToBall, 80); // Closer is better but not too close
+            const score = distanceScore + forwardBonus;
+            
+            if (score > bestScore) {
+              bestScore = score;
+              bestReceiver = receiver;
+            }
+          }
+          
+          // Pass the ball to the best receiver
+          passBall(playerWithBall, bestReceiver);
+          lastPassTimeRef.current = time;
+          return newPlayers;
+        }
+      }
+      
+      // Handle player movement
+      for (const player of newPlayers) {
+        // Skip very frequent movements to create smoother animations
+        if (time - player.lastMoveTime < 50) continue;
+        player.lastMoveTime = time;
+        
+        // Player with ball moves slightly forward
+        if (player.hasBall) {
+          const forwardDirection = player.team === 'A' ? 1 : -1;
+          const sidewaysMovement = (Math.random() - 0.5) * 0.5; // Slight sideways movement
+          
+          // Move forward with the ball, but stay in bounds
+          if (player.team === 'A' && player.y < 85) {
+            player.y += 0.2 * forwardDirection;
+            player.x += sidewaysMovement;
+          } else if (player.team === 'B' && player.y > 15) {
+            player.y += 0.2 * forwardDirection;
+            player.x += sidewaysMovement;
+          }
+          
+          // Keep ball with player
+          setBallPosition({ x: player.x, y: player.y });
+          
+          // Keep within bounds
+          player.x = Math.max(5, Math.min(95, player.x));
+          player.y = Math.max(5, Math.min(95, player.y));
+        } 
+        // Defending players (opposite team from ball holder) press the ball
+        else if (player.team !== playerWithBall.team) {
           const distToBall = getDistance(player, playerWithBall);
           
-          // If player is close to the ball holder, press them
+          // Closest players press the ball
           if (distToBall < 30) {
             player.isDefending = true;
-            
-            // Move toward ball holder
+            // Make some defensive movements toward ball holder
             const dx = (playerWithBall.x - player.x) * 0.05;
             const dy = (playerWithBall.y - player.y) * 0.05;
             
             player.x += dx;
             player.y += dy;
           } 
-          // Otherwise return to position gradually
+          // Others maintain formation
           else {
             player.isDefending = false;
+            // Return to base position
             returnToPosition(player, 0.02);
           }
         } 
-        // Same team behavior - maintain formation and offer passing options
+        // Same team as ball holder - provide support
         else {
-          // Make supporting runs when team has possession
           const distToBall = getDistance(player, playerWithBall);
           
-          // If not too close to ball holder, make supporting runs
+          // Make supporting runs when team has possession
           if (distToBall > 15 && distToBall < 40) {
-            // Find space away from opposing players
-            const opponentPositions = players.filter(p => p.team !== player.team);
-            let targetX = player.baseX;
+            // Find space away from defending players
+            let targetX = player.baseX + (Math.random() - 0.5) * 5;
             let targetY = player.baseY;
             
-            // Simple offensive movement - move forward
+            // Make forward runs
             if (player.team === 'A') {
-              targetY = Math.min(player.baseY + 15, 80);
+              targetY = Math.min(player.baseY + 10, 85);
             } else {
-              targetY = Math.max(player.baseY - 15, 20);
+              targetY = Math.max(player.baseY - 10, 15);
             }
             
             // Move slightly toward the calculated position
-            const dx = (targetX - player.x) * 0.04;
-            const dy = (targetY - player.y) * 0.04;
+            const dx = (targetX - player.x) * 0.03;
+            const dy = (targetY - player.y) * 0.03;
             
             player.x += dx;
             player.y += dy;
           } else {
-            // Return to base position if far from play
-            returnToPosition(player, 0.02);
+            // Return toward base position
+            returnToPosition(player, 0.01);
           }
-        }
-      }
-      
-      // AI team may occasionally attempt a pass
-      if (playerWithBall.team === 'B' && Math.random() < 0.01) {
-        // Find a teammate to pass to
-        const teammates = newPlayers.filter(p => p.team === 'B' && p.id !== playerWithBall.id);
-        if (teammates.length > 0) {
-          // Find a good passing option (not closely marked)
-          let bestPassOption = teammates[0];
-          let lowestPressure = 100;
-          
-          for (const teammate of teammates) {
-            // Calculate pressure on this teammate from opposing players
-            let pressure = 0;
-            const opponents = newPlayers.filter(p => p.team === 'A');
-            for (const opponent of opponents) {
-              const dist = getDistance(teammate, opponent);
-              pressure += dist < 15 ? (15 - dist) : 0;
-            }
-            
-            if (pressure < lowestPressure) {
-              lowestPressure = pressure;
-              bestPassOption = teammate;
-            }
-          }
-          
-          // Execute the pass
-          setTimeout(() => {
-            passBall(playerWithBall.id, bestPassOption.id);
-          }, Math.random() * 1000); // Random delay to make it seem more natural
         }
       }
       
       return newPlayers;
     });
+  };
+  
+  // Check if a player is tightly marked by opponents
+  const isPlayerMarkedTightly = (player: typeof players[0], opponents: typeof players) => {
+    for (const opponent of opponents) {
+      if (getDistance(player, opponent) < 10) {
+        return true;
+      }
+    }
+    return false;
   };
   
   // Helper to return player to base position
@@ -371,8 +338,7 @@ const FootballField = ({
   return (
     <div 
       ref={fieldRef}
-      className={cn("relative w-full aspect-[2/3] mx-auto max-w-md cursor-pointer", className)}
-      onClick={handleFieldClick}
+      className={cn("relative w-full aspect-[2/3] mx-auto max-w-md", className)}
     >
       {/* Field background */}
       <div className="absolute inset-0 bg-green-600 rounded-xl overflow-hidden">
@@ -403,38 +369,28 @@ const FootballField = ({
         
         {/* Ball */}
         <div 
-          className={cn(
-            "absolute w-3 h-3 bg-white rounded-full transform -translate-x-1/2 -translate-y-1/2 z-20",
-            activeBall ? "animate-pulse-gentle" : ""
-          )}
+          className="absolute w-3 h-3 bg-white rounded-full transform -translate-x-1/2 -translate-y-1/2 z-20 shadow-sm"
           style={{ 
             left: `${ballPosition.x}%`, 
             top: `${ballPosition.y}%`,
-            transition: !activeBall ? 'left 0.3s ease-out, top 0.3s ease-out' : 'none',
-            boxShadow: '0 0 5px rgba(0,0,0,0.3)'
           }}
         ></div>
         
-        {/* Interactive player dots */}
+        {/* Players */}
         {players.map(player => (
           <div 
             key={player.id}
             className={cn(
-              "absolute w-5 h-5 rounded-full transform -translate-x-1/2 -translate-y-1/2 cursor-pointer",
+              "absolute w-4 h-4 rounded-full transform -translate-x-1/2 -translate-y-1/2",
               player.team === 'A' ? "bg-team-home" : "bg-team-away",
-              selectedPlayer === player.id ? "ring-2 ring-white ring-opacity-70 scale-125" : "",
-              player.hasBall ? "ring-1 ring-white ring-opacity-70" : "",
-              player.isDefending ? "animate-pulse-gentle" : ""
+              player.isDefending ? "animate-pulse-gentle" : "",
+              player.hasBall ? "ring-1 ring-white ring-opacity-80" : ""
             )}
             style={{ 
               left: `${player.x}%`, 
               top: `${player.y}%`,
-              zIndex: selectedPlayer === player.id ? 10 : 5,
+              zIndex: player.hasBall ? 10 : 5,
               transition: 'transform 0.2s ease-out'
-            }}
-            onClick={(e) => {
-              e.stopPropagation();
-              handlePlayerClick(player.id);
             }}
           />
         ))}
