@@ -48,7 +48,7 @@ const Header = () => {
           className="text-2xl font-bold text-primary transition-transform hover:scale-105 flex items-center"
         >
           <span className="relative font-oswald tracking-wider">
-            Gather<span className="text-xs font-light ml-1 text-foreground">to play</span>
+            Gather<span className="text-xs font-light ml-1 text-emerald-500">to play</span>
           </span>
         </Link>
 
