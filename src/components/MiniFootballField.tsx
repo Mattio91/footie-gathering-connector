@@ -27,6 +27,15 @@ const MiniFootballField = () => {
       y: newPlayers[randomPlayerIndex].y 
     });
     
+    // Flip player positions horizontally
+    setPlayers(prevPlayers => 
+      prevPlayers.map(player => ({
+        ...player,
+        // Flip X coordinates (100 - x)
+        x: 100 - player.x
+      }))
+    );
+    
     // Start simple AI movement of players
     startAutoMovement();
     
@@ -214,6 +223,7 @@ const MiniFootballField = () => {
       ref={fieldRef}
       className="relative w-24 h-12 mx-4 cursor-pointer"
       onClick={handleFieldClick}
+      style={{ transform: 'scaleX(-1)' }} // Flip the entire field horizontally
     >
       {/* Field background */}
       <div className="absolute inset-0 bg-green-600 rounded-lg overflow-hidden border border-green-700">
@@ -241,7 +251,8 @@ const MiniFootballField = () => {
           style={{ 
             left: `${ballPosition.x}%`, 
             top: `${ballPosition.y}%`,
-            transition: !activeBall ? 'left 0.5s ease-out, top 0.5s ease-out' : 'none'
+            transition: !activeBall ? 'left 0.5s ease-out, top 0.5s ease-out' : 'none',
+            transform: 'scaleX(-1)' // Flip the ball back so it doesn't look mirrored
           }}
         ></div>
         
@@ -258,7 +269,8 @@ const MiniFootballField = () => {
             style={{ 
               left: `${player.x}%`, 
               top: `${player.y}%`,
-              zIndex: selectedPlayer === player.id ? 10 : 5
+              zIndex: selectedPlayer === player.id ? 10 : 5,
+              transform: 'scaleX(-1)' // Flip the players back so they don't look mirrored
             }}
             onClick={(e) => {
               e.stopPropagation();

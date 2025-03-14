@@ -3,7 +3,7 @@ import React from 'react';
 
 const Field: React.FC = () => {
   return (
-    <div className="absolute inset-0 opacity-30">
+    <div className="absolute inset-0 opacity-30" style={{ transform: 'scaleX(-1)' }}>
       <div className="absolute top-0 left-0 right-0 h-[1px] bg-white" />
       <div className="absolute bottom-0 left-0 right-0 h-[1px] bg-white" />
       <div className="absolute top-0 bottom-0 left-0 w-[1px] bg-white" />

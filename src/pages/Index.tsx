@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Plus, CalendarClock, MapPin, Search, Users, ArrowRight, Clock } from 'lucide-react';
@@ -20,13 +19,12 @@ import {
 import { format } from 'date-fns';
 import { Card } from '@/components/ui/card';
 
-// Mock data for demonstration
 const mockEvents: EventCardProps[] = [
   {
     id: '1',
     title: 'Saturday Morning Kickabout',
     location: 'Hackney Marshes, London',
-    date: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000), // 2 days from now
+    date: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000),
     time: '09:00',
     duration: '90 mins',
     format: '6v6',
@@ -40,7 +38,7 @@ const mockEvents: EventCardProps[] = [
     id: '2',
     title: 'Sunday League Match',
     location: 'Regent\'s Park, London',
-    date: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000), // 3 days from now
+    date: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000),
     time: '14:30',
     duration: '2 hours',
     format: '11v11',
@@ -54,7 +52,7 @@ const mockEvents: EventCardProps[] = [
     id: '3',
     title: 'After Work 5-a-side',
     location: 'Victoria Park, London',
-    date: new Date(Date.now() + 1 * 24 * 60 * 60 * 1000), // 1 day from now
+    date: new Date(Date.now() + 1 * 24 * 60 * 60 * 1000),
     time: '18:00',
     duration: '1 hour',
     format: '5v5',
@@ -68,7 +66,7 @@ const mockEvents: EventCardProps[] = [
     id: '4',
     title: 'Friendly Match',
     location: 'Wormwood Scrubs, London',
-    date: new Date(Date.now() + 4 * 24 * 60 * 60 * 1000), // 4 days from now
+    date: new Date(Date.now() + 4 * 24 * 60 * 60 * 1000),
     time: '11:00',
     duration: '90 mins',
     format: '7v7',
@@ -82,7 +80,7 @@ const mockEvents: EventCardProps[] = [
     id: '5',
     title: 'Weekend Tournament',
     location: 'Greenwich Park, London',
-    date: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000), // 5 days from now
+    date: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000),
     time: '10:00',
     duration: '4 hours',
     format: '5v5',
@@ -96,7 +94,7 @@ const mockEvents: EventCardProps[] = [
     id: '6',
     title: 'Charity Football Match',
     location: 'Finsbury Park, London',
-    date: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days from now
+    date: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
     time: '13:00',
     duration: '2 hours',
     format: '11v11',
@@ -110,7 +108,7 @@ const mockEvents: EventCardProps[] = [
     id: '7',
     title: 'Community Cup',
     location: 'Hampstead Heath, London',
-    date: new Date(Date.now() + 8 * 24 * 60 * 60 * 1000), // 8 days from now
+    date: new Date(Date.now() + 8 * 24 * 60 * 60 * 1000),
     time: '15:00',
     duration: '3 hours',
     format: '7v7',
@@ -130,7 +128,6 @@ const Index = () => {
   const [featuredEvents, setFeaturedEvents] = useState<EventCardProps[]>([]);
   const [tableEvents, setTableEvents] = useState<EventCardProps[]>([]);
   
-  // Simulate loading
   useEffect(() => {
     const timer = setTimeout(() => {
       setIsLoaded(true);
@@ -139,12 +136,9 @@ const Index = () => {
     return () => clearTimeout(timer);
   }, []);
   
-  // Process and sort events
   useEffect(() => {
-    // Sort events by date (ascending)
     const sortedEvents = [...mockEvents].sort((a, b) => a.date.getTime() - b.date.getTime());
     
-    // Apply search filter if query exists
     const filtered = searchQuery.trim() 
       ? sortedEvents.filter(event => {
           const query = searchQuery.toLowerCase();
@@ -156,10 +150,8 @@ const Index = () => {
     
     setFilteredEvents(filtered);
     
-    // First 3 events go to the featured section
     setFeaturedEvents(filtered.slice(0, 3));
     
-    // Next 10 events go to the table
     setTableEvents(filtered.slice(3, 13));
   }, [searchQuery, mockEvents]);
   
@@ -167,7 +159,6 @@ const Index = () => {
     <div className="min-h-screen flex flex-col">
       <Header />
       
-      {/* Hero Section */}
       <section className="pt-28 pb-14 px-4 relative overflow-hidden">
         <div className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-primary/5 via-background to-background"></div>
         
@@ -207,14 +198,13 @@ const Index = () => {
                 teamAPlayers={5} 
                 teamBPlayers={5} 
                 maxPlayers={10} 
-                className="transform scale-90 w-3/4 aspect-[2/2.5]" 
+                className="transform scale-90 w-4/5 aspect-[3/2]" 
               />
             </div>
           </div>
         </div>
       </section>
       
-      {/* Upcoming Events Section */}
       <section className="py-16 px-4 bg-slate-50 dark:bg-slate-900/30">
         <div className="container max-w-6xl mx-auto">
           <div className="flex flex-col md:flex-row md:items-center justify-between mb-10">
@@ -223,7 +213,6 @@ const Index = () => {
               <p className="text-muted-foreground">{t('index.upcomingEventsSubtitle')}</p>
             </div>
             
-            {/* Search Bar */}
             <div className="mt-4 md:mt-0 relative max-w-md w-full">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
@@ -236,7 +225,6 @@ const Index = () => {
             </div>
           </div>
           
-          {/* Featured Events Grid */}
           {featuredEvents.length > 0 && (
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
               {featuredEvents.map((event, index) => (
@@ -248,7 +236,6 @@ const Index = () => {
             </div>
           )}
           
-          {/* Events Table */}
           {tableEvents.length > 0 && (
             <Card className="mt-8 overflow-hidden">
               <Table>
@@ -305,7 +292,6 @@ const Index = () => {
             </Card>
           )}
           
-          {/* Show this when no events match search */}
           {filteredEvents.length === 0 && (
             <div className="text-center py-12">
               <p className="text-muted-foreground mb-4">{t('index.noEventsFound')}</p>
@@ -318,7 +304,6 @@ const Index = () => {
             </div>
           )}
           
-          {/* View all button */}
           {filteredEvents.length > 0 && (
             <div className="flex justify-center mt-12">
               <Button variant="outline" size="lg" className="group">
@@ -330,7 +315,6 @@ const Index = () => {
         </div>
       </section>
       
-      {/* Features Section */}
       <section className="py-20 px-4 bg-gradient-to-br from-secondary/30 to-background">
         <div className="container max-w-6xl mx-auto">
           <h2 className="font-oswald text-4xl text-center uppercase tracking-tight mb-16">{t('index.howItWorks')}</h2>
@@ -366,25 +350,6 @@ const Index = () => {
               </p>
             </div>
           </div>
-        </div>
-      </section>
-      
-      {/* CTA Section */}
-      <section className="py-24 px-4 relative overflow-hidden">
-        <div className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_bottom,_var(--tw-gradient-stops))] from-primary/5 via-background to-background"></div>
-        
-        <div className="container max-w-4xl mx-auto text-center">
-          <h2 className="font-oswald text-4xl uppercase tracking-tight mb-6">{t('index.ctaTitle')}</h2>
-          <p className="text-muted-foreground text-lg max-w-2xl mx-auto mb-10">
-            {t('index.ctaDesc')}
-          </p>
-          
-          <Link to="/create-event">
-            <Button size="lg" className="px-8 rounded-full">
-              <Plus className="h-4 w-4 mr-2" />
-              {t('index.ctaButton')}
-            </Button>
-          </Link>
         </div>
       </section>
       
