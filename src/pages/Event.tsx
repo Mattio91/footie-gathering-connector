@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { 
@@ -37,6 +36,7 @@ import Footer from '@/components/Footer';
 import PlayersList from '@/components/PlayersList';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
+import { Label } from '@/components/ui/label';
 
 // Mock data to simulate an event
 const mockEvent = {

@@ -28,7 +28,7 @@ const EventCard = ({
   date,
   time,
   duration,
-  format,
+  format: matchFormat,
   playerCount,
   maxPlayers,
   price,
@@ -96,7 +96,7 @@ const EventCard = ({
             <div className="space-y-2">
               <div className="flex items-center space-x-2">
                 <span className="tag bg-white/10 text-white border-none backdrop-blur-sm">
-                  {format}
+                  {matchFormat}
                 </span>
                 <span className={cn(
                   "tag backdrop-blur-sm border-none",
