@@ -1,13 +1,14 @@
 
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Plus, CalendarClock, MapPin, Search, Users } from 'lucide-react';
+import { Plus, CalendarClock, MapPin, Search, Users, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import EventCard, { EventCardProps } from '@/components/EventCard';
 import { useTranslation } from 'react-i18next';
+import FootballField from '@/components/FootballField';
 
 // Mock data for demonstration
 const mockEvents: EventCardProps[] = [
@@ -110,31 +111,45 @@ const Index = () => {
       <section className="pt-32 pb-16 px-4 relative overflow-hidden">
         <div className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-primary/5 via-background to-background"></div>
         
-        <div className="container max-w-6xl mx-auto text-center">
-          <span className="tag bg-primary/10 text-primary mb-4 animate-fade-in">
-            <CalendarClock className="h-3 w-3 mr-1" />
-            {t('index.heroSubtitle')}
-          </span>
-          
-          <h1 className="h1 md:text-5xl lg:text-6xl mb-6 animate-fade-in" style={{ animationDelay: '150ms' }}>
-            {t('index.heroTitle')}
-          </h1>
-          
-          <p className="text-muted-foreground text-lg max-w-2xl mx-auto mb-10 animate-fade-in" style={{ animationDelay: '300ms' }}>
-            {t('index.heroSubtitle')}
-          </p>
-          
-          <div className="flex flex-col sm:flex-row gap-4 justify-center animate-fade-in" style={{ animationDelay: '450ms' }}>
-            <Link to="/create-event">
-              <Button size="lg" className="w-full sm:w-auto">
-                <Plus className="h-4 w-4 mr-2" />
-                {t('common.createEvent')}
-              </Button>
-            </Link>
-            <Button variant="outline" size="lg" className="w-full sm:w-auto">
-              <MapPin className="h-4 w-4 mr-2" />
-              {t('common.findLocalGames')}
-            </Button>
+        <div className="container max-w-6xl mx-auto">
+          <div className="grid md:grid-cols-2 gap-8 items-center">
+            <div className="text-left">
+              <span className="tag bg-primary/10 text-primary mb-4 animate-fade-in">
+                <CalendarClock className="h-3 w-3 mr-1" />
+                {t('index.heroSubtitle')}
+              </span>
+              
+              <h1 className="font-oswald text-5xl md:text-6xl lg:text-7xl uppercase tracking-tight mb-6 animate-fade-in leading-none" style={{ animationDelay: '150ms' }}>
+                <span className="block">Gather</span>
+                <span className="text-primary">to play</span>
+              </h1>
+              
+              <p className="text-muted-foreground text-lg max-w-md mb-10 animate-fade-in" style={{ animationDelay: '300ms' }}>
+                {t('index.heroSubtitle')}
+              </p>
+              
+              <div className="flex flex-col sm:flex-row gap-4 animate-fade-in" style={{ animationDelay: '450ms' }}>
+                <Link to="/create-event">
+                  <Button size="lg" className="w-full sm:w-auto">
+                    <Plus className="h-4 w-4 mr-2" />
+                    {t('common.createEvent')}
+                  </Button>
+                </Link>
+                <Button variant="outline" size="lg" className="w-full sm:w-auto">
+                  <MapPin className="h-4 w-4 mr-2" />
+                  {t('common.findLocalGames')}
+                </Button>
+              </div>
+            </div>
+            
+            <div className="hidden md:block">
+              <FootballField 
+                teamAPlayers={5} 
+                teamBPlayers={5} 
+                maxPlayers={10} 
+                className="transform scale-110" 
+              />
+            </div>
           </div>
         </div>
       </section>
@@ -144,7 +159,7 @@ const Index = () => {
         <div className="container max-w-6xl mx-auto">
           <div className="flex flex-col md:flex-row md:items-center justify-between mb-10">
             <div>
-              <h2 className="h2 mb-2">{t('index.upcomingEvents')}</h2>
+              <h2 className="font-oswald text-3xl uppercase tracking-tight mb-2">{t('index.upcomingEvents')}</h2>
               <p className="text-muted-foreground">{t('index.upcomingEventsSubtitle')}</p>
             </div>
             
@@ -184,23 +199,12 @@ const Index = () => {
             </div>
           )}
           
-          {/* Pagination (simplified) */}
+          {/* View all button */}
           {filteredEvents.length > 0 && (
             <div className="flex justify-center mt-12">
-              <Button variant="outline" size="sm" className="mr-2">
-                {t('common.back')}
-              </Button>
-              <Button variant="outline" size="sm" className="mx-1 bg-primary text-white">
-                1
-              </Button>
-              <Button variant="outline" size="sm" className="mx-1">
-                2
-              </Button>
-              <Button variant="outline" size="sm" className="mx-1">
-                3
-              </Button>
-              <Button variant="outline" size="sm" className="ml-2">
-                {t('common.continue')}
+              <Button variant="outline" size="lg" className="group">
+                {t('common.viewAll')}
+                <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
               </Button>
             </div>
           )}
@@ -208,36 +212,36 @@ const Index = () => {
       </section>
       
       {/* Features Section */}
-      <section className="py-16 px-4 bg-secondary/30">
+      <section className="py-20 px-4 bg-gradient-to-br from-secondary/30 to-background">
         <div className="container max-w-6xl mx-auto">
-          <h2 className="h2 text-center mb-12">{t('index.howItWorks')}</h2>
+          <h2 className="font-oswald text-4xl text-center uppercase tracking-tight mb-16">{t('index.howItWorks')}</h2>
           
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="flex flex-col items-center text-center p-6 rounded-lg bg-white shadow-sm">
-              <div className="w-16 h-16 flex items-center justify-center rounded-full bg-primary/10 text-primary mb-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
+            <div className="flex flex-col items-center text-center p-8 rounded-xl hover:bg-white hover:shadow-lg transition-all duration-300">
+              <div className="w-16 h-16 flex items-center justify-center rounded-full bg-primary/10 text-primary mb-6">
                 <CalendarClock className="h-8 w-8" />
               </div>
-              <h3 className="h4 mb-2">{t('index.createOrJoin')}</h3>
+              <h3 className="font-oswald text-xl uppercase mb-3">{t('index.createOrJoin')}</h3>
               <p className="text-muted-foreground">
                 {t('index.createOrJoinDesc')}
               </p>
             </div>
             
-            <div className="flex flex-col items-center text-center p-6 rounded-lg bg-white shadow-sm">
-              <div className="w-16 h-16 flex items-center justify-center rounded-full bg-primary/10 text-primary mb-4">
+            <div className="flex flex-col items-center text-center p-8 rounded-xl hover:bg-white hover:shadow-lg transition-all duration-300">
+              <div className="w-16 h-16 flex items-center justify-center rounded-full bg-primary/10 text-primary mb-6">
                 <Users className="h-8 w-8" />
               </div>
-              <h3 className="h4 mb-2">{t('index.findPlayers')}</h3>
+              <h3 className="font-oswald text-xl uppercase mb-3">{t('index.findPlayers')}</h3>
               <p className="text-muted-foreground">
                 {t('index.findPlayersDesc')}
               </p>
             </div>
             
-            <div className="flex flex-col items-center text-center p-6 rounded-lg bg-white shadow-sm">
-              <div className="w-16 h-16 flex items-center justify-center rounded-full bg-primary/10 text-primary mb-4">
+            <div className="flex flex-col items-center text-center p-8 rounded-xl hover:bg-white hover:shadow-lg transition-all duration-300">
+              <div className="w-16 h-16 flex items-center justify-center rounded-full bg-primary/10 text-primary mb-6">
                 <MapPin className="h-8 w-8" />
               </div>
-              <h3 className="h4 mb-2">{t('index.playFootball')}</h3>
+              <h3 className="font-oswald text-xl uppercase mb-3">{t('index.playFootball')}</h3>
               <p className="text-muted-foreground">
                 {t('index.playFootballDesc')}
               </p>
@@ -251,13 +255,13 @@ const Index = () => {
         <div className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_bottom,_var(--tw-gradient-stops))] from-primary/5 via-background to-background"></div>
         
         <div className="container max-w-4xl mx-auto text-center">
-          <h2 className="h2 md:text-4xl mb-6">{t('index.ctaTitle')}</h2>
+          <h2 className="font-oswald text-4xl uppercase tracking-tight mb-6">{t('index.ctaTitle')}</h2>
           <p className="text-muted-foreground text-lg max-w-2xl mx-auto mb-10">
             {t('index.ctaDesc')}
           </p>
           
           <Link to="/create-event">
-            <Button size="lg" className="px-8">
+            <Button size="lg" className="px-8 rounded-full">
               <Plus className="h-4 w-4 mr-2" />
               {t('index.ctaButton')}
             </Button>

@@ -1,7 +1,7 @@
 
 {
   "common": {
-    "appName": "PitchMatch",
+    "appName": "Gather",
     "createEvent": "Create Event",
     "findLocalGames": "Find Local Games",
     "signIn": "Sign In",
@@ -17,7 +17,8 @@
     "groups": "Groups",
     "home": "Home",
     "events": "Events",
-    "share": "Share"
+    "share": "Share",
+    "viewAll": "View All Events"
   },
   "header": {
     "home": "Home",
@@ -25,14 +26,14 @@
     "groups": "Groups"
   },
   "footer": {
-    "copyright": "© 2023 PitchMatch. All rights reserved.",
+    "copyright": "© 2023 Gather. All rights reserved.",
     "privacyPolicy": "Privacy Policy",
     "terms": "Terms of Service",
     "contact": "Contact Us"
   },
   "index": {
     "heroTitle": "Connect with players.\nOrganize matches.\nPlay football.",
-    "heroSubtitle": "PitchMatch makes it easy to organize football games, find players, and manage your teams all in one place.",
+    "heroSubtitle": "Gather makes it easy to organize football games, find players, and manage your teams all in one place.",
     "upcomingEvents": "Upcoming Events",
     "upcomingEventsSubtitle": "Join a match and play football with others.",
     "searchPlaceholder": "Search by title, location, or format...",

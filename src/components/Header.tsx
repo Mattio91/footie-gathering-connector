@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { useTranslation } from 'react-i18next';
 import LanguageSwitcher from './LanguageSwitcher';
+import MiniFootballField from './MiniFootballField';
 
 const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -46,11 +47,15 @@ const Header = () => {
           to="/" 
           className="text-2xl font-bold text-primary transition-transform hover:scale-105 flex items-center"
         >
-          <span className="relative">
-            Pitch<span className="text-primary font-extrabold">Match</span>
-            <span className="absolute -bottom-1 left-0 right-0 h-1 bg-primary rounded-full transform scale-x-0 transition-transform origin-left group-hover:scale-x-100"></span>
+          <span className="relative font-oswald tracking-wider">
+            Gather<span className="text-xs font-light ml-1 text-foreground">to play</span>
           </span>
         </Link>
+
+        {/* Mini Football Field (Desktop only) */}
+        <div className="hidden md:block mx-auto">
+          <MiniFootballField />
+        </div>
 
         {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center space-x-8">

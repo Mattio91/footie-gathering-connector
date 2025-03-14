@@ -1,7 +1,7 @@
 
 {
   "common": {
-    "appName": "PitchMatch",
+    "appName": "Gather",
     "createEvent": "Utwórz wydarzenie",
     "findLocalGames": "Znajdź lokalne mecze",
     "signIn": "Zaloguj się",
@@ -17,7 +17,8 @@
     "groups": "Grupy",
     "home": "Strona główna",
     "events": "Wydarzenia",
-    "share": "Udostępnij"
+    "share": "Udostępnij",
+    "viewAll": "Zobacz wszystkie wydarzenia"
   },
   "header": {
     "home": "Strona główna",
@@ -25,14 +26,14 @@
     "groups": "Grupy"
   },
   "footer": {
-    "copyright": "© 2023 PitchMatch. Wszelkie prawa zastrzeżone.",
+    "copyright": "© 2023 Gather. Wszelkie prawa zastrzeżone.",
     "privacyPolicy": "Polityka prywatności",
     "terms": "Warunki korzystania z usługi",
     "contact": "Kontakt"
   },
   "index": {
     "heroTitle": "Połącz się z graczami.\nOrganizuj mecze.\nGraj w piłkę.",
-    "heroSubtitle": "PitchMatch umożliwia łatwe organizowanie meczów piłki nożnej, znajdowanie graczy i zarządzanie drużynami w jednym miejscu.",
+    "heroSubtitle": "Gather umożliwia łatwe organizowanie meczów piłki nożnej, znajdowanie graczy i zarządzanie drużynami w jednym miejscu.",
     "upcomingEvents": "Nadchodzące wydarzenia",
     "upcomingEventsSubtitle": "Dołącz do meczu i graj w piłkę z innymi.",
     "searchPlaceholder": "Szukaj według tytułu, lokalizacji lub formatu...",
