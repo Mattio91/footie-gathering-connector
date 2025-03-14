@@ -1,0 +1,133 @@
+
+import { useState, useEffect } from 'react';
+import { Link, useLocation } from 'react-router-dom';
+import { Menu, X, Plus, User } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
+
+const Header = () => {
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const location = useLocation();
+
+  // Handle scroll effect
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 10);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  // Close mobile menu when changing route
+  useEffect(() => {
+    setIsMobileMenuOpen(false);
+  }, [location.pathname]);
+
+  const navLinks = [
+    { name: 'Home', href: '/' },
+    { name: 'Events', href: '/events' },
+    { name: 'Groups', href: '/groups' },
+  ];
+
+  return (
+    <header 
+      className={cn(
+        'fixed top-0 left-0 right-0 z-50 py-4 transition-all duration-300 ease-in-out',
+        isScrolled ? 'glass shadow-sm py-3' : 'bg-transparent'
+      )}
+    >
+      <div className="container px-4 mx-auto flex items-center justify-between">
+        {/* Logo */}
+        <Link 
+          to="/" 
+          className="text-2xl font-bold text-primary transition-transform hover:scale-105 flex items-center"
+        >
+          <span className="relative">
+            Pitch<span className="text-primary font-extrabold">Match</span>
+            <span className="absolute -bottom-1 left-0 right-0 h-1 bg-primary rounded-full transform scale-x-0 transition-transform origin-left group-hover:scale-x-100"></span>
+          </span>
+        </Link>
+
+        {/* Desktop Navigation */}
+        <nav className="hidden md:flex items-center space-x-8">
+          {navLinks.map((link) => (
+            <Link
+              key={link.name}
+              to={link.href}
+              className={cn(
+                'text-sm font-medium transition-colors hover:text-primary relative group',
+                location.pathname === link.href ? 'text-primary' : 'text-foreground'
+              )}
+            >
+              {link.name}
+              <span className={cn(
+                'absolute -bottom-1 left-0 right-0 h-0.5 bg-primary rounded-full transform origin-left transition-transform duration-300',
+                location.pathname === link.href ? 'scale-x-100' : 'scale-x-0 group-hover:scale-x-100'
+              )}></span>
+            </Link>
+          ))}
+        </nav>
+
+        {/* CTA Buttons */}
+        <div className="hidden md:flex items-center space-x-4">
+          <Button variant="ghost" size="sm" className="rounded-full">
+            <User className="h-4 w-4 mr-2" />
+            Sign In
+          </Button>
+          <Button className="rounded-full">
+            <Plus className="h-4 w-4 mr-2" />
+            Create Event
+          </Button>
+        </div>
+
+        {/* Mobile menu button */}
+        <button
+          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          className="md:hidden flex items-center text-foreground"
+          aria-label="Toggle menu"
+        >
+          {isMobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+        </button>
+      </div>
+
+      {/* Mobile menu */}
+      <div
+        className={cn(
+          'fixed inset-0 bg-background/80 backdrop-blur-sm z-40 transform transition-transform duration-300 ease-in-out md:hidden',
+          isMobileMenuOpen ? 'translate-x-0' : 'translate-x-full'
+        )}
+        style={{ top: '62px' }}
+      >
+        <div className="flex flex-col p-6 space-y-6">
+          {navLinks.map((link) => (
+            <Link
+              key={link.name}
+              to={link.href}
+              className={cn(
+                'text-lg font-medium py-2 border-b border-border',
+                location.pathname === link.href ? 'text-primary' : 'text-foreground'
+              )}
+            >
+              {link.name}
+            </Link>
+          ))}
+          <div className="flex flex-col space-y-4 pt-4">
+            <Button variant="ghost" size="lg" className="justify-start">
+              <User className="h-5 w-5 mr-2" />
+              Sign In
+            </Button>
+            <Link to="/create-event">
+              <Button size="lg" className="w-full">
+                <Plus className="h-5 w-5 mr-2" />
+                Create Event
+              </Button>
+            </Link>
+          </div>
+        </div>
+      </div>
+    </header>
+  );
+};
+
+export default Header;
