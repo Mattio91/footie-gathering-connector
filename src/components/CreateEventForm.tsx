@@ -1,7 +1,7 @@
 
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { CalendarIcon, Clock, Users, DollarSign, Lock, LockOpen, Flag } from 'lucide-react';
+import { CalendarIcon, Clock, Users, DollarSign, Lock, LockOpen, Flag, Repeat } from 'lucide-react';
 import { 
   Card, 
   CardContent, 
@@ -25,7 +25,14 @@ import {
   SelectTrigger, 
   SelectValue 
 } from '@/components/ui/select';
-import FieldLocation from './FieldLocation';
+import { toast } from 'sonner';
+import OpenStreetMapPicker from './OpenStreetMapPicker';
+import GroupSelector from './GroupSelector';
+
+interface Group {
+  id: string;
+  name: string;
+}
 
 const CreateEventForm = () => {
   const navigate = useNavigate();
@@ -33,14 +40,20 @@ const CreateEventForm = () => {
   const [date, setDate] = useState<Date>();
   const [formData, setFormData] = useState({
     title: '',
-    location: '',
+    location: {
+      address: '',
+      lat: 0,
+      lng: 0
+    },
     time: '',
     duration: '90',
     format: '6v6',
     maxPlayers: 12,
     price: '',
     visibility: 'public',
+    occurrence: 'once',
     images: [] as File[],
+    groups: [] as Group[],
   });
   
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -52,12 +65,16 @@ const CreateEventForm = () => {
     setFormData(prev => ({ ...prev, [name]: value }));
   };
   
-  const handleLocationChange = (location: string) => {
+  const handleLocationChange = (location: { address: string; lat: number; lng: number }) => {
     setFormData(prev => ({ ...prev, location }));
   };
   
   const handleImagesChange = (images: File[]) => {
     setFormData(prev => ({ ...prev, images: [...prev.images, ...images] }));
+  };
+
+  const handleGroupsChange = (groups: Group[]) => {
+    setFormData(prev => ({ ...prev, groups }));
   };
   
   const handleNext = () => {
@@ -70,8 +87,18 @@ const CreateEventForm = () => {
   
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // If no groups are selected, create a default "Event Group"
+    const finalGroups = formData.groups.length === 0 
+      ? [{ id: `default-${Date.now()}`, name: `Event Group` }] 
+      : formData.groups;
+    
     // In a real app, you would submit the form data to an API
-    console.log('Form submitted:', { ...formData, date });
+    console.log('Form submitted:', { ...formData, date, groups: finalGroups });
+    
+    // Show a success message
+    toast.success("Event created successfully!");
+    
     // Navigate to the event page (in a real app, you would navigate to the newly created event)
     navigate('/');
   };
@@ -127,6 +154,27 @@ const CreateEventForm = () => {
                     />
                   </PopoverContent>
                 </Popover>
+              </div>
+              
+              <div className="space-y-3">
+                <Label htmlFor="occurrence" className="input-label">Occurrence</Label>
+                <div className="relative">
+                  <Repeat className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <Select 
+                    value={formData.occurrence} 
+                    onValueChange={(value) => handleSelect('occurrence', value)}
+                  >
+                    <SelectTrigger className="pl-10">
+                      <SelectValue placeholder="How often?" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="once">One time only</SelectItem>
+                      <SelectItem value="weekly">Weekly</SelectItem>
+                      <SelectItem value="biweekly">Every two weeks</SelectItem>
+                      <SelectItem value="monthly">Monthly</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
               
               <div className="grid grid-cols-2 gap-4">
@@ -206,16 +254,26 @@ const CreateEventForm = () => {
             </div>
           )}
           
-          {/* Step 2: Location & Visibility */}
+          {/* Step 2: Location, Groups & Visibility */}
           {step === 2 && (
             <div className="space-y-6 animate-slide-up">
-              <FieldLocation 
-                onLocationChange={handleLocationChange}
-                onImagesChange={handleImagesChange}
-              />
+              <div className="space-y-3">
+                <Label className="input-label">Location</Label>
+                <OpenStreetMapPicker 
+                  onLocationSelect={handleLocationChange}
+                  initialLocation={formData.location.address}
+                />
+              </div>
+              
+              <div className="space-y-3">
+                <GroupSelector 
+                  selectedGroups={formData.groups}
+                  onGroupsChange={handleGroupsChange}
+                />
+              </div>
               
               <div className="space-y-4 pt-2">
-                <Label className="input-label">Visibility</Label>
+                <Label className="input-label">Who can join?</Label>
                 <RadioGroup 
                   value={formData.visibility}
                   onValueChange={(value) => handleSelect('visibility', value)}
@@ -270,7 +328,7 @@ const CreateEventForm = () => {
                       <Users className="h-5 w-5 mb-2" />
                       <span className="font-medium">Group Only</span>
                       <span className="text-xs text-muted-foreground text-center">
-                        Only for your group
+                        Only for selected groups
                       </span>
                     </Label>
                   </div>
@@ -328,7 +386,7 @@ const CreateEventForm = () => {
           <Button
             type="submit"
             onClick={handleSubmit}
-            disabled={!formData.location}
+            disabled={!formData.location.address}
           >
             Create Event
           </Button>

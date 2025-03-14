@@ -1,0 +1,9 @@
+
+/* Required Leaflet CSS */
+@import url('https://unpkg.com/leaflet@1.9.4/dist/leaflet.css');
+
+/* Fix the map container */
+.leaflet-container {
+  height: 100%;
+  width: 100%;
+}
