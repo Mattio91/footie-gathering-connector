@@ -137,7 +137,7 @@ const EventCard = ({
                 className="bg-primary/90 hover:bg-primary text-white rounded-full shadow-lg transform transition-transform duration-300 hover:scale-105"
                 onClick={(e) => e.preventDefault()}
               >
-                View Details
+                View Event
               </Button>
             </div>
           </div>

@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Menu, X, Plus, User } from 'lucide-react';
@@ -5,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { useTranslation } from 'react-i18next';
 import LanguageSwitcher from './LanguageSwitcher';
+import MiniFootballField from './MiniFootballField';
 
 const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -40,11 +42,12 @@ const Header = () => {
       )}
     >
       <div className="container px-4 mx-auto flex items-center justify-between">
-        {/* Logo */}
+        {/* Logo with MiniFootballField */}
         <Link 
           to="/" 
           className="text-2xl font-bold text-primary transition-transform hover:scale-105 flex items-center"
         >
+          <MiniFootballField />
           <span className="relative font-oswald tracking-wider">
             Gather<span className="text-xs font-light ml-1 text-emerald-500">to play</span>
           </span>
