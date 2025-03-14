@@ -1,6 +1,6 @@
 
-import { useState } from 'react';
-import { Users, GripVertical } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Users, GripVertical, UserPlus } from 'lucide-react';
 import { 
   Tabs, 
   TabsContent, 
@@ -16,7 +16,9 @@ import {
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import FootballField from '@/components/FootballField';
+import AddFriendForm from '@/components/AddFriendForm';
 import { cn } from '@/lib/utils';
+import { useToast } from '@/hooks/use-toast';
 
 interface Player {
   id: string;
@@ -31,23 +33,31 @@ interface EventTeamsProps {
   maxPlayers: number;
   isJoined: boolean;
   onJoinEvent: () => void;
+  onAddFriend?: (name: string) => void;
 }
 
-const EventTeams = ({ players, maxPlayers, isJoined, onJoinEvent }: EventTeamsProps) => {
+const EventTeams = ({ 
+  players, 
+  maxPlayers, 
+  isJoined, 
+  onJoinEvent,
+  onAddFriend
+}: EventTeamsProps) => {
   const [activeTab, setActiveTab] = useState("teams");
   const [teamA, setTeamA] = useState<Player[]>([]);
   const [teamB, setTeamB] = useState<Player[]>([]);
   const [reservePlayers, setReservePlayers] = useState<Player[]>([]);
+  const { toast } = useToast();
   
   // Initialize teams when players change
-  useState(() => {
+  useEffect(() => {
     const confirmedPlayers = players.filter(p => p.isConfirmed);
     const halfwayPoint = Math.ceil(confirmedPlayers.length / 2);
     
     setTeamA(confirmedPlayers.slice(0, halfwayPoint));
     setTeamB(confirmedPlayers.slice(halfwayPoint));
     setReservePlayers(players.filter(p => !p.isConfirmed));
-  });
+  }, [players]);
   
   // Handlers for drag and drop
   const handleDragStart = (e: React.DragEvent, playerId: string, source: 'teamA' | 'teamB' | 'reserve') => {
@@ -92,10 +102,33 @@ const EventTeams = ({ players, maxPlayers, isJoined, onJoinEvent }: EventTeamsPr
     // Add to target array
     if (target === 'teamA') {
       setTeamA([...teamA, {...player, isConfirmed: true}]);
+      toast({
+        title: "Player moved to Home Team",
+        description: `${player.name} has been added to the Home Team.`,
+      });
     } else if (target === 'teamB') {
       setTeamB([...teamB, {...player, isConfirmed: true}]);
+      toast({
+        title: "Player moved to Away Team",
+        description: `${player.name} has been added to the Away Team.`,
+      });
     } else {
       setReservePlayers([...reservePlayers, {...player, isConfirmed: false}]);
+      toast({
+        title: "Player moved to Reserve",
+        description: `${player.name} has been moved to the reserve list.`,
+      });
+    }
+  };
+  
+  // Handle adding a friend
+  const handleAddFriend = (name: string) => {
+    if (onAddFriend) {
+      onAddFriend(name);
+      toast({
+        title: "Friend added",
+        description: `${name} has been added to the event.`,
+      });
     }
   };
   
@@ -128,7 +161,7 @@ const EventTeams = ({ players, maxPlayers, isJoined, onJoinEvent }: EventTeamsPr
       <div className="flex justify-between items-center">
         <h2 className="text-xl font-semibold">Teams</h2>
         <div className="text-sm text-muted-foreground">
-          {players.length}/{maxPlayers} players
+          <span className="font-medium">{players.length}/{maxPlayers}</span> players
         </div>
       </div>
       
@@ -273,6 +306,17 @@ const EventTeams = ({ players, maxPlayers, isJoined, onJoinEvent }: EventTeamsPr
                     </div>
                   )}
                 </div>
+                
+                {/* Add friend form */}
+                {onAddFriend && (
+                  <div className="mt-4 pt-4 border-t">
+                    <h4 className="text-sm font-medium mb-2 flex items-center">
+                      <UserPlus className="h-4 w-4 mr-2" />
+                      Add Friends to Event
+                    </h4>
+                    <AddFriendForm onAddFriend={handleAddFriend} />
+                  </div>
+                )}
               </CardContent>
             </Card>
           </div>

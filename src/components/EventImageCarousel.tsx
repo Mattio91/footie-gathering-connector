@@ -1,7 +1,7 @@
 
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { ChevronLeft, CalendarIcon, Clock, MapPin } from 'lucide-react';
+import { ChevronLeft, CalendarIcon, Clock, MapPin, Users } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
 
@@ -13,6 +13,8 @@ interface EventImageCarouselProps {
   duration: string;
   location: string;
   locationDetails?: string;
+  playerCount?: number;
+  maxPlayers?: number;
 }
 
 const EventImageCarousel = ({ 
@@ -22,7 +24,9 @@ const EventImageCarousel = ({
   time,
   duration,
   location,
-  locationDetails
+  locationDetails,
+  playerCount,
+  maxPlayers
 }: EventImageCarouselProps) => {
   const [activeImageIndex, setActiveImageIndex] = useState(0);
   
@@ -65,6 +69,13 @@ const EventImageCarousel = ({
               <Clock className="h-4 w-4 mr-2 flex-shrink-0" />
               <span>{time} · {duration}</span>
             </div>
+            
+            {playerCount !== undefined && maxPlayers !== undefined && (
+              <div className="flex items-center">
+                <Users className="h-4 w-4 mr-2 flex-shrink-0" />
+                <span>{playerCount}/{maxPlayers} players</span>
+              </div>
+            )}
           </div>
           
           <div className="flex items-start">
