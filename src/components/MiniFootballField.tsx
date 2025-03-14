@@ -221,9 +221,9 @@ const MiniFootballField = () => {
   return (
     <div 
       ref={fieldRef}
-      className="relative w-24 h-12 mx-4 cursor-pointer"
+      className="relative w-12 h-24 mx-4 cursor-pointer"
       onClick={handleFieldClick}
-      style={{ transform: 'scaleX(-1)' }} // Flip the entire field horizontally
+      style={{ transform: 'rotate(90deg)' }}
     >
       {/* Field background */}
       <div className="absolute inset-0 bg-green-600 rounded-lg overflow-hidden border border-green-700">
@@ -234,9 +234,9 @@ const MiniFootballField = () => {
           <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-1 h-1 bg-white rounded-full"></div>
           <div className="absolute top-1/2 left-0 right-0 h-[1px] bg-white"></div>
           
-          {/* Goal areas */}
-          <div className="absolute top-0 left-1/3 right-1/3 h-1.5 border-b border-l border-r border-white"></div>
-          <div className="absolute bottom-0 left-1/3 right-1/3 h-1.5 border-t border-l border-r border-white"></div>
+          {/* Goal areas - now on left and right sides */}
+          <div className="absolute left-0 top-1/3 bottom-1/3 w-1.5 border-r border-t border-b border-white"></div>
+          <div className="absolute right-0 top-1/3 bottom-1/3 w-1.5 border-l border-t border-b border-white"></div>
           
           {/* Field outline */}
           <div className="absolute inset-0.5 border border-white rounded-md"></div>
@@ -251,8 +251,7 @@ const MiniFootballField = () => {
           style={{ 
             left: `${ballPosition.x}%`, 
             top: `${ballPosition.y}%`,
-            transition: !activeBall ? 'left 0.5s ease-out, top 0.5s ease-out' : 'none',
-            transform: 'scaleX(-1)' // Flip the ball back so it doesn't look mirrored
+            transition: !activeBall ? 'left 0.5s ease-out, top 0.5s ease-out' : 'none'
           }}
         ></div>
         
@@ -269,8 +268,7 @@ const MiniFootballField = () => {
             style={{ 
               left: `${player.x}%`, 
               top: `${player.y}%`,
-              zIndex: selectedPlayer === player.id ? 10 : 5,
-              transform: 'scaleX(-1)' // Flip the players back so they don't look mirrored
+              zIndex: selectedPlayer === player.id ? 10 : 5
             }}
             onClick={(e) => {
               e.stopPropagation();

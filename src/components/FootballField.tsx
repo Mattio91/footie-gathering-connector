@@ -26,7 +26,7 @@ const FootballField: React.FC<FootballFieldProps> = ({
     <div 
       ref={fieldRef}
       className={cn("relative w-full aspect-[3/2] mx-auto max-w-md", className)}
-      style={{ transform: 'scaleX(-1)' }} // Flip the entire field horizontally
+      style={{ transform: 'rotate(90deg)' }} // Rotate the field 90 degrees
     >
       {/* Field background */}
       <div className="absolute inset-0 bg-green-600 rounded-xl overflow-hidden">
