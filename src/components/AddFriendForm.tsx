@@ -1,8 +1,8 @@
 
 import { useState } from 'react';
-import { UserPlus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { UserPlus } from 'lucide-react';
 
 interface AddFriendFormProps {
   onAddFriend: (name: string) => void;
@@ -11,8 +11,7 @@ interface AddFriendFormProps {
 const AddFriendForm = ({ onAddFriend }: AddFriendFormProps) => {
   const [friendName, setFriendName] = useState('');
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleAddFriend = () => {
     if (friendName.trim()) {
       onAddFriend(friendName.trim());
       setFriendName('');
@@ -20,19 +19,22 @@ const AddFriendForm = ({ onAddFriend }: AddFriendFormProps) => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="flex space-x-2 mt-4">
+    <div className="flex space-x-2">
       <Input
-        type="text"
         value={friendName}
         onChange={(e) => setFriendName(e.target.value)}
-        placeholder="Enter friend's name"
+        placeholder="Friend's name"
         className="flex-grow"
       />
-      <Button type="submit" disabled={!friendName.trim()}>
-        <UserPlus className="h-4 w-4 mr-2" />
-        Add Friend
+      <Button 
+        size="sm" 
+        onClick={handleAddFriend} 
+        disabled={!friendName.trim()}
+      >
+        <UserPlus className="h-4 w-4 mr-1" />
+        Add
       </Button>
-    </form>
+    </div>
   );
 };
 
