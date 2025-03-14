@@ -47,7 +47,7 @@ const EventImageCarousel = ({
   };
 
   return (
-    <div className="relative rounded-xl overflow-hidden aspect-video bg-muted animate-fade-in mb-8">
+    <div className="relative rounded-xl overflow-hidden aspect-[16/6] bg-muted animate-fade-in mb-8">
       <img 
         src={images[activeImageIndex]} 
         alt="Event image" 
@@ -112,7 +112,7 @@ const EventImageCarousel = ({
       </div>
       
       {/* Image indicators */}
-      <div className="absolute bottom-24 sm:bottom-28 left-0 right-0 flex justify-center space-x-2">
+      <div className="absolute bottom-20 sm:bottom-24 left-0 right-0 flex justify-center space-x-2">
         {images.map((_, index) => (
           <button
             key={index}

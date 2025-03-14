@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { UserPlus } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import { useToast } from '@/hooks/use-toast';
 
 interface AddFriendFormProps {
   onAddFriend: (name: string) => void;
@@ -12,11 +13,18 @@ interface AddFriendFormProps {
 const AddFriendForm = ({ onAddFriend }: AddFriendFormProps) => {
   const { t } = useTranslation();
   const [friendName, setFriendName] = useState('');
+  const { toast } = useToast();
 
   const handleAddFriend = () => {
     if (friendName.trim()) {
+      // In a real app, this would link with the user's account friends
       onAddFriend(friendName.trim());
       setFriendName('');
+      
+      toast({
+        title: t('event.friendAdded'),
+        description: t('event.friendLinkedToAccount', { name: friendName.trim() }),
+      });
     }
   };
 

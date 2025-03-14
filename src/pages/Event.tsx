@@ -11,6 +11,7 @@ import EventChat from '@/components/EventChat';
 import EventImageCarousel from '@/components/EventImageCarousel';
 import EventTeams from '@/components/EventTeams';
 import EventAbout from '@/components/EventAbout';
+import EventGroups from '@/components/EventGroups';
 
 // Mock data to simulate an event
 const mockEvent = {
@@ -32,6 +33,10 @@ const mockEvent = {
   },
   description: 'Casual 6-a-side match on Saturday morning. All skill levels welcome! We\'ll play for about 90 minutes. There\'s a small fee to cover pitch rental. Please bring both dark and light colored shirts so we can make teams on the day.',
   imageUrl: 'https://images.unsplash.com/photo-1592656094267-764a45160876?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
+  groups: [
+    { id: '1', name: 'Sunday League', memberCount: 14 },
+    { id: '2', name: 'Neighborhood Crew', memberCount: 8 }
+  ]
 };
 
 // Mock images
@@ -125,7 +130,7 @@ const Event = () => {
     
     toast({
       title: "Friend Added",
-      description: `${name} has been added to the event as your friend.`,
+      description: `${name} has been linked to your account and added to the event as your friend.`,
     });
   };
   
@@ -179,53 +184,62 @@ const Event = () => {
             maxPlayers={mockEvent.maxPlayers}
           />
           
-          {/* Main content area */}
-          <div className="space-y-8">
-            {/* Teams & Field visualization section with join button */}
-            <EventTeams 
-              players={players} 
-              maxPlayers={mockEvent.maxPlayers} 
-              isJoined={isJoined}
-              onJoinEvent={handleJoinEvent}
-              onAddFriend={handleAddFriend}
-            />
-            
-            {/* About the event */}
-            <EventAbout description={mockEvent.description} />
-            
-            {/* Location map */}
-            <div className="space-y-4">
-              <h3 className="text-lg font-semibold">Location</h3>
-              <EventMap 
-                location={mockEvent.location} 
-                locationDetails={mockEvent.locationDetails}
+          {/* Main content area - grid layout */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {/* Left/Main content (2/3 width) */}
+            <div className="md:col-span-2 space-y-8">
+              {/* Teams & Field visualization section with join button */}
+              <EventTeams 
+                players={players} 
+                maxPlayers={mockEvent.maxPlayers} 
+                isJoined={isJoined}
+                onJoinEvent={handleJoinEvent}
+                onAddFriend={handleAddFriend}
               />
-            </div>
-            
-            {/* Event host information */}
-            <div className="rounded-lg border p-3 max-w-xs">
-              <div className="text-sm">
-                <div className="font-medium mb-1">Organized by</div>
-                <div className="flex items-center">
-                  <div className="w-8 h-8 rounded-full overflow-hidden mr-2">
-                    <img 
-                      src={mockEvent.host.avatar || `https://ui-avatars.com/api/?name=${mockEvent.host.name}`} 
-                      alt={mockEvent.host.name} 
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                  <span>{mockEvent.host.name}</span>
-                </div>
+              
+              {/* About the event */}
+              <EventAbout description={mockEvent.description} />
+              
+              {/* Location map */}
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold">Location</h3>
+                <EventMap 
+                  location={mockEvent.location} 
+                  locationDetails={mockEvent.locationDetails}
+                />
+              </div>
+              
+              {/* Chat section */}
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold">Event Chat</h3>
+                <EventChat 
+                  messages={mockMessages}
+                  onSendMessage={handleSendMessage}
+                />
               </div>
             </div>
             
-            {/* Chat section */}
-            <div className="space-y-4">
-              <h3 className="text-lg font-semibold">Event Chat</h3>
-              <EventChat 
-                messages={mockMessages}
-                onSendMessage={handleSendMessage}
-              />
+            {/* Right sidebar (1/3 width) */}
+            <div className="space-y-8">
+              {/* Event host information */}
+              <div className="rounded-lg border p-3">
+                <div className="text-sm">
+                  <div className="font-medium mb-1">Organized by</div>
+                  <div className="flex items-center">
+                    <div className="w-8 h-8 rounded-full overflow-hidden mr-2">
+                      <img 
+                        src={mockEvent.host.avatar || `https://ui-avatars.com/api/?name=${mockEvent.host.name}`} 
+                        alt={mockEvent.host.name} 
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                    <span>{mockEvent.host.name}</span>
+                  </div>
+                </div>
+              </div>
+              
+              {/* Event groups and invitation */}
+              <EventGroups groups={mockEvent.groups} />
             </div>
           </div>
         </div>
