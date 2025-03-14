@@ -23,6 +23,7 @@ export function useFootballGame(teamAPlayers: number, teamBPlayers: number, maxP
   const lastPassTimeRef = useRef<number>(0);
   const gameSpeedRef = useRef<number>(1); // 1 = normal speed
   const lastMoveRef = useRef<number>(0);
+  const isPassingRef = useRef<boolean>(false);
   
   // Pass the ball between players
   const passBall = (fromPlayer: FootballPlayer, toPlayer: FootballPlayer) => {
@@ -30,6 +31,8 @@ export function useFootballGame(teamAPlayers: number, teamBPlayers: number, maxP
     if (animationRef.current) {
       cancelAnimationFrame(animationRef.current);
     }
+    
+    isPassingRef.current = true;
     
     animationRef.current = animateBallMovement(
       { x: fromPlayer.x, y: fromPlayer.y },
@@ -44,8 +47,23 @@ export function useFootballGame(teamAPlayers: number, teamBPlayers: number, maxP
         }));
         
         setPlayers(updatedPlayers);
+        isPassingRef.current = false;
       }
     );
+  };
+  
+  // Find a random teammate to pass to
+  const findRandomTeammate = (currentPlayer: FootballPlayer, allPlayers: FootballPlayer[]) => {
+    const teammates = allPlayers.filter(p => 
+      p.team === currentPlayer.team && 
+      p.id !== currentPlayer.id
+    );
+    
+    if (teammates.length === 0) return null;
+    
+    // Get a random teammate
+    const randomIndex = Math.floor(Math.random() * teammates.length);
+    return teammates[randomIndex];
   };
   
   // Update player positions and handle AI
@@ -56,38 +74,13 @@ export function useFootballGame(teamAPlayers: number, teamBPlayers: number, maxP
       
       if (!playerWithBall) return newPlayers;
       
-      // Check for passing the ball (based on time and randomness)
-      if (time - lastPassTimeRef.current > 2000 && Math.random() < 0.03) {
-        const possibleReceivers = newPlayers.filter(p => 
-          p.team === playerWithBall.team && 
-          p.id !== playerWithBall.id &&
-          !isPlayerMarkedTightly(p, newPlayers.filter(op => op.team !== p.team))
-        );
+      // Check for passing the ball (based on time)
+      if (!isPassingRef.current && time - lastPassTimeRef.current > 1500) {
+        const randomTeammate = findRandomTeammate(playerWithBall, newPlayers);
         
-        if (possibleReceivers.length > 0) {
-          // Find best passing option
-          let bestReceiver = possibleReceivers[0];
-          let bestScore = -Infinity;
-          
-          for (const receiver of possibleReceivers) {
-            // Calculate how good this passing option is
-            const distToBall = getDistance(playerWithBall, receiver);
-            const isForward = (playerWithBall.team === 'A' && receiver.y > playerWithBall.y) ||
-                              (playerWithBall.team === 'B' && receiver.y < playerWithBall.y);
-            
-            // Prefer forward passes that aren't too far
-            const forwardBonus = isForward ? 20 : 0;
-            const distanceScore = 100 - Math.min(distToBall, 80); // Closer is better but not too close
-            const score = distanceScore + forwardBonus;
-            
-            if (score > bestScore) {
-              bestScore = score;
-              bestReceiver = receiver;
-            }
-          }
-          
-          // Pass the ball to the best receiver
-          passBall(playerWithBall, bestReceiver);
+        if (randomTeammate) {
+          // Pass the ball to a random teammate
+          passBall(playerWithBall, randomTeammate);
           lastPassTimeRef.current = time;
           return newPlayers;
         }
