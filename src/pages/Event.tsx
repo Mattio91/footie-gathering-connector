@@ -1,19 +1,13 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { ChevronLeft, Share2, Tag } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Label } from '@/components/ui/label';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import EventMap from '@/components/EventMap';
 import EventChat from '@/components/EventChat';
-import EventHeader from '@/components/EventHeader';
 import EventImageCarousel from '@/components/EventImageCarousel';
 import EventTeams from '@/components/EventTeams';
-import ReservePlayers from '@/components/ReservePlayers';
-import EventSidebar from '@/components/EventSidebar';
 import EventAbout from '@/components/EventAbout';
 
 // Mock data to simulate an event
@@ -122,10 +116,6 @@ const Event = () => {
     
     setChatMessages([...chatMessages, newMessage]);
   };
-
-  // Get reserve players
-  const reservePlayers = players.length > mockEvent.maxPlayers ? 
-    players.slice(mockEvent.maxPlayers) : [];
   
   return (
     <div className="min-h-screen flex flex-col">
@@ -146,61 +136,64 @@ const Event = () => {
             </Button>
           </div>
           
-          {/* Field Image */}
-          <EventImageCarousel images={mockImages} />
+          {/* Field Image with title and details on it */}
+          <EventImageCarousel 
+            images={mockImages} 
+            title={mockEvent.title}
+            date={mockEvent.date}
+            time={mockEvent.time}
+            duration={mockEvent.duration}
+            location={mockEvent.location}
+            locationDetails={mockEvent.locationDetails}
+          />
           
-          {/* Page content */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            {/* Main content area */}
-            <div className="lg:col-span-2 space-y-8">
-              {/* Event header */}
-              <EventHeader 
-                title={mockEvent.title}
-                date={mockEvent.date}
-                time={mockEvent.time}
-                duration={mockEvent.duration}
-                location={mockEvent.location}
+          {/* Main content area */}
+          <div className="space-y-8">
+            {/* Teams & Field visualization section with join button */}
+            <EventTeams 
+              players={players} 
+              maxPlayers={mockEvent.maxPlayers} 
+              isJoined={isJoined}
+              onJoinEvent={handleJoinEvent}
+            />
+            
+            {/* About the event */}
+            <EventAbout description={mockEvent.description} />
+            
+            {/* Location map */}
+            <div className="space-y-4">
+              <h3 className="text-lg font-semibold">Location</h3>
+              <EventMap 
+                location={mockEvent.location} 
                 locationDetails={mockEvent.locationDetails}
-                format={mockEvent.format}
-                price={mockEvent.price}
               />
-              
-              {/* Teams & Field visualization section */}
-              <EventTeams players={players} maxPlayers={mockEvent.maxPlayers} />
-              
-              {/* Reserve players section */}
-              <ReservePlayers reservePlayers={reservePlayers} />
-              
-              {/* About the event */}
-              <EventAbout description={mockEvent.description} />
-              
-              {/* Location map */}
-              <div className="space-y-4">
-                <h3 className="text-lg font-semibold">Location</h3>
-                <EventMap 
-                  location={mockEvent.location} 
-                  locationDetails={mockEvent.locationDetails}
-                />
-              </div>
-              
-              {/* Chat section */}
-              <div className="space-y-4">
-                <h3 className="text-lg font-semibold">Event Chat</h3>
-                <EventChat 
-                  messages={chatMessages}
-                  onSendMessage={handleSendMessage}
-                />
+            </div>
+            
+            {/* Event host information */}
+            <div className="rounded-lg border p-3 max-w-xs">
+              <div className="text-sm">
+                <div className="font-medium mb-1">Organized by</div>
+                <div className="flex items-center">
+                  <div className="w-8 h-8 rounded-full overflow-hidden mr-2">
+                    <img 
+                      src={mockEvent.host.avatar || `https://ui-avatars.com/api/?name=${mockEvent.host.name}`} 
+                      alt={mockEvent.host.name} 
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                  <span>{mockEvent.host.name}</span>
+                </div>
               </div>
             </div>
             
-            {/* Sidebar */}
-            <EventSidebar 
-              isJoined={isJoined}
-              players={players}
-              maxPlayers={mockEvent.maxPlayers}
-              host={mockEvent.host}
-              onJoinEvent={handleJoinEvent}
-            />
+            {/* Chat section */}
+            <div className="space-y-4">
+              <h3 className="text-lg font-semibold">Event Chat</h3>
+              <EventChat 
+                messages={chatMessages}
+                onSendMessage={handleSendMessage}
+              />
+            </div>
           </div>
         </div>
       </main>
