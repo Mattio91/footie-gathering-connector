@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { 
@@ -37,6 +38,9 @@ import PlayersList from '@/components/PlayersList';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
+import FootballField from '@/components/FootballField';
+import EventMap from '@/components/EventMap';
+import EventChat from '@/components/EventChat';
 
 // Mock data to simulate an event
 const mockEvent = {
@@ -71,28 +75,25 @@ const mockPlayers = [
   { id: '7', name: 'Ryan Clark', isConfirmed: true, isAdmin: false },
 ];
 
-// Mock comments
-const mockComments = [
+// Mock chat messages
+const mockMessages = [
   { 
     id: '1', 
     author: { id: '2', name: 'Sarah Smith', avatar: 'https://randomuser.me/api/portraits/women/44.jpg' },
     text: 'Looking forward to the game! Should we bring anything specific?',
     timestamp: new Date(Date.now() - 8 * 60 * 60 * 1000),
-    replies: [
-      {
-        id: '1-1',
-        author: { id: '1', name: 'Alex Johnson', avatar: 'https://randomuser.me/api/portraits/men/32.jpg' },
-        text: 'Just regular football gear and water! If you have both light and dark jerseys, that would help for making teams.',
-        timestamp: new Date(Date.now() - 7 * 60 * 60 * 1000),
-      }
-    ]
   },
   {
     id: '2',
+    author: { id: '1', name: 'Alex Johnson', avatar: 'https://randomuser.me/api/portraits/men/32.jpg' },
+    text: 'Just regular football gear and water! If you have both light and dark jerseys, that would help for making teams.',
+    timestamp: new Date(Date.now() - 7 * 60 * 60 * 1000),
+  },
+  {
+    id: '3',
     author: { id: '3', name: 'Mike Wilson', avatar: 'https://randomuser.me/api/portraits/men/45.jpg' },
     text: 'Is there parking available at the field?',
     timestamp: new Date(Date.now() - 5 * 60 * 60 * 1000),
-    replies: []
   }
 ];
 
@@ -106,10 +107,10 @@ const mockImages = [
 const Event = () => {
   const { id } = useParams<{ id: string }>();
   const [isJoined, setIsJoined] = useState(false);
-  const [newComment, setNewComment] = useState('');
-  const [comments, setComments] = useState(mockComments);
+  const [chatMessages, setChatMessages] = useState(mockMessages);
   const [players, setPlayers] = useState(mockPlayers);
   const [activeImageIndex, setActiveImageIndex] = useState(0);
+  const [activeTab, setActiveTab] = useState("teams");
   
   // Format date
   const formattedDate = format(mockEvent.date, 'EEEE, MMMM d, yyyy');
@@ -135,24 +136,22 @@ const Event = () => {
     setIsJoined(!isJoined);
   };
   
-  // Handle add comment
-  const handleAddComment = () => {
-    if (!newComment.trim()) return;
+  // Handle add chat message
+  const handleSendMessage = (messageText: string) => {
+    if (!messageText.trim()) return;
     
-    const newCommentObj = {
-      id: `comment-${Date.now()}`,
+    const newMessage = {
+      id: `message-${Date.now()}`,
       author: { 
         id: 'current-user', 
         name: 'You', 
         avatar: 'https://randomuser.me/api/portraits/lego/1.jpg' 
       },
-      text: newComment,
+      text: messageText,
       timestamp: new Date(),
-      replies: []
     };
     
-    setComments([newCommentObj, ...comments]);
-    setNewComment('');
+    setChatMessages([...chatMessages, newMessage]);
   };
   
   // Handle next/prev image
@@ -167,6 +166,12 @@ const Event = () => {
       prevIndex === 0 ? mockImages.length - 1 : prevIndex - 1
     );
   };
+
+  // Get team distributions
+  const teamA = players.slice(0, Math.ceil(players.length / 2));
+  const teamB = players.slice(Math.ceil(players.length / 2));
+  const reservePlayers = players.length > mockEvent.maxPlayers ? 
+    players.slice(mockEvent.maxPlayers) : [];
   
   return (
     <div className="min-h-screen flex flex-col">
@@ -187,57 +192,58 @@ const Event = () => {
             </Button>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {/* Main content */}
-            <div className="md:col-span-2 space-y-8">
-              {/* Event Images */}
-              <div className="relative rounded-xl overflow-hidden aspect-video bg-muted animate-fade-in">
-                <img 
-                  src={mockImages[activeImageIndex]} 
-                  alt={mockEvent.title} 
-                  className="w-full h-full object-cover"
-                />
-                
-                {/* Image navigation */}
-                <div className="absolute inset-0 flex items-center justify-between p-4">
-                  <Button 
-                    variant="ghost" 
-                    size="icon" 
-                    className="h-10 w-10 rounded-full bg-black/30 text-white hover:bg-black/50"
-                    onClick={handlePrevImage}
-                  >
-                    <ChevronLeft className="h-5 w-5" />
-                  </Button>
-                  
-                  <Button 
-                    variant="ghost" 
-                    size="icon" 
-                    className="h-10 w-10 rounded-full bg-black/30 text-white hover:bg-black/50"
-                    onClick={handleNextImage}
-                  >
-                    <ChevronLeft className="h-5 w-5 transform rotate-180" />
-                  </Button>
-                </div>
-                
-                {/* Image indicators */}
-                <div className="absolute bottom-4 left-0 right-0 flex justify-center space-x-2">
-                  {mockImages.map((_, index) => (
-                    <button
-                      key={index}
-                      className={cn(
-                        "w-2 h-2 rounded-full transition-all",
-                        index === activeImageIndex 
-                          ? "bg-white w-4" 
-                          : "bg-white/50 hover:bg-white/80"
-                      )}
-                      onClick={() => setActiveImageIndex(index)}
-                    />
-                  ))}
-                </div>
-              </div>
+          {/* Field Image */}
+          <div className="relative rounded-xl overflow-hidden aspect-video bg-muted animate-fade-in mb-8">
+            <img 
+              src={mockImages[activeImageIndex]} 
+              alt={mockEvent.title} 
+              className="w-full h-full object-cover"
+            />
+            
+            {/* Image navigation */}
+            <div className="absolute inset-0 flex items-center justify-between p-4">
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                className="h-10 w-10 rounded-full bg-black/30 text-white hover:bg-black/50"
+                onClick={handlePrevImage}
+              >
+                <ChevronLeft className="h-5 w-5" />
+              </Button>
               
-              {/* Event Details */}
-              <div className="space-y-6 animate-fade-in" style={{ animationDelay: '150ms' }}>
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                className="h-10 w-10 rounded-full bg-black/30 text-white hover:bg-black/50"
+                onClick={handleNextImage}
+              >
+                <ChevronLeft className="h-5 w-5 transform rotate-180" />
+              </Button>
+            </div>
+            
+            {/* Image indicators */}
+            <div className="absolute bottom-4 left-0 right-0 flex justify-center space-x-2">
+              {mockImages.map((_, index) => (
+                <button
+                  key={index}
+                  className={cn(
+                    "w-2 h-2 rounded-full transition-all",
+                    index === activeImageIndex 
+                      ? "bg-white w-4" 
+                      : "bg-white/50 hover:bg-white/80"
+                  )}
+                  onClick={() => setActiveImageIndex(index)}
+                />
+              ))}
+            </div>
+          </div>
+          
+          {/* Page content */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            {/* Main content area */}
+            <div className="lg:col-span-2 space-y-8">
+              {/* Event header */}
+              <div className="space-y-4">
                 <div className="flex items-center space-x-2">
                   <span className="tag bg-primary/10 text-primary border-none">
                     <Flag className="h-3 w-3 mr-1" />
@@ -274,130 +280,185 @@ const Event = () => {
                     </div>
                   </div>
                 </div>
-                
-                <Separator />
-                
-                <div>
-                  <h3 className="text-lg font-semibold mb-2">About this event</h3>
-                  <p className="text-muted-foreground whitespace-pre-line">
-                    {mockEvent.description}
-                  </p>
-                </div>
               </div>
               
-              {/* Tabs for Players, Comments, etc. */}
-              <Tabs defaultValue="players" className="animate-fade-in" style={{ animationDelay: '300ms' }}>
-                <TabsList className="grid w-full grid-cols-2">
-                  <TabsTrigger value="players">
-                    <Users className="h-4 w-4 mr-2" />
-                    Players
-                  </TabsTrigger>
-                  <TabsTrigger value="comments">
-                    <MessageCircle className="h-4 w-4 mr-2" />
-                    Comments
-                  </TabsTrigger>
-                </TabsList>
+              <Separator />
+              
+              {/* Teams & Field visualization section */}
+              <div className="space-y-4">
+                <div className="flex justify-between items-center">
+                  <h2 className="text-xl font-semibold">Teams</h2>
+                  <div className="text-sm text-muted-foreground">
+                    {players.length}/{mockEvent.maxPlayers} players
+                  </div>
+                </div>
                 
-                <TabsContent value="players" className="pt-6">
-                  <PlayersList 
-                    players={players} 
-                    maxPlayers={mockEvent.maxPlayers} 
-                    teamCount={2}
-                    showManagement={false}
-                  />
-                </TabsContent>
-                
-                <TabsContent value="comments" className="pt-6">
-                  <div className="space-y-6">
-                    {/* Add comment */}
-                    <div className="flex space-x-3">
-                      <div className="flex-shrink-0 w-10 h-10 rounded-full overflow-hidden">
-                        <img 
-                          src="https://randomuser.me/api/portraits/lego/1.jpg" 
-                          alt="Your avatar" 
-                          className="w-full h-full object-cover"
-                        />
-                      </div>
-                      <div className="flex-grow">
-                        <Textarea
-                          placeholder="Ask a question or leave a comment..."
-                          className="w-full mb-2"
-                          value={newComment}
-                          onChange={(e) => setNewComment(e.target.value)}
-                        />
-                        <Button 
-                          onClick={handleAddComment}
-                          disabled={!newComment.trim()}
-                        >
-                          Post Comment
-                        </Button>
-                      </div>
+                {/* Tabs for team management */}
+                <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+                  <TabsList className="grid w-full grid-cols-2">
+                    <TabsTrigger value="teams">Teams</TabsTrigger>
+                    <TabsTrigger value="field">Field View</TabsTrigger>
+                  </TabsList>
+                  
+                  <TabsContent value="teams" className="pt-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      {/* Team A */}
+                      <Card className="border-team-home/20 bg-team-home/5">
+                        <CardHeader className="pb-2">
+                          <CardTitle className="text-lg">Home Team</CardTitle>
+                          <CardDescription>{teamA.length} players</CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                          <div className="space-y-2">
+                            {teamA.map(player => (
+                              <div 
+                                key={player.id} 
+                                className="flex items-center p-2 rounded-md bg-background/80"
+                              >
+                                <div className="w-8 h-8 rounded-full overflow-hidden mr-3">
+                                  <img 
+                                    src={player.avatar || `https://ui-avatars.com/api/?name=${player.name}`} 
+                                    alt={player.name} 
+                                    className="w-full h-full object-cover"
+                                  />
+                                </div>
+                                <div className="flex-grow">
+                                  <div className="font-medium text-sm">{player.name}</div>
+                                </div>
+                              </div>
+                            ))}
+                            
+                            {/* Empty spots */}
+                            {Array.from({length: Math.max(0, Math.ceil(mockEvent.maxPlayers/2) - teamA.length)}).map((_, i) => (
+                              <div 
+                                key={`empty-a-${i}`} 
+                                className="flex items-center p-2 rounded-md border border-dashed border-muted-foreground/30"
+                              >
+                                <div className="w-8 h-8 rounded-full bg-muted/50 flex items-center justify-center mr-3">
+                                  <Users className="h-4 w-4 text-muted-foreground/50" />
+                                </div>
+                                <div className="flex-grow text-sm text-muted-foreground">
+                                  Available spot
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </CardContent>
+                      </Card>
+                      
+                      {/* Team B */}
+                      <Card className="border-team-away/20 bg-team-away/5">
+                        <CardHeader className="pb-2">
+                          <CardTitle className="text-lg">Away Team</CardTitle>
+                          <CardDescription>{teamB.length} players</CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                          <div className="space-y-2">
+                            {teamB.map(player => (
+                              <div 
+                                key={player.id} 
+                                className="flex items-center p-2 rounded-md bg-background/80"
+                              >
+                                <div className="w-8 h-8 rounded-full overflow-hidden mr-3">
+                                  <img 
+                                    src={player.avatar || `https://ui-avatars.com/api/?name=${player.name}`} 
+                                    alt={player.name} 
+                                    className="w-full h-full object-cover"
+                                  />
+                                </div>
+                                <div className="flex-grow">
+                                  <div className="font-medium text-sm">{player.name}</div>
+                                </div>
+                              </div>
+                            ))}
+                            
+                            {/* Empty spots */}
+                            {Array.from({length: Math.max(0, Math.floor(mockEvent.maxPlayers/2) - teamB.length)}).map((_, i) => (
+                              <div 
+                                key={`empty-b-${i}`} 
+                                className="flex items-center p-2 rounded-md border border-dashed border-muted-foreground/30"
+                              >
+                                <div className="w-8 h-8 rounded-full bg-muted/50 flex items-center justify-center mr-3">
+                                  <Users className="h-4 w-4 text-muted-foreground/50" />
+                                </div>
+                                <div className="flex-grow text-sm text-muted-foreground">
+                                  Available spot
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </CardContent>
+                      </Card>
                     </div>
-                    
-                    {/* Comments list */}
-                    <div className="space-y-6">
-                      {comments.map((comment) => (
-                        <div key={comment.id} className="space-y-4">
-                          <div className="flex space-x-3">
-                            <div className="flex-shrink-0 w-10 h-10 rounded-full overflow-hidden">
+                  </TabsContent>
+                  
+                  <TabsContent value="field" className="pt-4">
+                    <div className="rounded-xl border p-6 bg-muted/10">
+                      <FootballField 
+                        teamAPlayers={teamA.length} 
+                        teamBPlayers={teamB.length}
+                        maxPlayers={mockEvent.maxPlayers}
+                      />
+                    </div>
+                  </TabsContent>
+                </Tabs>
+              </div>
+              
+              {/* Reserve players section */}
+              {reservePlayers.length > 0 && (
+                <div className="space-y-4">
+                  <h3 className="text-lg font-semibold">Reserve Players</h3>
+                  <Card>
+                    <CardContent className="pt-6">
+                      <div className="space-y-2">
+                        {reservePlayers.map(player => (
+                          <div 
+                            key={player.id} 
+                            className="flex items-center p-2 rounded-md bg-muted/10"
+                          >
+                            <div className="w-8 h-8 rounded-full overflow-hidden mr-3">
                               <img 
-                                src={comment.author.avatar || `https://ui-avatars.com/api/?name=${comment.author.name}`} 
-                                alt={comment.author.name} 
+                                src={player.avatar || `https://ui-avatars.com/api/?name=${player.name}`} 
+                                alt={player.name} 
                                 className="w-full h-full object-cover"
                               />
                             </div>
                             <div className="flex-grow">
-                              <div className="flex items-baseline justify-between">
-                                <h4 className="font-medium">{comment.author.name}</h4>
-                                <span className="text-xs text-muted-foreground">
-                                  {format(comment.timestamp, 'MMM d, p')}
-                                </span>
-                              </div>
-                              <p className="mt-1 text-muted-foreground">{comment.text}</p>
-                              <Button variant="ghost" size="sm" className="text-xs mt-1 h-auto py-1">
-                                Reply
-                              </Button>
+                              <div className="font-medium text-sm">{player.name}</div>
                             </div>
                           </div>
-                          
-                          {/* Replies */}
-                          {comment.replies.length > 0 && (
-                            <div className="pl-12 space-y-4">
-                              {comment.replies.map((reply) => (
-                                <div key={reply.id} className="flex space-x-3">
-                                  <div className="flex-shrink-0 w-8 h-8 rounded-full overflow-hidden">
-                                    <img 
-                                      src={reply.author.avatar || `https://ui-avatars.com/api/?name=${reply.author.name}`} 
-                                      alt={reply.author.name} 
-                                      className="w-full h-full object-cover"
-                                    />
-                                  </div>
-                                  <div className="flex-grow">
-                                    <div className="flex items-baseline justify-between">
-                                      <h4 className="font-medium text-sm">{reply.author.name}</h4>
-                                      <span className="text-xs text-muted-foreground">
-                                        {format(reply.timestamp, 'MMM d, p')}
-                                      </span>
-                                    </div>
-                                    <p className="mt-1 text-sm text-muted-foreground">{reply.text}</p>
-                                  </div>
-                                </div>
-                              ))}
-                            </div>
-                          )}
-                        </div>
-                      ))}
-                      
-                      {comments.length === 0 && (
-                        <div className="text-center py-8">
-                          <MessageCircle className="h-12 w-12 text-muted mx-auto mb-3" />
-                          <p className="text-muted-foreground">Be the first to comment!</p>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                </TabsContent>
-              </Tabs>
+                        ))}
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+              )}
+              
+              {/* About the event */}
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold">About this event</h3>
+                <p className="text-muted-foreground whitespace-pre-line">
+                  {mockEvent.description}
+                </p>
+              </div>
+              
+              {/* Location map */}
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold">Location</h3>
+                <EventMap 
+                  location={mockEvent.location} 
+                  locationDetails={mockEvent.locationDetails}
+                />
+              </div>
+              
+              {/* Chat section */}
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold">Event Chat</h3>
+                <EventChat 
+                  messages={chatMessages}
+                  onSendMessage={handleSendMessage}
+                />
+              </div>
             </div>
             
             {/* Sidebar */}
