@@ -134,6 +134,14 @@
     "termsOfService": "Terms of Service",
     "privacyPolicy": "Privacy Policy",
     "signInSuccess": "Signed in successfully!",
-    "registrationSuccess": "Account created successfully!"
+    "registrationSuccess": "Account created successfully!",
+    "signInFailed": "Login failed. Please check your credentials.",
+    "registrationFailed": "Registration failed. Please try again.",
+    "passwordsDoNotMatch": "Passwords do not match",
+    "passwordTooShort": "Password must be at least 8 characters",
+    "passwordRequirements": "Use at least 8 characters with a mix of letters, numbers, and symbols",
+    "googleLoginFailed": "Google login failed. Please try again.",
+    "facebookLoginFailed": "Facebook login failed. Please try again.",
+    "invalidCredentials": "Invalid email or password"
   }
 }

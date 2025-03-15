@@ -4,11 +4,12 @@ import { Link } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { AlertCircle } from "lucide-react";
+import { AlertCircle, Loader2 } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useTranslation } from 'react-i18next';
 import { useSignUp } from '@clerk/clerk-react';
 import { toast } from 'sonner';
+import { useAuth } from './AuthProvider';
 
 interface RegisterFormProps {
   email: string;
@@ -43,15 +44,31 @@ const RegisterForm = ({
 }: RegisterFormProps) => {
   const { t } = useTranslation();
   const { signUp, isLoaded: signUpLoaded } = useSignUp();
+  const { handleAuthError } = useAuth();
+
+  const validateForm = () => {
+    if (password !== confirmPassword) {
+      setError(t('login.passwordsDoNotMatch'));
+      return false;
+    }
+    
+    if (password.length < 8) {
+      setError(t('login.passwordTooShort'));
+      return false;
+    }
+    
+    return true;
+  };
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!signUpLoaded) return;
     
-    if (password !== confirmPassword) {
-      setError('Passwords do not match');
+    if (!validateForm()) {
       return;
     }
+    
+    setError(null);
     
     try {
       const result = await signUp.create({
@@ -68,7 +85,7 @@ const RegisterForm = ({
       }
     } catch (err: any) {
       console.error('Sign up error:', err);
-      throw err;
+      handleAuthError(err, t('login.registrationFailed'));
     }
   };
 
@@ -89,6 +106,8 @@ const RegisterForm = ({
             required 
             value={firstName}
             onChange={(e) => setFirstName(e.target.value)}
+            disabled={isLoading}
+            className={error ? "border-red-500 focus-visible:ring-red-500" : ""}
           />
         </div>
         <div className="space-y-2">
@@ -98,6 +117,8 @@ const RegisterForm = ({
             required 
             value={lastName}
             onChange={(e) => setLastName(e.target.value)}
+            disabled={isLoading}
+            className={error ? "border-red-500 focus-visible:ring-red-500" : ""}
           />
         </div>
       </div>
@@ -110,6 +131,8 @@ const RegisterForm = ({
           required 
           value={email}
           onChange={(e) => setEmail(e.target.value)}
+          disabled={isLoading}
+          className={error ? "border-red-500 focus-visible:ring-red-500" : ""}
         />
       </div>
       <div className="space-y-2">
@@ -120,7 +143,10 @@ const RegisterForm = ({
           required 
           value={password}
           onChange={(e) => setPassword(e.target.value)}
+          disabled={isLoading}
+          className={error ? "border-red-500 focus-visible:ring-red-500" : ""}
         />
+        <p className="text-xs text-gray-500">{t('login.passwordRequirements')}</p>
       </div>
       <div className="space-y-2">
         <Label htmlFor="confirm-password">{t('login.confirmPassword')}</Label>
@@ -130,10 +156,19 @@ const RegisterForm = ({
           required 
           value={confirmPassword}
           onChange={(e) => setConfirmPassword(e.target.value)}
+          disabled={isLoading}
+          className={error ? "border-red-500 focus-visible:ring-red-500" : ""}
         />
       </div>
       <Button type="submit" className="w-full" disabled={isLoading || !signUpLoaded}>
-        {isLoading ? t('login.creatingAccount') : t('login.createAccount')}
+        {isLoading ? (
+          <>
+            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            {t('login.creatingAccount')}
+          </>
+        ) : (
+          t('login.createAccount')
+        )}
       </Button>
     </form>
   );

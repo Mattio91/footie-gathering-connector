@@ -134,6 +134,14 @@
     "termsOfService": "Warunki korzystania z usługi",
     "privacyPolicy": "Politykę prywatności",
     "signInSuccess": "Zalogowano pomyślnie!",
-    "registrationSuccess": "Konto utworzone pomyślnie!"
+    "registrationSuccess": "Konto utworzone pomyślnie!",
+    "signInFailed": "Logowanie nie powiodło się. Sprawdź swoje dane.",
+    "registrationFailed": "Rejestracja nie powiodła się. Spróbuj ponownie.",
+    "passwordsDoNotMatch": "Hasła nie pasują do siebie",
+    "passwordTooShort": "Hasło musi mieć co najmniej 8 znaków",
+    "passwordRequirements": "Użyj co najmniej 8 znaków, stosując kombinację liter, cyfr i symboli",
+    "googleLoginFailed": "Logowanie przez Google nie powiodło się. Spróbuj ponownie.",
+    "facebookLoginFailed": "Logowanie przez Facebook nie powiodło się. Spróbuj ponownie.",
+    "invalidCredentials": "Nieprawidłowy email lub hasło"
   }
 }

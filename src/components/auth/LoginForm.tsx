@@ -4,11 +4,12 @@ import { Link } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { AlertCircle } from "lucide-react";
+import { AlertCircle, Loader2 } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useTranslation } from 'react-i18next';
 import { useSignIn } from '@clerk/clerk-react';
 import { toast } from 'sonner';
+import { useAuth } from './AuthProvider';
 
 interface LoginFormProps {
   email: string;
@@ -29,6 +30,7 @@ const LoginForm = ({
 }: LoginFormProps) => {
   const { t } = useTranslation();
   const { signIn, isLoaded: signInLoaded } = useSignIn();
+  const { handleAuthError } = useAuth();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -47,7 +49,7 @@ const LoginForm = ({
       }
     } catch (err: any) {
       console.error('Sign in error:', err);
-      throw err;
+      handleAuthError(err, t('login.signInFailed'));
     }
   };
 
@@ -69,6 +71,8 @@ const LoginForm = ({
           required 
           value={email}
           onChange={(e) => setEmail(e.target.value)}
+          disabled={isLoading}
+          className={error ? "border-red-500 focus-visible:ring-red-500" : ""}
         />
       </div>
       <div className="space-y-2">
@@ -84,10 +88,19 @@ const LoginForm = ({
           required 
           value={password}
           onChange={(e) => setPassword(e.target.value)}
+          disabled={isLoading}
+          className={error ? "border-red-500 focus-visible:ring-red-500" : ""}
         />
       </div>
       <Button type="submit" className="w-full" disabled={isLoading || !signInLoaded}>
-        {isLoading ? t('login.signingIn') : t('login.signIn')}
+        {isLoading ? (
+          <>
+            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            {t('login.signingIn')}
+          </>
+        ) : (
+          t('login.signIn')
+        )}
       </Button>
     </form>
   );
