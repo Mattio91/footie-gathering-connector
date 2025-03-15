@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -9,25 +9,49 @@ import { Label } from "@/components/ui/label";
 import { Facebook, Mail, AlertCircle } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useTranslation } from 'react-i18next';
+import { useSignIn, useSignUp, useClerk } from '@clerk/clerk-react';
+import { toast } from 'sonner';
 
 const Login = () => {
   const { t } = useTranslation();
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = React.useState(false);
+  const [error, setError] = React.useState<string | null>(null);
+  const [activeTab, setActiveTab] = React.useState('login');
+  
+  const { signIn, isLoaded: signInLoaded } = useSignIn();
+  const { signUp, isLoaded: signUpLoaded } = useSignUp();
+  const { openSignIn } = useClerk();
+
+  // Form state
+  const [email, setEmail] = React.useState('');
+  const [password, setPassword] = React.useState('');
+  const [firstName, setFirstName] = React.useState('');
+  const [lastName, setLastName] = React.useState('');
+  const [confirmPassword, setConfirmPassword] = React.useState('');
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!signInLoaded) return;
+    
     setIsLoading(true);
     setError(null);
 
-    // Simulate login process
     try {
-      // Here you would implement actual authentication
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      console.log("Login successful");
-      // Redirect would happen here
-    } catch (err) {
-      setError("Login failed. Please check your credentials.");
+      const result = await signIn.create({
+        identifier: email,
+        password,
+      });
+      
+      if (result.status === 'complete') {
+        // Redirect is handled by Clerk
+        toast.success(t('login.signInSuccess'));
+      } else {
+        // Additional verification may be needed
+        console.log('Additional verification needed', result);
+      }
+    } catch (err: any) {
+      console.error('Sign in error:', err);
+      setError(err.errors?.[0]?.message || 'Login failed. Please check your credentials.');
     } finally {
       setIsLoading(false);
     }
@@ -35,27 +59,54 @@ const Login = () => {
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!signUpLoaded) return;
+    
+    if (password !== confirmPassword) {
+      setError('Passwords do not match');
+      return;
+    }
+    
     setIsLoading(true);
     setError(null);
 
-    // Simulate registration process
     try {
-      // Here you would implement actual registration
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      console.log("Registration successful");
-      // Redirect would happen here
-    } catch (err) {
-      setError("Registration failed. Please try again.");
+      const result = await signUp.create({
+        emailAddress: email,
+        password,
+        firstName,
+        lastName,
+      });
+      
+      if (result.status === 'complete') {
+        toast.success(t('login.registrationSuccess'));
+        // Redirect is handled by Clerk
+      } else {
+        // Additional verification may be needed
+        console.log('Additional verification needed', result);
+      }
+    } catch (err: any) {
+      console.error('Sign up error:', err);
+      setError(err.errors?.[0]?.message || 'Registration failed. Please try again.');
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handleSocialLogin = (provider: string) => {
+  const handleSocialLogin = (provider: 'oauth_google' | 'oauth_facebook') => {
+    if (!signInLoaded) return;
+    
     setIsLoading(true);
-    console.log(`Logging in with ${provider}`);
-    // Here you would implement actual social login
-    setTimeout(() => setIsLoading(false), 1000);
+    
+    try {
+      signIn.authenticateWithRedirect({
+        strategy: provider,
+        redirectUrl: '/login',
+        redirectUrlComplete: '/',
+      });
+    } catch (err) {
+      console.error(`Login with ${provider} failed:`, err);
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -70,7 +121,12 @@ const Login = () => {
           </p>
         </div>
 
-        <Tabs defaultValue="login" className="w-full">
+        <Tabs 
+          defaultValue="login" 
+          value={activeTab} 
+          onValueChange={setActiveTab} 
+          className="w-full"
+        >
           <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger value="login">{t('login.signIn')}</TabsTrigger>
             <TabsTrigger value="register">{t('login.register')}</TabsTrigger>
@@ -95,7 +151,14 @@ const Login = () => {
                 <form onSubmit={handleLogin} className="space-y-4">
                   <div className="space-y-2">
                     <Label htmlFor="email">{t('login.emailAddress')}</Label>
-                    <Input id="email" type="email" placeholder="email@example.com" required />
+                    <Input 
+                      id="email" 
+                      type="email" 
+                      placeholder="email@example.com" 
+                      required 
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                    />
                   </div>
                   <div className="space-y-2">
                     <div className="flex items-center justify-between">
@@ -104,9 +167,15 @@ const Login = () => {
                         {t('login.forgotPassword')}
                       </Link>
                     </div>
-                    <Input id="password" type="password" required />
+                    <Input 
+                      id="password" 
+                      type="password" 
+                      required 
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                    />
                   </div>
-                  <Button type="submit" className="w-full" disabled={isLoading}>
+                  <Button type="submit" className="w-full" disabled={isLoading || !signInLoaded}>
                     {isLoading ? t('login.signingIn') : t('login.signIn')}
                   </Button>
                 </form>
@@ -126,8 +195,8 @@ const Login = () => {
                   <Button 
                     variant="outline" 
                     type="button" 
-                    disabled={isLoading} 
-                    onClick={() => handleSocialLogin('Google')}
+                    disabled={isLoading || !signInLoaded} 
+                    onClick={() => handleSocialLogin('oauth_google')}
                   >
                     <Mail className="mr-2 h-4 w-4" />
                     Google
@@ -135,8 +204,8 @@ const Login = () => {
                   <Button 
                     variant="outline" 
                     type="button" 
-                    disabled={isLoading} 
-                    onClick={() => handleSocialLogin('Facebook')}
+                    disabled={isLoading || !signInLoaded} 
+                    onClick={() => handleSocialLogin('oauth_facebook')}
                   >
                     <Facebook className="mr-2 h-4 w-4" />
                     Facebook
@@ -166,26 +235,55 @@ const Login = () => {
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
                       <Label htmlFor="firstName">{t('login.firstName')}</Label>
-                      <Input id="firstName" required />
+                      <Input 
+                        id="firstName" 
+                        required 
+                        value={firstName}
+                        onChange={(e) => setFirstName(e.target.value)}
+                      />
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="lastName">{t('login.lastName')}</Label>
-                      <Input id="lastName" required />
+                      <Input 
+                        id="lastName" 
+                        required 
+                        value={lastName}
+                        onChange={(e) => setLastName(e.target.value)}
+                      />
                     </div>
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="register-email">{t('login.emailAddress')}</Label>
-                    <Input id="register-email" type="email" placeholder="email@example.com" required />
+                    <Input 
+                      id="register-email" 
+                      type="email" 
+                      placeholder="email@example.com" 
+                      required 
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                    />
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="register-password">{t('login.password')}</Label>
-                    <Input id="register-password" type="password" required />
+                    <Input 
+                      id="register-password" 
+                      type="password" 
+                      required 
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                    />
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="confirm-password">{t('login.confirmPassword')}</Label>
-                    <Input id="confirm-password" type="password" required />
+                    <Input 
+                      id="confirm-password" 
+                      type="password" 
+                      required 
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                    />
                   </div>
-                  <Button type="submit" className="w-full" disabled={isLoading}>
+                  <Button type="submit" className="w-full" disabled={isLoading || !signUpLoaded}>
                     {isLoading ? t('login.creatingAccount') : t('login.createAccount')}
                   </Button>
                 </form>
@@ -205,8 +303,8 @@ const Login = () => {
                   <Button 
                     variant="outline" 
                     type="button" 
-                    disabled={isLoading} 
-                    onClick={() => handleSocialLogin('Google')}
+                    disabled={isLoading || !signInLoaded} 
+                    onClick={() => handleSocialLogin('oauth_google')}
                   >
                     <Mail className="mr-2 h-4 w-4" />
                     Google
@@ -214,8 +312,8 @@ const Login = () => {
                   <Button 
                     variant="outline" 
                     type="button" 
-                    disabled={isLoading} 
-                    onClick={() => handleSocialLogin('Facebook')}
+                    disabled={isLoading || !signInLoaded} 
+                    onClick={() => handleSocialLogin('oauth_facebook')}
                   >
                     <Facebook className="mr-2 h-4 w-4" />
                     Facebook

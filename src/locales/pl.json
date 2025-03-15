@@ -1,3 +1,4 @@
+
 {
   "common": {
     "appName": "Gather",
@@ -131,6 +132,8 @@
     "byCreatingAccount": "Tworząc konto, zgadzasz się na nasze",
     "and": "i",
     "termsOfService": "Warunki korzystania z usługi",
-    "privacyPolicy": "Politykę prywatności"
+    "privacyPolicy": "Politykę prywatności",
+    "signInSuccess": "Zalogowano pomyślnie!",
+    "registrationSuccess": "Konto utworzone pomyślnie!"
   }
 }
