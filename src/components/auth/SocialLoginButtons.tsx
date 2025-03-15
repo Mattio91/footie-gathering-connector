@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Button } from "@/components/ui/button";
 import { Facebook, Loader2, Mail } from "lucide-react";
@@ -38,7 +39,7 @@ const SocialLoginButtons = ({ isLoading }: SocialLoginButtonsProps) => {
     setSocialLoading(providerKey as 'google' | 'facebook');
     
     try {
-      await signIn.authenticateWithRedirect({
+      await signIn.authenticateWithStrategy({
         strategy: provider,
         redirectUrl: '/login',
         redirectUrlComplete: '/',
