@@ -105,12 +105,13 @@ const GroupMemberItem = ({ member, onPingMember }: GroupMemberItemProps) => {
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
-                <Badge className="bg-green-600 hover:bg-green-700 flex items-center gap-1 ml-2">
+                <Badge variant="outline" className="bg-green-100 text-green-800 border-green-300 hover:bg-green-200 flex items-center gap-1 ml-2">
                   <Check className="h-3 w-3" />
+                  <span className="text-xs">Joined</span>
                 </Badge>
               </TooltipTrigger>
               <TooltipContent>
-                <p>Joining</p>
+                <p>Joining this event</p>
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>
@@ -120,12 +121,13 @@ const GroupMemberItem = ({ member, onPingMember }: GroupMemberItemProps) => {
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
-                <Badge className="bg-yellow-500 hover:bg-yellow-600 flex items-center gap-1 ml-2">
+                <Badge variant="outline" className="bg-yellow-100 text-yellow-800 border-yellow-300 hover:bg-yellow-200 flex items-center gap-1 ml-2">
                   <HelpCircle className="h-3 w-3" />
+                  <span className="text-xs">Maybe</span>
                 </Badge>
               </TooltipTrigger>
               <TooltipContent>
-                <p>Tentative</p>
+                <p>Tentatively joining</p>
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>
@@ -135,8 +137,9 @@ const GroupMemberItem = ({ member, onPingMember }: GroupMemberItemProps) => {
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
-                <Badge className="bg-red-500 hover:bg-red-600 flex items-center gap-1 ml-2">
+                <Badge variant="outline" className="bg-red-100 text-red-800 border-red-300 hover:bg-red-200 flex items-center gap-1 ml-2">
                   <UserX className="h-3 w-3" />
+                  <span className="text-xs">No</span>
                 </Badge>
               </TooltipTrigger>
               <TooltipContent>

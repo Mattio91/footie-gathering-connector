@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Users, UserPlus, Clock, UserX } from 'lucide-react';
 import { 
@@ -50,7 +49,6 @@ const EventTeams = ({
     handleDrop
   } = useDragAndDrop(players, maxPlayers);
   
-  // Handle adding a friend
   const handleAddFriend = (name: string) => {
     if (onAddFriend) {
       onAddFriend(name);
@@ -70,7 +68,6 @@ const EventTeams = ({
         </div>
       </div>
       
-      {/* Join Button in center */}
       <div className="flex justify-center mb-4">
         {isJoined ? (
           <Button 
@@ -80,9 +77,9 @@ const EventTeams = ({
             Leave Event
           </Button>
         ) : (
-          <div className="flex gap-2">
+          <div className="grid grid-cols-3 gap-2 w-full">
             <Button 
-              className="flex-1 bg-green-600 hover:bg-green-700"
+              className="bg-green-600 hover:bg-green-700"
               onClick={onJoinEvent}
             >
               <UserPlus className="h-4 w-4 mr-2" />
@@ -92,25 +89,22 @@ const EventTeams = ({
             <Button 
               variant="secondary"
               onClick={onTentativeJoin}
-              className="flex-1"
             >
               <Clock className="h-4 w-4 mr-2" />
-              Join Tentatively
+              Tentative
             </Button>
             
             <Button 
               variant="destructive" 
               onClick={onSkipEvent}
-              className="flex-1"
             >
               <UserX className="h-4 w-4 mr-2" />
-              Can't Participate
+              Can't Join
             </Button>
           </div>
         )}
       </div>
       
-      {/* Tabs for team management */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
         <TabsList className="grid w-full grid-cols-2">
           <TabsTrigger value="teams">Teams</TabsTrigger>
@@ -119,7 +113,6 @@ const EventTeams = ({
         
         <TabsContent value="teams" className="pt-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* Team A */}
             <TeamCard
               teamName="Home Team"
               teamPlayers={teamA}
@@ -130,7 +123,6 @@ const EventTeams = ({
               onDrop={handleDrop}
             />
             
-            {/* Team B */}
             <TeamCard
               teamName="Away Team"
               teamPlayers={teamB}
@@ -142,7 +134,6 @@ const EventTeams = ({
             />
           </div>
           
-          {/* Reserve Players */}
           <TeamReserve
             reservePlayers={reservePlayers}
             onDragStart={handleDragStart}
@@ -151,7 +142,6 @@ const EventTeams = ({
             onAddFriend={handleAddFriend}
           />
           
-          {/* Tentative Players */}
           <TentativePlayers tentativePlayers={tentativePlayers} />
         </TabsContent>
         
