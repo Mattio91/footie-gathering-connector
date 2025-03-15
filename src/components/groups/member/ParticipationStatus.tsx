@@ -17,6 +17,7 @@ interface ParticipationStatusProps {
 }
 
 const ParticipationStatus = ({ status, memberId, onPingMember }: ParticipationStatusProps) => {
+  // Display appropriate status badge based on participation status
   switch(status) {
     case 'joined':
       return (
@@ -68,6 +69,7 @@ const ParticipationStatus = ({ status, memberId, onPingMember }: ParticipationSt
       );
     case 'none':
     default:
+      // Only show notification button if member has no status and onPingMember is provided
       return onPingMember ? (
         <TooltipProvider>
           <Tooltip>
