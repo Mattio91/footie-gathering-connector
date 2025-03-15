@@ -1,10 +1,10 @@
-
 import React from 'react';
 import { Button } from "@/components/ui/button";
 import { Facebook, Loader2, Mail } from "lucide-react";
 import { useTranslation } from 'react-i18next';
 import { useSignIn } from '@clerk/clerk-react';
 import { useAuth } from './AuthProvider';
+import { toast } from 'sonner';
 
 interface SocialLoginButtonsProps {
   isLoading: boolean;
@@ -12,12 +12,27 @@ interface SocialLoginButtonsProps {
 
 const SocialLoginButtons = ({ isLoading }: SocialLoginButtonsProps) => {
   const { t } = useTranslation();
-  const { signIn, isLoaded: signInLoaded } = useSignIn();
-  const { handleAuthError } = useAuth();
+  const { handleAuthError, isClerkAvailable } = useAuth();
   const [socialLoading, setSocialLoading] = React.useState<'google' | 'facebook' | null>(null);
+  
+  let signIn;
+  let isSignInLoaded = false;
+  
+  try {
+    const signInHook = isClerkAvailable ? useSignIn() : null;
+    signIn = signInHook;
+    isSignInLoaded = isClerkAvailable ? signInHook?.isLoaded || false : false;
+  } catch (e) {
+    console.warn('Clerk sign-in is not available');
+    signIn = null;
+    isSignInLoaded = false;
+  }
 
   const handleSocialLogin = async (provider: 'oauth_google' | 'oauth_facebook') => {
-    if (!signInLoaded) return;
+    if (!isClerkAvailable || !signIn || !isSignInLoaded) {
+      toast.error('Authentication service is not available');
+      return;
+    }
     
     const providerKey = provider === 'oauth_google' ? 'google' : 'facebook';
     setSocialLoading(providerKey as 'google' | 'facebook');
@@ -52,7 +67,7 @@ const SocialLoginButtons = ({ isLoading }: SocialLoginButtonsProps) => {
         <Button 
           variant="outline" 
           type="button" 
-          disabled={isLoading || !signInLoaded || socialLoading !== null} 
+          disabled={isLoading || !isSignInLoaded || socialLoading !== null} 
           onClick={() => handleSocialLogin('oauth_google')}
         >
           {socialLoading === 'google' ? (
@@ -65,7 +80,7 @@ const SocialLoginButtons = ({ isLoading }: SocialLoginButtonsProps) => {
         <Button 
           variant="outline" 
           type="button" 
-          disabled={isLoading || !signInLoaded || socialLoading !== null} 
+          disabled={isLoading || !isSignInLoaded || socialLoading !== null} 
           onClick={() => handleSocialLogin('oauth_facebook')}
         >
           {socialLoading === 'facebook' ? (

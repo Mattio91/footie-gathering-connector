@@ -1,6 +1,7 @@
 
 import React, { createContext, useState, useContext, ReactNode } from 'react';
 import { toast } from 'sonner';
+import { useClerk, useSignIn, useSignUp } from '@clerk/clerk-react';
 
 interface AuthContextType {
   isLoading: boolean;
@@ -9,6 +10,7 @@ interface AuthContextType {
   setError: (error: string | null) => void;
   handleAuthError: (err: any, defaultMessage: string) => void;
   clearError: () => void;
+  isClerkAvailable: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -28,6 +30,21 @@ interface AuthProviderProps {
 export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  
+  // Check if Clerk is available by trying to access it
+  let isClerkAvailable = false;
+  try {
+    // This will throw an error if Clerk is not properly initialized
+    const clerk = useClerk();
+    const signIn = useSignIn();
+    const signUp = useSignUp();
+    
+    isClerkAvailable = Boolean(clerk) && Boolean(signIn) && Boolean(signUp);
+  } catch (e) {
+    // If we get here, Clerk is not available
+    isClerkAvailable = false;
+    console.warn('Clerk authentication is not available');
+  }
 
   const clearError = () => setError(null);
 
@@ -61,6 +78,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     setError,
     handleAuthError,
     clearError,
+    isClerkAvailable,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
