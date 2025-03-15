@@ -66,23 +66,22 @@ const EventContent = ({ event, players, tentativePlayers, isJoined, messages, ha
           onAddFriend={handlers.handleAddFriend}
         />
         
-        {/* About the event */}
+        {/* Event description is now hidden in a collapsible component */}
         <EventAbout description={event.description} />
         
-        {/* Chat section */}
-        <div className="space-y-4">
-          <h3 className="text-lg font-semibold">Event Chat</h3>
-          <EventChat 
-            messages={messages}
-            onSendMessage={handlers.handleSendMessage}
+        {/* Chat section - made taller */}
+        <EventChat 
+          messages={messages}
+          onSendMessage={handlers.handleSendMessage}
+        />
+        
+        {/* Location map moved to bottom with no heading */}
+        <div className="mt-8">
+          <EventMap 
+            location={event.location} 
+            locationDetails={event.locationDetails}
           />
         </div>
-        
-        {/* Location map moved to bottom */}
-        <EventMap 
-          location={event.location} 
-          locationDetails={event.locationDetails}
-        />
       </div>
       
       {/* Right sidebar (1/3 width) */}

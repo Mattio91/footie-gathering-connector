@@ -1,10 +1,11 @@
 
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { format } from 'date-fns';
 import { MessageCircle, Send } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import { ScrollArea } from '@/components/ui/scroll-area';
 
 interface ChatMessage {
   id: string;
@@ -25,6 +26,7 @@ interface EventChatProps {
 const EventChat = ({ messages, onSendMessage }: EventChatProps) => {
   const { t } = useTranslation();
   const [newMessage, setNewMessage] = useState('');
+  const messagesEndRef = useRef<HTMLDivElement>(null);
   
   const handleSendMessage = () => {
     if (newMessage.trim()) {
@@ -39,11 +41,23 @@ const EventChat = ({ messages, onSendMessage }: EventChatProps) => {
       handleSendMessage();
     }
   };
+
+  // Scroll to bottom when new messages arrive
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages.length]);
   
   return (
     <div className="border rounded-xl overflow-hidden bg-card shadow-sm">
-      {/* Chat messages container */}
-      <div className="h-64 overflow-y-auto p-3">
+      <div className="p-3 border-b bg-muted/30">
+        <h3 className="text-sm font-medium flex items-center gap-2">
+          <MessageCircle className="h-4 w-4 text-muted-foreground" />
+          {t('event.eventChat')}
+        </h3>
+      </div>
+      
+      {/* Chat messages container - taller now (90px → 320px) */}
+      <ScrollArea className="h-[320px] p-3">
         {messages.length === 0 ? (
           <div className="h-full flex flex-col items-center justify-center text-center text-muted-foreground">
             <MessageCircle className="h-12 w-12 mb-2 opacity-20" />
@@ -51,39 +65,49 @@ const EventChat = ({ messages, onSendMessage }: EventChatProps) => {
             <p className="text-sm">{t('event.beFirst')}</p>
           </div>
         ) : (
-          <div className="space-y-3">
-            {messages.map((message) => {
-              // Determine if this is a consecutive message from the same author
-              const messageStyle = "px-3 py-2 rounded-lg max-w-[85%]";
+          <div className="space-y-2">
+            {messages.map((message, index) => {
+              const isConsecutive = index > 0 && messages[index - 1].author.id === message.author.id;
+              
               return (
-                <div key={message.id} className="flex items-end gap-2 group">
-                  {/* Avatar only shown for first message or different author */}
-                  <div className="flex-shrink-0 w-7 h-7 rounded-full overflow-hidden">
-                    <img 
-                      src={message.author.avatar || `https://ui-avatars.com/api/?name=${message.author.name}`} 
-                      alt={message.author.name} 
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                  <div className="flex-grow space-y-1">
-                    <div className="flex items-baseline gap-2">
-                      <span className="font-medium text-xs">
-                        {message.author.name}
-                      </span>
-                      <span className="text-[10px] text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity">
-                        {format(message.timestamp, 'p')}
-                      </span>
+                <div key={message.id} className="flex items-start gap-1.5 group">
+                  {/* Only show avatar if it's a new author */}
+                  {!isConsecutive ? (
+                    <div className="flex-shrink-0 w-6 h-6 rounded-full overflow-hidden mt-0.5">
+                      <img 
+                        src={message.author.avatar || `https://ui-avatars.com/api/?name=${message.author.name}`} 
+                        alt={message.author.name} 
+                        className="w-full h-full object-cover"
+                      />
                     </div>
-                    <div className={`${messageStyle} bg-muted/50 text-sm`}>
+                  ) : (
+                    <div className="w-6 flex-shrink-0"></div>
+                  )}
+                  
+                  <div className="flex-grow space-y-0.5">
+                    {/* Only show name for first message from an author */}
+                    {!isConsecutive && (
+                      <div className="flex items-baseline gap-2">
+                        <span className="font-medium text-xs">
+                          {message.author.name}
+                        </span>
+                        <span className="text-[10px] text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity">
+                          {format(message.timestamp, 'p')}
+                        </span>
+                      </div>
+                    )}
+                    
+                    <div className="px-2.5 py-1.5 rounded-lg bg-muted/40 text-sm inline-block max-w-[calc(100%-8px)]">
                       {message.text}
                     </div>
                   </div>
                 </div>
               );
             })}
+            <div ref={messagesEndRef} />
           </div>
         )}
-      </div>
+      </ScrollArea>
       
       {/* Message input */}
       <div className="p-2 border-t bg-background/60">
