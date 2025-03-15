@@ -6,8 +6,8 @@ import App from "./App.tsx";
 import "./index.css";
 import './i18n';
 
-// Get the Clerk publishable key from environment variables
-const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
+// Use the provided Clerk publishable key
+const PUBLISHABLE_KEY = "pk_test_ZGVlcC1sb2N1c3QtOTAuY2xlcmsuYWNjb3VudHMuZGV2JA";
 
 // Only use ClerkProvider if we have a valid key
 const shouldUseClerk = PUBLISHABLE_KEY && PUBLISHABLE_KEY.startsWith('pk_');
