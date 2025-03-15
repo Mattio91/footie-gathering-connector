@@ -114,25 +114,10 @@ export const useEventActions = ({
     }
   };
 
-  // Handle member role update
-  const handleUpdateMemberRole = (groupId: string, memberId: string, role: string) => {
-    try {
-      // In a real application, this would update the role in the database
-      console.log(`Updated role for member ${memberId} in group ${groupId} to ${role}`);
-    } catch (err) {
-      toast({
-        title: "Error",
-        description: "Failed to update member role",
-        variant: "destructive",
-      });
-    }
-  };
-
   return {
     handleJoinEvent,
     handleAddFriend,
     handleSendMessage,
-    handleImageUpload,
-    handleUpdateMemberRole
+    handleImageUpload
   };
 };

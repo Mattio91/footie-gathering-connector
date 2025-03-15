@@ -35,10 +35,10 @@ export const getMockEvent = (eventId: string): EventData => ({
       name: 'Sunday League', 
       memberCount: 14,
       members: [
-        { id: '1', name: 'Alex Johnson', role: 'Host' as const, avatar: 'https://randomuser.me/api/portraits/men/32.jpg' },
-        { id: '2', name: 'Sarah Smith', role: 'Admin' as const, avatar: 'https://randomuser.me/api/portraits/women/44.jpg' },
-        { id: '3', name: 'Mike Wilson', role: 'Member' as const, avatar: 'https://randomuser.me/api/portraits/men/45.jpg' },
-        { id: '4', name: 'Jessica Taylor', role: 'Member' as const, avatar: 'https://randomuser.me/api/portraits/women/23.jpg' }
+        { id: '1', name: 'Alex Johnson', role: 'Admin', avatar: 'https://randomuser.me/api/portraits/men/32.jpg' },
+        { id: '2', name: 'Sarah Smith', role: 'Co-Admin', avatar: 'https://randomuser.me/api/portraits/women/44.jpg' },
+        { id: '3', name: 'Mike Wilson', role: 'Member', avatar: 'https://randomuser.me/api/portraits/men/45.jpg' },
+        { id: '4', name: 'Jessica Taylor', role: 'Member', avatar: 'https://randomuser.me/api/portraits/women/23.jpg' }
       ]
     },
     { 
@@ -46,9 +46,9 @@ export const getMockEvent = (eventId: string): EventData => ({
       name: 'Neighborhood Crew', 
       memberCount: 8,
       members: [
-        { id: '1', name: 'Alex Johnson', role: 'Host' as const, avatar: 'https://randomuser.me/api/portraits/men/32.jpg' },
-        { id: '5', name: 'David Brown', role: 'Member' as const, avatar: 'https://randomuser.me/api/portraits/men/86.jpg' },
-        { id: '6', name: 'Emma Davis', role: 'Member' as const, avatar: 'https://randomuser.me/api/portraits/women/12.jpg' }
+        { id: '1', name: 'Alex Johnson', role: 'Admin', avatar: 'https://randomuser.me/api/portraits/men/32.jpg' },
+        { id: '5', name: 'David Brown', role: 'Member', avatar: 'https://randomuser.me/api/portraits/men/86.jpg' },
+        { id: '6', name: 'Emma Davis', role: 'Member', avatar: 'https://randomuser.me/api/portraits/women/12.jpg' }
       ]
     }
   ]
