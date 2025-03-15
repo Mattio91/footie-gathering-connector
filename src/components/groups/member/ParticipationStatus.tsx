@@ -23,11 +23,11 @@ const ParticipationStatus = ({ status, memberId, onPingMember }: ParticipationSt
       return (
         <TooltipProvider>
           <Tooltip>
-            <TooltipTrigger asChild>
-              <Badge variant="outline" className="bg-green-100 text-green-800 border-green-300 hover:bg-green-200 flex items-center gap-1 ml-2">
+            <TooltipTrigger>
+              <div className="bg-green-100 text-green-800 border border-green-300 hover:bg-green-200 rounded-full px-2.5 py-0.5 flex items-center gap-1 ml-2">
                 <Check className="h-3 w-3" />
                 <span className="text-xs">Joined</span>
-              </Badge>
+              </div>
             </TooltipTrigger>
             <TooltipContent>
               <p>Joining this event</p>
@@ -39,11 +39,11 @@ const ParticipationStatus = ({ status, memberId, onPingMember }: ParticipationSt
       return (
         <TooltipProvider>
           <Tooltip>
-            <TooltipTrigger asChild>
-              <Badge variant="outline" className="bg-yellow-100 text-yellow-800 border-yellow-300 hover:bg-yellow-200 flex items-center gap-1 ml-2">
+            <TooltipTrigger>
+              <div className="bg-yellow-100 text-yellow-800 border border-yellow-300 hover:bg-yellow-200 rounded-full px-2.5 py-0.5 flex items-center gap-1 ml-2">
                 <HelpCircle className="h-3 w-3" />
                 <span className="text-xs">Maybe</span>
-              </Badge>
+              </div>
             </TooltipTrigger>
             <TooltipContent>
               <p>Tentatively joining</p>
@@ -55,11 +55,11 @@ const ParticipationStatus = ({ status, memberId, onPingMember }: ParticipationSt
       return (
         <TooltipProvider>
           <Tooltip>
-            <TooltipTrigger asChild>
-              <Badge variant="outline" className="bg-red-100 text-red-800 border-red-300 hover:bg-red-200 flex items-center gap-1 ml-2">
+            <TooltipTrigger>
+              <div className="bg-red-100 text-red-800 border border-red-300 hover:bg-red-200 rounded-full px-2.5 py-0.5 flex items-center gap-1 ml-2">
                 <UserX className="h-3 w-3" />
                 <span className="text-xs">No</span>
-              </Badge>
+              </div>
             </TooltipTrigger>
             <TooltipContent>
               <p>Not participating</p>
@@ -91,10 +91,10 @@ const ParticipationStatus = ({ status, memberId, onPingMember }: ParticipationSt
       ) : (
         <TooltipProvider>
           <Tooltip>
-            <TooltipTrigger asChild>
-              <Badge variant="outline" className="bg-gray-100 text-gray-600 border-gray-300 hover:bg-gray-200 flex items-center gap-1 ml-2">
+            <TooltipTrigger>
+              <div className="bg-gray-100 text-gray-600 border border-gray-300 hover:bg-gray-200 rounded-full px-2.5 py-0.5 flex items-center gap-1 ml-2">
                 <span className="text-xs">No status</span>
-              </Badge>
+              </div>
             </TooltipTrigger>
             <TooltipContent>
               <p>No participation status set</p>
