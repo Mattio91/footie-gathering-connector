@@ -1,4 +1,3 @@
-
 {
   "common": {
     "appName": "Gather",
@@ -111,5 +110,27 @@
   "language": {
     "en": "English",
     "pl": "Polish"
+  },
+  "login": {
+    "welcome": "Welcome to Gather",
+    "welcomeSubtitle": "Sign in to your account or create a new one",
+    "signIn": "Sign In",
+    "register": "Register",
+    "signInSubtitle": "Enter your credentials to access your account",
+    "emailAddress": "Email Address",
+    "password": "Password",
+    "forgotPassword": "Forgot password?",
+    "signingIn": "Signing in...",
+    "orContinueWith": "or continue with",
+    "createAccount": "Create Account",
+    "createAccountSubtitle": "Fill out the form to create a new account",
+    "firstName": "First Name",
+    "lastName": "Last Name",
+    "confirmPassword": "Confirm Password",
+    "creatingAccount": "Creating account...",
+    "byCreatingAccount": "By creating an account, you agree to our",
+    "and": "and",
+    "termsOfService": "Terms of Service",
+    "privacyPolicy": "Privacy Policy"
   }
 }
