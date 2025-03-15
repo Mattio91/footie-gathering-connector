@@ -1,13 +1,10 @@
 
 import React from 'react';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from './AuthProvider';
-import LoginForm from './LoginForm';
-import RegisterForm from './RegisterForm';
-import SocialLoginButtons from './SocialLoginButtons';
+import LoginTab from './LoginTab';
+import RegisterTab from './RegisterTab';
 
 const LoginContent = () => {
   const { t } = useTranslation();
@@ -45,64 +42,31 @@ const LoginContent = () => {
           </TabsList>
 
           <TabsContent value="login">
-            <Card>
-              <CardHeader>
-                <CardTitle>{t('login.signIn')}</CardTitle>
-                <CardDescription>
-                  {t('login.signInSubtitle')}
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <LoginForm 
-                  email={email}
-                  setEmail={setEmail}
-                  password={password}
-                  setPassword={setPassword}
-                  error={error}
-                  isLoading={isLoading}
-                />
-
-                <SocialLoginButtons isLoading={isLoading} />
-              </CardContent>
-            </Card>
+            <LoginTab
+              email={email}
+              setEmail={setEmail}
+              password={password}
+              setPassword={setPassword}
+              error={error}
+              isLoading={isLoading}
+            />
           </TabsContent>
 
           <TabsContent value="register">
-            <Card>
-              <CardHeader>
-                <CardTitle>{t('login.createAccount')}</CardTitle>
-                <CardDescription>
-                  {t('login.createAccountSubtitle')}
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <RegisterForm 
-                  email={email}
-                  setEmail={setEmail}
-                  password={password}
-                  setPassword={setPassword}
-                  firstName={firstName}
-                  setFirstName={setFirstName}
-                  lastName={lastName}
-                  setLastName={setLastName}
-                  confirmPassword={confirmPassword}
-                  setConfirmPassword={setConfirmPassword}
-                  error={error}
-                  isLoading={isLoading}
-                />
-
-                <SocialLoginButtons isLoading={isLoading} />
-              </CardContent>
-              <CardFooter className="text-center text-sm text-gray-600">
-                {t('login.byCreatingAccount')} 
-                <Link to="/terms" className="font-medium text-blue-600 hover:text-blue-800"> 
-                  {t('footer.terms')}
-                </Link> {t('login.and')} 
-                <Link to="/privacy" className="font-medium text-blue-600 hover:text-blue-800">
-                  {t('footer.privacyPolicy')}
-                </Link>.
-              </CardFooter>
-            </Card>
+            <RegisterTab
+              email={email}
+              setEmail={setEmail}
+              password={password}
+              setPassword={setPassword}
+              firstName={firstName}
+              setFirstName={setFirstName}
+              lastName={lastName}
+              setLastName={setLastName}
+              confirmPassword={confirmPassword}
+              setConfirmPassword={setConfirmPassword}
+              error={error}
+              isLoading={isLoading}
+            />
           </TabsContent>
         </Tabs>
       </div>
