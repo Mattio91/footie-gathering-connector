@@ -54,7 +54,7 @@ export const useEventActions = ({
           isAdmin: false,
           isTentative: false,
           isSkipping: false,
-          participationStatus: 'joined',
+          participationStatus: 'joined' as const,
           avatar: 'https://randomuser.me/api/portraits/lego/1.jpg'
         }
       ]);
@@ -85,7 +85,7 @@ export const useEventActions = ({
         isAdmin: false,
         isTentative: true,
         isSkipping: false,
-        participationStatus: 'tentative',
+        participationStatus: 'tentative' as const,
         avatar: 'https://randomuser.me/api/portraits/lego/1.jpg'
       }
     ]);
@@ -143,12 +143,12 @@ export const useEventActions = ({
     const friendId = `friend-${Date.now()}`;
     
     // Add the friend to the players list as an unconfirmed player (reserve)
-    const newPlayer = {
+    const newPlayer: Player = {
       id: friendId,
       name: name,
       isConfirmed: false,
       isAdmin: false,
-      participationStatus: 'none'
+      participationStatus: 'none' as const
       // No avatar provided, will use UI avatars
     };
     
