@@ -15,12 +15,6 @@ import { Player } from '@/types/player';
 import TeamCard from '@/components/TeamCard';
 import TeamReserve from '@/components/TeamReserve';
 import { useDragAndDrop } from '@/hooks/useDragAndDrop';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
 import TentativePlayers from '@/components/TentativePlayers';
 
 interface EventTeamsProps {
@@ -88,6 +82,23 @@ const EventTeams = ({
         ) : (
           <div className="flex gap-2">
             <Button 
+              className="flex-1 bg-green-600 hover:bg-green-700"
+              onClick={onJoinEvent}
+            >
+              <UserPlus className="h-4 w-4 mr-2" />
+              Join
+            </Button>
+            
+            <Button 
+              variant="secondary"
+              onClick={onTentativeJoin}
+              className="flex-1"
+            >
+              <Clock className="h-4 w-4 mr-2" />
+              Join Tentatively
+            </Button>
+            
+            <Button 
               variant="destructive" 
               onClick={onSkipEvent}
               className="flex-1"
@@ -95,24 +106,6 @@ const EventTeams = ({
               <UserX className="h-4 w-4 mr-2" />
               Can't Participate
             </Button>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button className="flex-1 bg-green-600 hover:bg-green-700">
-                  <UserPlus className="h-4 w-4 mr-2" />
-                  Join
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent>
-                <DropdownMenuItem onClick={onJoinEvent}>
-                  <UserPlus className="h-4 w-4 mr-2" />
-                  <span>Join Now</span>
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={onTentativeJoin}>
-                  <Clock className="h-4 w-4 mr-2" />
-                  <span>Join Tentatively</span>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
           </div>
         )}
       </div>

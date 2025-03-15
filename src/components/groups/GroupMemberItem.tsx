@@ -105,7 +105,7 @@ const GroupMemberItem = ({ member, onPingMember }: GroupMemberItemProps) => {
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
-                <Badge className="bg-green-500 flex items-center gap-1 ml-2">
+                <Badge className="bg-green-600 hover:bg-green-700 flex items-center gap-1 ml-2">
                   <Check className="h-3 w-3" />
                 </Badge>
               </TooltipTrigger>
@@ -120,7 +120,7 @@ const GroupMemberItem = ({ member, onPingMember }: GroupMemberItemProps) => {
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
-                <Badge className="bg-yellow-500 flex items-center gap-1 ml-2">
+                <Badge className="bg-yellow-500 hover:bg-yellow-600 flex items-center gap-1 ml-2">
                   <HelpCircle className="h-3 w-3" />
                 </Badge>
               </TooltipTrigger>
@@ -135,7 +135,7 @@ const GroupMemberItem = ({ member, onPingMember }: GroupMemberItemProps) => {
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
-                <Badge className="bg-red-500 flex items-center gap-1 ml-2">
+                <Badge className="bg-red-500 hover:bg-red-600 flex items-center gap-1 ml-2">
                   <UserX className="h-3 w-3" />
                 </Badge>
               </TooltipTrigger>
@@ -154,7 +154,7 @@ const GroupMemberItem = ({ member, onPingMember }: GroupMemberItemProps) => {
                 <Button 
                   variant="ghost" 
                   size="icon" 
-                  className="h-6 w-6 rounded-full ml-2"
+                  className="h-6 w-6 rounded-full ml-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100"
                   onClick={() => onPingMember(member.id)}
                 >
                   <Bell className="h-3 w-3" />
