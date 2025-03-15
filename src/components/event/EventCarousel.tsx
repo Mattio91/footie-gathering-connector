@@ -19,18 +19,20 @@ interface EventCarouselProps {
 
 const EventCarousel = ({ images, event, playerCount, maxPlayers, onImageUpload }: EventCarouselProps) => {
   return (
-    <EventImageCarousel 
-      images={images} 
-      title={event.title}
-      date={event.date}
-      time={event.time}
-      duration={event.duration}
-      location={event.location}
-      locationDetails={event.locationDetails}
-      playerCount={playerCount}
-      maxPlayers={maxPlayers}
-      onImageUpload={onImageUpload}
-    />
+    <div className="mb-4">
+      <EventImageCarousel 
+        images={images} 
+        title={event.title}
+        date={event.date}
+        time={event.time}
+        duration={event.duration}
+        location={event.location}
+        locationDetails={event.locationDetails}
+        playerCount={playerCount}
+        maxPlayers={maxPlayers}
+        onImageUpload={onImageUpload}
+      />
+    </div>
   );
 };
 

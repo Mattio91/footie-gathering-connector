@@ -18,8 +18,8 @@ const Header = () => {
       <div className="container flex h-14 items-center">
         <div className="mr-4 flex">
           <Link to="/" className="mr-6 flex items-center space-x-2">
-            <span className="font-bold text-xl text-purple-600">
-              Gather <span className="text-sm font-medium text-purple-400">To Play</span>
+            <span className="font-bold text-xl text-black">
+              Gather <span className="text-sm font-medium text-emerald-500">To Play</span>
             </span>
           </Link>
           <nav className="flex items-center space-x-6 text-sm font-medium">
@@ -57,7 +57,7 @@ const Header = () => {
             </Button>
           </Link>
           <Link to="/create-event">
-            <Button size="sm" className="bg-purple-600 hover:bg-purple-700">
+            <Button size="sm" className="bg-emerald-600 hover:bg-emerald-700">
               {t("common.createEvent")}
             </Button>
           </Link>

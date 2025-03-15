@@ -101,3 +101,18 @@
     animation: pulse-gentle 1.5s ease-in-out infinite;
   }
 }
+
+/* Adding compact classes */
+@layer utilities {
+  .event-carousel {
+    @apply aspect-[21/6] rounded-lg overflow-hidden;
+  }
+  
+  .compact-grid {
+    @apply gap-3;
+  }
+  
+  .compact-spacing {
+    @apply space-y-3;
+  }
+}
