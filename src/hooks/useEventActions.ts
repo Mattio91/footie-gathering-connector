@@ -37,6 +37,8 @@ export const useEventActions = ({
       setPlayers(players.filter(player => player.id !== 'current-user'));
       // Also remove from tentative if somehow there
       setTentativePlayers(tentativePlayers.filter(player => player.id !== 'current-user'));
+      setIsJoined(false);
+      
       toast({
         title: "Left Event",
         description: "You have been removed from the event.",
@@ -51,15 +53,18 @@ export const useEventActions = ({
           isConfirmed: false, 
           isAdmin: false,
           isTentative: false,
+          isSkipping: false,
+          participationStatus: 'joined',
           avatar: 'https://randomuser.me/api/portraits/lego/1.jpg'
         }
       ]);
+      setIsJoined(true);
+      
       toast({
         title: "Joined Event",
         description: "You have been added to the reserve list.",
       });
     }
-    setIsJoined(!isJoined);
   };
   
   // Handle tentative join event
@@ -79,6 +84,8 @@ export const useEventActions = ({
         isConfirmed: false, 
         isAdmin: false,
         isTentative: true,
+        isSkipping: false,
+        participationStatus: 'tentative',
         avatar: 'https://randomuser.me/api/portraits/lego/1.jpg'
       }
     ]);
@@ -88,6 +95,45 @@ export const useEventActions = ({
     toast({
       title: "Tentatively Joined",
       description: "You've been added as a tentative player. Please confirm later.",
+    });
+  };
+  
+  // Handle skip event (can't participate)
+  const handleSkipEvent = () => {
+    if (isJoined) {
+      // If already joined, remove first
+      handleJoinEvent();
+    }
+    
+    // Add a notification that user won't participate
+    const newMessage = {
+      id: `message-${Date.now()}`,
+      author: { 
+        id: 'current-user', 
+        name: 'You', 
+        avatar: 'https://randomuser.me/api/portraits/lego/1.jpg' 
+      },
+      text: "I won't be able to participate in this event.",
+      timestamp: new Date(),
+    };
+    
+    setMessages([...messages, newMessage]);
+    
+    // Set user status as skipping in storage if needed
+    // This would typically be sent to an API
+    
+    toast({
+      title: "Status Updated",
+      description: "You've indicated that you can't participate in this event.",
+    });
+  };
+  
+  // Handle ping member
+  const handlePingMember = (memberId: string) => {
+    // In a real app, this would send a notification to the member
+    toast({
+      title: "Reminder Sent",
+      description: "A reminder has been sent to the member.",
     });
   };
   
@@ -102,6 +148,7 @@ export const useEventActions = ({
       name: name,
       isConfirmed: false,
       isAdmin: false,
+      participationStatus: 'none'
       // No avatar provided, will use UI avatars
     };
     
@@ -153,8 +200,10 @@ export const useEventActions = ({
   return {
     handleJoinEvent,
     handleTentativeJoin,
+    handleSkipEvent,
     handleAddFriend,
     handleSendMessage,
-    handleImageUpload
+    handleImageUpload,
+    handlePingMember
   };
 };

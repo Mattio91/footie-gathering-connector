@@ -2,8 +2,9 @@
 export interface GroupMember {
   id: string;
   name: string;
-  role: 'New' | 'Member' | 'Founder' | 'Co-Admin' | 'Admin';
   avatar?: string;
+  role: 'New' | 'Member' | 'Founder' | 'Co-Admin' | 'Admin';
+  participationStatus?: 'joined' | 'tentative' | 'skipping' | 'none';
 }
 
 export interface Group {

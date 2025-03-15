@@ -13,9 +13,10 @@ interface GroupItemProps {
   group: Group;
   isExpanded: boolean;
   onToggle: (groupId: string) => void;
+  onPingMember?: (memberId: string) => void;
 }
 
-const GroupItem = ({ group, isExpanded, onToggle }: GroupItemProps) => {
+const GroupItem = ({ group, isExpanded, onToggle, onPingMember }: GroupItemProps) => {
   return (
     <Collapsible className="border rounded-md p-2">
       <div className="flex items-center justify-between">
@@ -44,6 +45,7 @@ const GroupItem = ({ group, isExpanded, onToggle }: GroupItemProps) => {
               <GroupMemberItem 
                 key={member.id} 
                 member={member}
+                onPingMember={onPingMember}
               />
             ))}
           </div>

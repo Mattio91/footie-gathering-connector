@@ -1,19 +1,21 @@
 
 import { Badge } from '@/components/ui/badge';
 import { GroupMember } from '@/types/group';
-import { Crown, Shield, UserCheck, UserCog, Mail } from 'lucide-react';
+import { Crown, Shield, UserCheck, UserCog, Mail, Bell, UserX, HelpCircle, Check } from 'lucide-react';
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { Button } from '@/components/ui/button';
 
 interface GroupMemberItemProps {
   member: GroupMember;
+  onPingMember?: (memberId: string) => void;
 }
 
-const GroupMemberItem = ({ member }: GroupMemberItemProps) => {
+const GroupMemberItem = ({ member, onPingMember }: GroupMemberItemProps) => {
   const getRoleBadge = () => {
     switch(member.role) {
       case 'Admin':
@@ -96,6 +98,77 @@ const GroupMemberItem = ({ member }: GroupMemberItemProps) => {
     }
   };
 
+  const getParticipationStatus = () => {
+    switch(member.participationStatus) {
+      case 'joined':
+        return (
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Badge className="bg-green-500 flex items-center gap-1 ml-2">
+                  <Check className="h-3 w-3" />
+                </Badge>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Joining</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        );
+      case 'tentative':
+        return (
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Badge className="bg-yellow-500 flex items-center gap-1 ml-2">
+                  <HelpCircle className="h-3 w-3" />
+                </Badge>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Tentative</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        );
+      case 'skipping':
+        return (
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Badge className="bg-red-500 flex items-center gap-1 ml-2">
+                  <UserX className="h-3 w-3" />
+                </Badge>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Not participating</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        );
+      case 'none':
+      default:
+        return onPingMember ? (
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button 
+                  variant="ghost" 
+                  size="icon" 
+                  className="h-6 w-6 rounded-full ml-2"
+                  onClick={() => onPingMember(member.id)}
+                >
+                  <Bell className="h-3 w-3" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Ping member</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        ) : null;
+    }
+  };
+
   return (
     <div className="flex items-center justify-between">
       <div className="flex items-center gap-2">
@@ -109,7 +182,10 @@ const GroupMemberItem = ({ member }: GroupMemberItemProps) => {
         <span className="text-sm">{member.name}</span>
       </div>
       
-      {getRoleBadge()}
+      <div className="flex items-center">
+        {getRoleBadge()}
+        {getParticipationStatus()}
+      </div>
     </div>
   );
 };

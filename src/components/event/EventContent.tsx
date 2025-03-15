@@ -42,8 +42,10 @@ interface EventContentProps {
   handlers: {
     handleJoinEvent: () => void;
     handleTentativeJoin: () => void;
+    handleSkipEvent: () => void;
     handleAddFriend: (name: string) => void;
     handleSendMessage: (message: string) => void;
+    handlePingMember?: (memberId: string) => void;
   };
 }
 
@@ -60,6 +62,7 @@ const EventContent = ({ event, players, tentativePlayers, isJoined, messages, ha
           isJoined={isJoined}
           onJoinEvent={handlers.handleJoinEvent}
           onTentativeJoin={handlers.handleTentativeJoin}
+          onSkipEvent={handlers.handleSkipEvent}
           onAddFriend={handlers.handleAddFriend}
         />
         
@@ -91,7 +94,10 @@ const EventContent = ({ event, players, tentativePlayers, isJoined, messages, ha
         <EventHostInfo host={event.host} coHosts={event.coHosts} />
         
         {/* Event groups and invitation */}
-        <EventGroups groups={event.groups} />
+        <EventGroups 
+          groups={event.groups} 
+          onPingMember={handlers.handlePingMember}
+        />
       </div>
     </div>
   );

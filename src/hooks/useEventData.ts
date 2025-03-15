@@ -25,9 +25,11 @@ export const useEventData = (eventId: string) => {
   const {
     handleJoinEvent,
     handleTentativeJoin,
+    handleSkipEvent,
     handleAddFriend,
     handleSendMessage,
-    handleImageUpload
+    handleImageUpload,
+    handlePingMember
   } = useEventActions({
     players,
     setPlayers,
@@ -52,8 +54,10 @@ export const useEventData = (eventId: string) => {
     error,
     handleJoinEvent,
     handleTentativeJoin,
+    handleSkipEvent,
     handleAddFriend,
     handleSendMessage,
-    handleImageUpload
+    handleImageUpload,
+    handlePingMember
   };
 };

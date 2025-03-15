@@ -21,9 +21,11 @@ const Event = () => {
     error,
     handleJoinEvent,
     handleTentativeJoin,
+    handleSkipEvent,
     handleAddFriend,
     handleSendMessage,
-    handleImageUpload
+    handleImageUpload,
+    handlePingMember
   } = useEventData(id || '');
   
   return (
@@ -53,9 +55,11 @@ const Event = () => {
                 handlers={{
                   handleJoinEvent,
                   handleTentativeJoin,
+                  handleSkipEvent,
                   handleAddFriend,
                   handleSendMessage,
-                  handleImageUpload
+                  handleImageUpload,
+                  handlePingMember
                 }}
               />
             )

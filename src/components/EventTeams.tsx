@@ -1,6 +1,6 @@
 
 import { useState } from 'react';
-import { Users, UserPlus, Clock } from 'lucide-react';
+import { Users, UserPlus, Clock, UserX } from 'lucide-react';
 import { 
   Tabs, 
   TabsContent, 
@@ -30,6 +30,7 @@ interface EventTeamsProps {
   isJoined: boolean;
   onJoinEvent: () => void;
   onTentativeJoin: () => void;
+  onSkipEvent: () => void;
   onAddFriend?: (name: string) => void;
 }
 
@@ -40,6 +41,7 @@ const EventTeams = ({
   isJoined, 
   onJoinEvent,
   onTentativeJoin,
+  onSkipEvent,
   onAddFriend
 }: EventTeamsProps) => {
   const [activeTab, setActiveTab] = useState("teams");
@@ -84,24 +86,34 @@ const EventTeams = ({
             Leave Event
           </Button>
         ) : (
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button className="w-64">
-                <UserPlus className="h-4 w-4 mr-2" />
-                Join
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent>
-              <DropdownMenuItem onClick={onJoinEvent}>
-                <UserPlus className="h-4 w-4 mr-2" />
-                <span>Join Now</span>
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={onTentativeJoin}>
-                <Clock className="h-4 w-4 mr-2" />
-                <span>Join Tentatively</span>
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <div className="flex gap-2">
+            <Button 
+              variant="destructive" 
+              onClick={onSkipEvent}
+              className="flex-1"
+            >
+              <UserX className="h-4 w-4 mr-2" />
+              Can't Participate
+            </Button>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button className="flex-1 bg-green-600 hover:bg-green-700">
+                  <UserPlus className="h-4 w-4 mr-2" />
+                  Join
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                <DropdownMenuItem onClick={onJoinEvent}>
+                  <UserPlus className="h-4 w-4 mr-2" />
+                  <span>Join Now</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={onTentativeJoin}>
+                  <Clock className="h-4 w-4 mr-2" />
+                  <span>Join Tentatively</span>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
         )}
       </div>
       

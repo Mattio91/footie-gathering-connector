@@ -14,9 +14,11 @@ interface EventViewProps {
   handlers: {
     handleJoinEvent: () => void;
     handleTentativeJoin: () => void;
+    handleSkipEvent: () => void;
     handleAddFriend: (name: string) => void;
     handleSendMessage: (message: string) => void;
     handleImageUpload: (file: File) => void;
+    handlePingMember?: (memberId: string) => void;
   };
 }
 
@@ -50,8 +52,10 @@ const EventView = ({
         handlers={{
           handleJoinEvent: handlers.handleJoinEvent,
           handleTentativeJoin: handlers.handleTentativeJoin,
+          handleSkipEvent: handlers.handleSkipEvent,
           handleAddFriend: handlers.handleAddFriend,
-          handleSendMessage: handlers.handleSendMessage
+          handleSendMessage: handlers.handleSendMessage,
+          handlePingMember: handlers.handlePingMember
         }}
       />
     </>
