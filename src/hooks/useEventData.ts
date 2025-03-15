@@ -1,5 +1,5 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { Group } from '@/types/group';
 import { Player } from '@/types/player';
@@ -45,6 +45,15 @@ interface ChatMessage {
 export const useEventData = (eventId: string) => {
   const { toast } = useToast();
   
+  // Add loading and error states
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+  const [event, setEvent] = useState<EventData | null>(null);
+  const [players, setPlayers] = useState<Player[]>([]);
+  const [isJoined, setIsJoined] = useState(false);
+  const [currentImages, setCurrentImages] = useState<string[]>([]);
+  const [mockMessages, setMockMessages] = useState<ChatMessage[]>([]);
+
   // Mock event data
   const mockEvent: EventData = {
     id: '1',
@@ -104,39 +113,72 @@ export const useEventData = (eventId: string) => {
     'https://images.unsplash.com/photo-1614632537423-1e6c2e7e0aab?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
   ];
 
-  const [isJoined, setIsJoined] = useState(false);
-  const [currentImages, setCurrentImages] = useState(mockImages);
-  const [players, setPlayers] = useState<Player[]>([
-    { id: '1', name: 'Alex Johnson', isConfirmed: true, isAdmin: true, avatar: 'https://randomuser.me/api/portraits/men/32.jpg' },
-    { id: '2', name: 'Sarah Smith', isConfirmed: true, isAdmin: false, avatar: 'https://randomuser.me/api/portraits/women/44.jpg' },
-    { id: '3', name: 'Mike Wilson', isConfirmed: true, isAdmin: false, avatar: 'https://randomuser.me/api/portraits/men/45.jpg' },
-    { id: '4', name: 'Jessica Taylor', isConfirmed: false, isAdmin: false, avatar: 'https://randomuser.me/api/portraits/women/23.jpg' },
-    { id: '5', name: 'David Brown', isConfirmed: true, isAdmin: false, avatar: 'https://randomuser.me/api/portraits/men/86.jpg' },
-    { id: '6', name: 'Emma Davis', isConfirmed: false, isAdmin: false, avatar: 'https://randomuser.me/api/portraits/women/12.jpg' },
-    { id: '7', name: 'Ryan Clark', isConfirmed: true, isAdmin: false },
-  ]);
-  
-  // Mock chat messages
-  const [mockMessages, setMockMessages] = useState<ChatMessage[]>([
-    { 
-      id: '1', 
-      author: { id: '2', name: 'Sarah Smith', avatar: 'https://randomuser.me/api/portraits/women/44.jpg' },
-      text: 'Looking forward to the game! Should we bring anything specific?',
-      timestamp: new Date(Date.now() - 8 * 60 * 60 * 1000),
-    },
-    {
-      id: '2',
-      author: { id: '1', name: 'Alex Johnson', avatar: 'https://randomuser.me/api/portraits/men/32.jpg' },
-      text: 'Just regular football gear and water! If you have both light and dark jerseys, that would help for making teams.',
-      timestamp: new Date(Date.now() - 7 * 60 * 60 * 1000),
-    },
-    {
-      id: '3',
-      author: { id: '3', name: 'Mike Wilson', avatar: 'https://randomuser.me/api/portraits/men/45.jpg' },
-      text: 'Is there parking available at the field?',
-      timestamp: new Date(Date.now() - 5 * 60 * 60 * 1000),
-    }
-  ]);
+  // Simulate API data fetching
+  useEffect(() => {
+    const fetchEventData = async () => {
+      setIsLoading(true);
+      setError(null);
+      
+      try {
+        // Simulate network delay
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        
+        // Check if event ID is valid (in a real app, this would be an API check)
+        if (!eventId || eventId === 'undefined') {
+          throw new Error('Invalid event ID');
+        }
+        
+        // For demo purposes: randomly fail 10% of the time to show error state
+        if (Math.random() < 0.1) {
+          throw new Error('Failed to load event data');
+        }
+        
+        // Set mock data (in a real app, this would be API response data)
+        setEvent(mockEvent);
+        setCurrentImages(mockImages);
+        setPlayers([
+          { id: '1', name: 'Alex Johnson', isConfirmed: true, isAdmin: true, avatar: 'https://randomuser.me/api/portraits/men/32.jpg' },
+          { id: '2', name: 'Sarah Smith', isConfirmed: true, isAdmin: false, avatar: 'https://randomuser.me/api/portraits/women/44.jpg' },
+          { id: '3', name: 'Mike Wilson', isConfirmed: true, isAdmin: false, avatar: 'https://randomuser.me/api/portraits/men/45.jpg' },
+          { id: '4', name: 'Jessica Taylor', isConfirmed: false, isAdmin: false, avatar: 'https://randomuser.me/api/portraits/women/23.jpg' },
+          { id: '5', name: 'David Brown', isConfirmed: true, isAdmin: false, avatar: 'https://randomuser.me/api/portraits/men/86.jpg' },
+          { id: '6', name: 'Emma Davis', isConfirmed: false, isAdmin: false, avatar: 'https://randomuser.me/api/portraits/women/12.jpg' },
+          { id: '7', name: 'Ryan Clark', isConfirmed: true, isAdmin: false },
+        ]);
+        setMockMessages([
+          { 
+            id: '1', 
+            author: { id: '2', name: 'Sarah Smith', avatar: 'https://randomuser.me/api/portraits/women/44.jpg' },
+            text: 'Looking forward to the game! Should we bring anything specific?',
+            timestamp: new Date(Date.now() - 8 * 60 * 60 * 1000),
+          },
+          {
+            id: '2',
+            author: { id: '1', name: 'Alex Johnson', avatar: 'https://randomuser.me/api/portraits/men/32.jpg' },
+            text: 'Just regular football gear and water! If you have both light and dark jerseys, that would help for making teams.',
+            timestamp: new Date(Date.now() - 7 * 60 * 60 * 1000),
+          },
+          {
+            id: '3',
+            author: { id: '3', name: 'Mike Wilson', avatar: 'https://randomuser.me/api/portraits/men/45.jpg' },
+            text: 'Is there parking available at the field?',
+            timestamp: new Date(Date.now() - 5 * 60 * 60 * 1000),
+          }
+        ]);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'An unknown error occurred');
+        toast({
+          title: "Error",
+          description: err instanceof Error ? err.message : 'Failed to load event data',
+          variant: "destructive",
+        });
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchEventData();
+  }, [eventId, toast]);
 
   // Handle join event
   const handleJoinEvent = () => {
@@ -209,27 +251,45 @@ export const useEventData = (eventId: string) => {
 
   // Handle image upload
   const handleImageUpload = (file: File) => {
-    const imageUrl = URL.createObjectURL(file);
-    setCurrentImages([imageUrl, ...currentImages.slice(1)]);
-    
-    toast({
-      title: "Image Updated",
-      description: "Your event image has been updated successfully.",
-    });
+    try {
+      const imageUrl = URL.createObjectURL(file);
+      setCurrentImages([imageUrl, ...currentImages.slice(1)]);
+      
+      toast({
+        title: "Image Updated",
+        description: "Your event image has been updated successfully.",
+      });
+    } catch (err) {
+      toast({
+        title: "Error",
+        description: "Failed to upload image",
+        variant: "destructive",
+      });
+    }
   };
 
   // Handle member role update
   const handleUpdateMemberRole = (groupId: string, memberId: string, role: string) => {
-    // In a real application, this would update the role in the database
-    console.log(`Updated role for member ${memberId} in group ${groupId} to ${role}`);
+    try {
+      // In a real application, this would update the role in the database
+      console.log(`Updated role for member ${memberId} in group ${groupId} to ${role}`);
+    } catch (err) {
+      toast({
+        title: "Error",
+        description: "Failed to update member role",
+        variant: "destructive",
+      });
+    }
   };
 
   return {
-    event: mockEvent,
+    event: event || mockEvent, // Fallback to mockEvent if event is null
     players,
     isJoined,
     currentImages,
     messages: mockMessages,
+    isLoading,
+    error,
     handleJoinEvent,
     handleAddFriend,
     handleSendMessage,
