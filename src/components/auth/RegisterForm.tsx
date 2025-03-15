@@ -1,6 +1,4 @@
-
 import React from 'react';
-import { Link } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -23,7 +21,6 @@ interface RegisterFormProps {
   confirmPassword: string;
   setConfirmPassword: (confirmPassword: string) => void;
   error: string | null;
-  setError: (error: string | null) => void;
   isLoading: boolean;
 }
 
@@ -39,12 +36,11 @@ const RegisterForm = ({
   confirmPassword,
   setConfirmPassword,
   error, 
-  setError,
   isLoading 
 }: RegisterFormProps) => {
   const { t } = useTranslation();
   const { signUp, isLoaded: signUpLoaded } = useSignUp();
-  const { handleAuthError } = useAuth();
+  const { handleAuthError, setError } = useAuth();
 
   const validateForm = () => {
     if (password !== confirmPassword) {
