@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -17,7 +18,9 @@ const Header = () => {
       <div className="container flex h-14 items-center">
         <div className="mr-4 flex">
           <Link to="/" className="mr-6 flex items-center space-x-2">
-            <span className="font-bold text-xl">{t("common.appName")}</span>
+            <span className="font-bold text-xl text-purple-600">
+              Gather <span className="text-sm font-medium text-purple-400">To Play</span>
+            </span>
           </Link>
           <nav className="flex items-center space-x-6 text-sm font-medium">
             <Link
@@ -54,7 +57,9 @@ const Header = () => {
             </Button>
           </Link>
           <Link to="/create-event">
-            <Button size="sm">{t("common.createEvent")}</Button>
+            <Button size="sm" className="bg-purple-600 hover:bg-purple-700">
+              {t("common.createEvent")}
+            </Button>
           </Link>
         </div>
       </div>

@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { Users, UserPlus, Clock, UserX } from 'lucide-react';
 import { 
@@ -134,15 +135,20 @@ const EventTeams = ({
             />
           </div>
           
-          <TeamReserve
-            reservePlayers={reservePlayers}
-            onDragStart={handleDragStart}
-            onDragOver={handleDragOver}
-            onDrop={handleDrop}
-            onAddFriend={handleAddFriend}
-          />
+          {/* Reserve players section - moved between teams and tentative players */}
+          <div className="mt-6">
+            <TeamReserve
+              reservePlayers={reservePlayers}
+              onDragStart={handleDragStart}
+              onDragOver={handleDragOver}
+              onDrop={handleDrop}
+              onAddFriend={handleAddFriend}
+            />
+          </div>
           
-          <TentativePlayers tentativePlayers={tentativePlayers} />
+          <div className="mt-6">
+            <TentativePlayers tentativePlayers={tentativePlayers} />
+          </div>
         </TabsContent>
         
         <TabsContent value="field" className="pt-4">

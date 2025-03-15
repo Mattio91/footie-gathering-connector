@@ -4,7 +4,6 @@ import EventAbout from '@/components/EventAbout';
 import EventMap from '@/components/EventMap';
 import EventChat from '@/components/EventChat';
 import EventGroups from '@/components/EventGroups';
-import EventHostInfo from '@/components/event/EventHostInfo';
 import { Player } from '@/types/player';
 import { Group } from '@/types/group';
 
@@ -54,6 +53,11 @@ const EventContent = ({ event, players, tentativePlayers, isJoined, messages, ha
     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
       {/* Left/Main content (2/3 width) */}
       <div className="md:col-span-2 space-y-8">
+        {/* About event info button in corner */}
+        <div className="flex justify-end">
+          <EventAbout description={event.description} />
+        </div>
+        
         {/* Teams & Field visualization section with join button */}
         <EventTeams 
           players={players} 
@@ -65,9 +69,6 @@ const EventContent = ({ event, players, tentativePlayers, isJoined, messages, ha
           onSkipEvent={handlers.handleSkipEvent}
           onAddFriend={handlers.handleAddFriend}
         />
-        
-        {/* Event description is now hidden in a collapsible component */}
-        <EventAbout description={event.description} />
         
         {/* Chat section - made taller */}
         <EventChat 
@@ -86,10 +87,7 @@ const EventContent = ({ event, players, tentativePlayers, isJoined, messages, ha
       
       {/* Right sidebar (1/3 width) */}
       <div className="space-y-8">
-        {/* Event host information */}
-        <EventHostInfo host={event.host} coHosts={event.coHosts} />
-        
-        {/* Event groups and invitation */}
+        {/* Event groups moved to after reserve players */}
         <EventGroups 
           groups={event.groups} 
           onPingMember={handlers.handlePingMember}

@@ -56,7 +56,7 @@ const EventImageCarousel = ({
   };
 
   return (
-    <div className="relative rounded-xl overflow-hidden aspect-[16/9] bg-muted animate-fade-in mb-8">
+    <div className="relative rounded-xl overflow-hidden aspect-[21/9] bg-muted animate-fade-in mb-8">
       <img 
         src={images[activeImageIndex]} 
         alt="Event image" 
