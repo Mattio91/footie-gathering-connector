@@ -168,7 +168,21 @@ const GroupMemberItem = ({ member, onPingMember }: GroupMemberItemProps) => {
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>
-        ) : null;
+        ) : (
+          // Display a neutral status indicator when no participation status is set
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Badge variant="outline" className="bg-gray-100 text-gray-600 border-gray-300 hover:bg-gray-200 flex items-center gap-1 ml-2">
+                  <span className="text-xs">No status</span>
+                </Badge>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>No participation status set</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        );
     }
   };
 
