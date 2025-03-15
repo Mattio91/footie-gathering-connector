@@ -69,15 +69,6 @@ const EventContent = ({ event, players, tentativePlayers, isJoined, messages, ha
         {/* About the event */}
         <EventAbout description={event.description} />
         
-        {/* Location map */}
-        <div className="space-y-4">
-          <h3 className="text-lg font-semibold">Location</h3>
-          <EventMap 
-            location={event.location} 
-            locationDetails={event.locationDetails}
-          />
-        </div>
-        
         {/* Chat section */}
         <div className="space-y-4">
           <h3 className="text-lg font-semibold">Event Chat</h3>
@@ -86,6 +77,12 @@ const EventContent = ({ event, players, tentativePlayers, isJoined, messages, ha
             onSendMessage={handlers.handleSendMessage}
           />
         </div>
+        
+        {/* Location map moved to bottom */}
+        <EventMap 
+          location={event.location} 
+          locationDetails={event.locationDetails}
+        />
       </div>
       
       {/* Right sidebar (1/3 width) */}
