@@ -42,7 +42,6 @@ interface EventContentProps {
     handleJoinEvent: () => void;
     handleAddFriend: (name: string) => void;
     handleSendMessage: (message: string) => void;
-    handleUpdateMemberRole: (groupId: string, memberId: string, role: string) => void;
   };
 }
 
@@ -88,10 +87,7 @@ const EventContent = ({ event, players, isJoined, messages, handlers }: EventCon
         <EventHostInfo host={event.host} coHosts={event.coHosts} />
         
         {/* Event groups and invitation */}
-        <EventGroups 
-          groups={event.groups}
-          onUpdateMemberRole={handlers.handleUpdateMemberRole}
-        />
+        <EventGroups groups={event.groups} />
       </div>
     </div>
   );

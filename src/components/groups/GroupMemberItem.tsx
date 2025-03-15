@@ -1,21 +1,55 @@
+
 import { Badge } from '@/components/ui/badge';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Shield, UserCog } from 'lucide-react';
 import { GroupMember } from '@/types/group';
+import { Crown, Shield, UserCheck, UserCog, Mail } from 'lucide-react';
 
 interface GroupMemberItemProps {
   member: GroupMember;
-  groupId: string;
-  onRoleChange: (groupId: string, memberId: string, role: string) => void;
 }
 
-const GroupMemberItem = ({ member, groupId, onRoleChange }: GroupMemberItemProps) => {
+const GroupMemberItem = ({ member }: GroupMemberItemProps) => {
+  const getRoleBadge = () => {
+    switch(member.role) {
+      case 'Admin':
+        return (
+          <Badge className="bg-red-600 flex items-center gap-1">
+            <Shield className="h-3 w-3" />
+            Admin
+          </Badge>
+        );
+      case 'Co-Admin':
+        return (
+          <Badge className="bg-orange-600 flex items-center gap-1">
+            <UserCog className="h-3 w-3" />
+            Co-Admin
+          </Badge>
+        );
+      case 'Founder':
+        return (
+          <Badge className="bg-yellow-600 flex items-center gap-1">
+            <Crown className="h-3 w-3" />
+            Founder
+          </Badge>
+        );
+      case 'Member':
+        return (
+          <Badge className="bg-blue-600 flex items-center gap-1">
+            <UserCheck className="h-3 w-3" />
+            Member
+          </Badge>
+        );
+      case 'New':
+        return (
+          <Badge className="bg-green-600 flex items-center gap-1">
+            <Mail className="h-3 w-3" />
+            New
+          </Badge>
+        );
+      default:
+        return null;
+    }
+  };
+
   return (
     <div className="flex items-center justify-between">
       <div className="flex items-center gap-2">
@@ -27,38 +61,9 @@ const GroupMemberItem = ({ member, groupId, onRoleChange }: GroupMemberItemProps
           />
         </div>
         <span className="text-sm">{member.name}</span>
-        
-        {member.role === 'Host' && (
-          <Badge className="bg-green-600">Host</Badge>
-        )}
-        {member.role === 'Admin' && (
-          <Badge className="bg-blue-600">Admin</Badge>
-        )}
       </div>
       
-      <Select 
-        defaultValue={member.role}
-        onValueChange={(value) => onRoleChange(groupId, member.id, value)}
-      >
-        <SelectTrigger className="w-28 h-8">
-          <SelectValue placeholder="Role" />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectItem value="Host">
-            <div className="flex items-center">
-              <Shield className="h-3 w-3 mr-1" />
-              Host
-            </div>
-          </SelectItem>
-          <SelectItem value="Admin">
-            <div className="flex items-center">
-              <UserCog className="h-3 w-3 mr-1" />
-              Admin
-            </div>
-          </SelectItem>
-          <SelectItem value="Member">Member</SelectItem>
-        </SelectContent>
-      </Select>
+      {getRoleBadge()}
     </div>
   );
 };

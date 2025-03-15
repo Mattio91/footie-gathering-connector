@@ -1,3 +1,4 @@
+
 import { Badge } from '@/components/ui/badge';
 import { 
   Collapsible, 
@@ -5,17 +6,16 @@ import {
   CollapsibleTrigger 
 } from '@/components/ui/collapsible';
 import { ChevronDown, ChevronRight, Users } from 'lucide-react';
-import { Group, GroupMember } from '@/types/group';
+import { Group } from '@/types/group';
 import GroupMemberItem from './GroupMemberItem';
 
 interface GroupItemProps {
   group: Group;
   isExpanded: boolean;
   onToggle: (groupId: string) => void;
-  onRoleChange: (groupId: string, memberId: string, role: string) => void;
 }
 
-const GroupItem = ({ group, isExpanded, onToggle, onRoleChange }: GroupItemProps) => {
+const GroupItem = ({ group, isExpanded, onToggle }: GroupItemProps) => {
   return (
     <Collapsible className="border rounded-md p-2">
       <div className="flex items-center justify-between">
@@ -43,9 +43,7 @@ const GroupItem = ({ group, isExpanded, onToggle, onRoleChange }: GroupItemProps
             {group.members.map(member => (
               <GroupMemberItem 
                 key={member.id} 
-                member={member} 
-                groupId={group.id}
-                onRoleChange={onRoleChange}
+                member={member}
               />
             ))}
           </div>

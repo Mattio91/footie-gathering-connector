@@ -2,7 +2,7 @@
 export interface GroupMember {
   id: string;
   name: string;
-  role: 'Host' | 'Admin' | 'Member';
+  role: 'New' | 'Member' | 'Founder' | 'Co-Admin' | 'Admin';
   avatar?: string;
 }
 

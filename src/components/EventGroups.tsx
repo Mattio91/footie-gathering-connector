@@ -1,7 +1,7 @@
+
 import { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Users } from 'lucide-react';
-import { useToast } from '@/hooks/use-toast';
 import { Group } from '@/types/group';
 import GroupItem from './groups/GroupItem';
 import GroupInviteForm from './groups/GroupInviteForm';
@@ -9,29 +9,16 @@ import GroupEmptyState from './groups/GroupEmptyState';
 
 interface EventGroupsProps {
   groups: Group[];
-  onUpdateMemberRole?: (groupId: string, memberId: string, role: string) => void;
 }
 
-const EventGroups = ({ groups, onUpdateMemberRole }: EventGroupsProps) => {
+const EventGroups = ({ groups }: EventGroupsProps) => {
   const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>({});
-  const { toast } = useToast();
 
   const toggleGroup = (groupId: string) => {
     setExpandedGroups(prev => ({
       ...prev,
       [groupId]: !prev[groupId]
     }));
-  };
-
-  const handleRoleChange = (groupId: string, memberId: string, role: string) => {
-    if (onUpdateMemberRole) {
-      onUpdateMemberRole(groupId, memberId, role);
-      
-      toast({
-        title: "Role updated",
-        description: `Member role has been updated to ${role}`,
-      });
-    }
   };
 
   return (
@@ -52,7 +39,6 @@ const EventGroups = ({ groups, onUpdateMemberRole }: EventGroupsProps) => {
                     group={group} 
                     isExpanded={expandedGroups[group.id] || false}
                     onToggle={toggleGroup}
-                    onRoleChange={handleRoleChange}
                   />
                 ))}
               </div>
