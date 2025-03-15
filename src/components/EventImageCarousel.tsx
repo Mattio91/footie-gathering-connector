@@ -1,7 +1,7 @@
 
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { ChevronLeft, CalendarIcon, Clock, MapPin, Users } from 'lucide-react';
+import { ChevronLeft, CalendarIcon, Clock, MapPin, Users, ImagePlus } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
 
@@ -15,6 +15,7 @@ interface EventImageCarouselProps {
   locationDetails?: string;
   playerCount?: number;
   maxPlayers?: number;
+  onImageUpload?: (file: File) => void;
 }
 
 const EventImageCarousel = ({ 
@@ -26,7 +27,8 @@ const EventImageCarousel = ({
   location,
   locationDetails,
   playerCount,
-  maxPlayers
+  maxPlayers,
+  onImageUpload
 }: EventImageCarouselProps) => {
   const [activeImageIndex, setActiveImageIndex] = useState(0);
   
@@ -46,13 +48,43 @@ const EventImageCarousel = ({
     );
   };
 
+  // Handle image upload
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0] && onImageUpload) {
+      onImageUpload(e.target.files[0]);
+    }
+  };
+
   return (
-    <div className="relative rounded-xl overflow-hidden aspect-[16/6] bg-muted animate-fade-in mb-8">
+    <div className="relative rounded-xl overflow-hidden aspect-[16/9] bg-muted animate-fade-in mb-8">
       <img 
         src={images[activeImageIndex]} 
         alt="Event image" 
         className="w-full h-full object-cover"
       />
+      
+      {/* Image upload button */}
+      {onImageUpload && (
+        <div className="absolute top-4 right-4 z-10">
+          <label htmlFor="image-upload" className="cursor-pointer">
+            <Button 
+              variant="secondary" 
+              size="sm" 
+              className="bg-black/50 hover:bg-black/70 text-white"
+            >
+              <ImagePlus className="h-4 w-4 mr-1" />
+              Change Image
+            </Button>
+            <input 
+              id="image-upload" 
+              type="file" 
+              accept="image/*" 
+              className="hidden" 
+              onChange={handleImageChange}
+            />
+          </label>
+        </div>
+      )}
       
       {/* Overlay with event details */}
       <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent">

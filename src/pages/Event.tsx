@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { ChevronLeft, Share2, Tag } from 'lucide-react';
@@ -31,11 +30,37 @@ const mockEvent = {
     name: 'Alex Johnson',
     avatar: 'https://randomuser.me/api/portraits/men/32.jpg'
   },
+  coHosts: [
+    {
+      id: '2',
+      name: 'Sarah Smith',
+      avatar: 'https://randomuser.me/api/portraits/women/44.jpg'
+    }
+  ],
   description: 'Casual 6-a-side match on Saturday morning. All skill levels welcome! We\'ll play for about 90 minutes. There\'s a small fee to cover pitch rental. Please bring both dark and light colored shirts so we can make teams on the day.',
   imageUrl: 'https://images.unsplash.com/photo-1592656094267-764a45160876?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
   groups: [
-    { id: '1', name: 'Sunday League', memberCount: 14 },
-    { id: '2', name: 'Neighborhood Crew', memberCount: 8 }
+    { 
+      id: '1', 
+      name: 'Sunday League', 
+      memberCount: 14,
+      members: [
+        { id: '1', name: 'Alex Johnson', role: 'Host', avatar: 'https://randomuser.me/api/portraits/men/32.jpg' },
+        { id: '2', name: 'Sarah Smith', role: 'Admin', avatar: 'https://randomuser.me/api/portraits/women/44.jpg' },
+        { id: '3', name: 'Mike Wilson', role: 'Member', avatar: 'https://randomuser.me/api/portraits/men/45.jpg' },
+        { id: '4', name: 'Jessica Taylor', role: 'Member', avatar: 'https://randomuser.me/api/portraits/women/23.jpg' }
+      ]
+    },
+    { 
+      id: '2', 
+      name: 'Neighborhood Crew', 
+      memberCount: 8,
+      members: [
+        { id: '1', name: 'Alex Johnson', role: 'Host', avatar: 'https://randomuser.me/api/portraits/men/32.jpg' },
+        { id: '5', name: 'David Brown', role: 'Member', avatar: 'https://randomuser.me/api/portraits/men/86.jpg' },
+        { id: '6', name: 'Emma Davis', role: 'Member', avatar: 'https://randomuser.me/api/portraits/women/12.jpg' }
+      ]
+    }
   ]
 };
 
@@ -50,6 +75,7 @@ const Event = () => {
   const { id } = useParams<{ id: string }>();
   const [isJoined, setIsJoined] = useState(false);
   const [chatMessages, setChatMessages] = useState([]);
+  const [currentImages, setCurrentImages] = useState(mockImages);
   const [players, setPlayers] = useState([
     { id: '1', name: 'Alex Johnson', isConfirmed: true, isAdmin: true, avatar: 'https://randomuser.me/api/portraits/men/32.jpg' },
     { id: '2', name: 'Sarah Smith', isConfirmed: true, isAdmin: false, avatar: 'https://randomuser.me/api/portraits/women/44.jpg' },
@@ -151,6 +177,23 @@ const Event = () => {
     
     setMockMessages([...mockMessages, newMessage]);
   };
+
+  // Handle image upload
+  const handleImageUpload = (file: File) => {
+    const imageUrl = URL.createObjectURL(file);
+    setCurrentImages([imageUrl, ...currentImages.slice(1)]);
+    
+    toast({
+      title: "Image Updated",
+      description: "Your event image has been updated successfully.",
+    });
+  };
+
+  // Handle member role update
+  const handleUpdateMemberRole = (groupId: string, memberId: string, role: string) => {
+    // In a real application, this would update the role in the database
+    console.log(`Updated role for member ${memberId} in group ${groupId} to ${role}`);
+  };
   
   return (
     <div className="min-h-screen flex flex-col">
@@ -173,7 +216,7 @@ const Event = () => {
           
           {/* Field Image with title and details on it */}
           <EventImageCarousel 
-            images={mockImages} 
+            images={currentImages} 
             title={mockEvent.title}
             date={mockEvent.date}
             time={mockEvent.time}
@@ -182,6 +225,7 @@ const Event = () => {
             locationDetails={mockEvent.locationDetails}
             playerCount={players.length}
             maxPlayers={mockEvent.maxPlayers}
+            onImageUpload={handleImageUpload}
           />
           
           {/* Main content area - grid layout */}
@@ -235,11 +279,34 @@ const Event = () => {
                     </div>
                     <span>{mockEvent.host.name}</span>
                   </div>
+                  
+                  {mockEvent.coHosts && mockEvent.coHosts.length > 0 && (
+                    <div className="mt-2">
+                      <div className="font-medium mb-1">Co-hosts</div>
+                      <div className="space-y-2">
+                        {mockEvent.coHosts.map(coHost => (
+                          <div key={coHost.id} className="flex items-center">
+                            <div className="w-8 h-8 rounded-full overflow-hidden mr-2">
+                              <img 
+                                src={coHost.avatar || `https://ui-avatars.com/api/?name=${coHost.name}`}
+                                alt={coHost.name}
+                                className="w-full h-full object-cover"
+                              />
+                            </div>
+                            <span>{coHost.name}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
               
               {/* Event groups and invitation */}
-              <EventGroups groups={mockEvent.groups} />
+              <EventGroups 
+                groups={mockEvent.groups} 
+                onUpdateMemberRole={handleUpdateMemberRole}
+              />
             </div>
           </div>
         </div>
