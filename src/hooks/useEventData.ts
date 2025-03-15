@@ -11,6 +11,8 @@ export const useEventData = (eventId: string) => {
     event,
     players,
     setPlayers,
+    tentativePlayers,
+    setTentativePlayers,
     isJoined,
     setIsJoined,
     currentImages,
@@ -22,12 +24,15 @@ export const useEventData = (eventId: string) => {
   // Get actions from useEventActions
   const {
     handleJoinEvent,
+    handleTentativeJoin,
     handleAddFriend,
     handleSendMessage,
     handleImageUpload
   } = useEventActions({
     players,
     setPlayers,
+    tentativePlayers,
+    setTentativePlayers,
     isJoined,
     setIsJoined,
     currentImages,
@@ -39,12 +44,14 @@ export const useEventData = (eventId: string) => {
   return {
     event: event as EventData, // Type assertion since it's null initially but we handle that in the component
     players,
+    tentativePlayers,
     isJoined,
     currentImages,
     messages,
     isLoading,
     error,
     handleJoinEvent,
+    handleTentativeJoin,
     handleAddFriend,
     handleSendMessage,
     handleImageUpload

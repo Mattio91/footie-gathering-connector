@@ -27,6 +27,7 @@ interface EventContentProps {
     }[];
   };
   players: Player[];
+  tentativePlayers: Player[];
   isJoined: boolean;
   messages: {
     id: string;
@@ -40,12 +41,13 @@ interface EventContentProps {
   }[];
   handlers: {
     handleJoinEvent: () => void;
+    handleTentativeJoin: () => void;
     handleAddFriend: (name: string) => void;
     handleSendMessage: (message: string) => void;
   };
 }
 
-const EventContent = ({ event, players, isJoined, messages, handlers }: EventContentProps) => {
+const EventContent = ({ event, players, tentativePlayers, isJoined, messages, handlers }: EventContentProps) => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
       {/* Left/Main content (2/3 width) */}
@@ -53,9 +55,11 @@ const EventContent = ({ event, players, isJoined, messages, handlers }: EventCon
         {/* Teams & Field visualization section with join button */}
         <EventTeams 
           players={players} 
+          tentativePlayers={tentativePlayers}
           maxPlayers={event.maxPlayers} 
           isJoined={isJoined}
           onJoinEvent={handlers.handleJoinEvent}
+          onTentativeJoin={handlers.handleTentativeJoin}
           onAddFriend={handlers.handleAddFriend}
         />
         

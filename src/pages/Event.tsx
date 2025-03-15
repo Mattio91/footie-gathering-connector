@@ -13,12 +13,14 @@ const Event = () => {
   const { 
     event, 
     players, 
+    tentativePlayers,
     isJoined, 
     currentImages, 
     messages,
     isLoading,
     error,
     handleJoinEvent,
+    handleTentativeJoin,
     handleAddFriend,
     handleSendMessage,
     handleImageUpload
@@ -44,11 +46,13 @@ const Event = () => {
               <EventView 
                 event={event}
                 players={players}
+                tentativePlayers={tentativePlayers}
                 isJoined={isJoined}
                 currentImages={currentImages}
                 messages={messages}
                 handlers={{
                   handleJoinEvent,
+                  handleTentativeJoin,
                   handleAddFriend,
                   handleSendMessage,
                   handleImageUpload

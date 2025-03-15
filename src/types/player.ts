@@ -4,5 +4,6 @@ export interface Player {
   name: string;
   isConfirmed: boolean;
   isAdmin: boolean;
+  isTentative?: boolean;
   avatar?: string;
 }

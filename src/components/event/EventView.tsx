@@ -7,11 +7,13 @@ import { Player } from '@/types/player';
 interface EventViewProps {
   event: EventData;
   players: Player[];
+  tentativePlayers: Player[];
   isJoined: boolean;
   currentImages: string[];
   messages: ChatMessage[];
   handlers: {
     handleJoinEvent: () => void;
+    handleTentativeJoin: () => void;
     handleAddFriend: (name: string) => void;
     handleSendMessage: (message: string) => void;
     handleImageUpload: (file: File) => void;
@@ -21,6 +23,7 @@ interface EventViewProps {
 const EventView = ({ 
   event, 
   players, 
+  tentativePlayers,
   isJoined, 
   currentImages, 
   messages, 
@@ -41,10 +44,12 @@ const EventView = ({
       <EventContent 
         event={event}
         players={players}
+        tentativePlayers={tentativePlayers}
         isJoined={isJoined}
         messages={messages}
         handlers={{
           handleJoinEvent: handlers.handleJoinEvent,
+          handleTentativeJoin: handlers.handleTentativeJoin,
           handleAddFriend: handlers.handleAddFriend,
           handleSendMessage: handlers.handleSendMessage
         }}

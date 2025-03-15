@@ -13,6 +13,7 @@ export const useEventState = (eventId: string) => {
   const [error, setError] = useState<string | null>(null);
   const [event, setEvent] = useState<EventData | null>(null);
   const [players, setPlayers] = useState<Player[]>([]);
+  const [tentativePlayers, setTentativePlayers] = useState<Player[]>([]);
   const [isJoined, setIsJoined] = useState(false);
   const [currentImages, setCurrentImages] = useState<string[]>([]);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
@@ -41,6 +42,7 @@ export const useEventState = (eventId: string) => {
         setEvent(getMockEvent(eventId));
         setCurrentImages(mockImages);
         setPlayers(getMockPlayers());
+        setTentativePlayers([]);
         setMessages(getMockMessages());
       } catch (err) {
         setError(err instanceof Error ? err.message : 'An unknown error occurred');
@@ -63,6 +65,8 @@ export const useEventState = (eventId: string) => {
     event,
     players,
     setPlayers,
+    tentativePlayers,
+    setTentativePlayers,
     isJoined,
     setIsJoined,
     currentImages,
