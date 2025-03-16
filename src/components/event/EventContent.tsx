@@ -50,49 +50,36 @@ interface EventContentProps {
 
 const EventContent = ({ event, players, tentativePlayers, isJoined, messages, handlers }: EventContentProps) => {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-4 gap-3 compact-grid">
-      {/* Main content (75% width) */}
-      <div className="md:col-span-3 space-y-3 compact-spacing">
-        {/* About event info button in corner */}
-        <div className="flex justify-end">
-          <EventAbout description={event.description} />
-        </div>
-        
-        {/* Teams & Field visualization section with join button */}
-        <EventTeams 
-          players={players} 
-          tentativePlayers={tentativePlayers}
-          maxPlayers={event.maxPlayers} 
-          isJoined={isJoined}
-          onJoinEvent={handlers.handleJoinEvent}
-          onTentativeJoin={handlers.handleTentativeJoin}
-          onSkipEvent={handlers.handleSkipEvent}
-          onAddFriend={handlers.handleAddFriend}
-        />
-        
-        {/* Chat section */}
-        <EventChat 
-          messages={messages}
-          onSendMessage={handlers.handleSendMessage}
-        />
-        
-        {/* Groups */}
-        <EventGroups 
-          groups={event.groups} 
-          onPingMember={handlers.handlePingMember}
-        />
-        
-        {/* Map moved below groups */}
-        <EventMap 
-          location={event.location} 
-          locationDetails={event.locationDetails}
-        />
-      </div>
+    <div className="space-y-3 compact-spacing">
+      {/* Teams & Field visualization section with join button */}
+      <EventTeams 
+        players={players} 
+        tentativePlayers={tentativePlayers}
+        maxPlayers={event.maxPlayers} 
+        isJoined={isJoined}
+        onJoinEvent={handlers.handleJoinEvent}
+        onTentativeJoin={handlers.handleTentativeJoin}
+        onSkipEvent={handlers.handleSkipEvent}
+        onAddFriend={handlers.handleAddFriend}
+      />
       
-      {/* Smaller right sidebar (25% width) - now empty */}
-      <div className="space-y-3 compact-spacing">
-        {/* This column is now empty but kept for layout purposes */}
-      </div>
+      {/* Chat section */}
+      <EventChat 
+        messages={messages}
+        onSendMessage={handlers.handleSendMessage}
+      />
+      
+      {/* Groups */}
+      <EventGroups 
+        groups={event.groups} 
+        onPingMember={handlers.handlePingMember}
+      />
+      
+      {/* Map moved below groups */}
+      <EventMap 
+        location={event.location} 
+        locationDetails={event.locationDetails}
+      />
     </div>
   );
 };
