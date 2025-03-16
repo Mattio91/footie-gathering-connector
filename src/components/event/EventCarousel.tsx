@@ -1,11 +1,12 @@
 
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { ChevronLeft, Calendar, Clock, MapPin, Users, ImagePlus } from 'lucide-react';
+import { ChevronLeft, Calendar, Clock, MapPin, Users, ImagePlus, Share2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
 import EventAbout from '@/components/EventAbout';
 import { EventData } from '@/types/event';
+import { Link } from 'react-router-dom';
 
 interface EventCarouselProps {
   images: string[];
@@ -42,7 +43,23 @@ const EventCarousel = ({ images, event, playerCount, maxPlayers, onImageUpload }
   };
 
   return (
-    <div className="relative rounded-xl overflow-hidden aspect-[21/9] bg-muted animate-fade-in mb-6">
+    <div className="relative rounded-xl overflow-hidden aspect-[21/9] bg-muted animate-fade-in mb-4">
+      {/* Navigation Buttons directly on the image */}
+      <div className="absolute top-0 left-0 right-0 flex justify-between items-center p-2 z-20">
+        <Link to="/" className="text-white hover:text-white/80 transition-colors inline-flex items-center bg-black/40 px-2 py-1 rounded-md">
+          <ChevronLeft className="h-4 w-4 mr-1" />
+          Back
+        </Link>
+        
+        <Button 
+          variant="ghost" 
+          size="sm" 
+          className="text-white bg-black/40 hover:bg-black/60"
+        >
+          <Share2 className="h-4 w-4" />
+        </Button>
+      </div>
+      
       {images.length > 0 ? (
         <img 
           src={images[activeImageIndex]} 

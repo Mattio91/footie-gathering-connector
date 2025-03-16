@@ -2,7 +2,6 @@
 import { useParams } from 'react-router-dom';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
-import EventHeaderActions from '@/components/event/EventHeaderActions';
 import EventSkeleton from '@/components/event/EventSkeleton';
 import EventError from '@/components/event/EventError';
 import EventView from '@/components/event/EventView';
@@ -32,11 +31,8 @@ const Event = () => {
     <div className="min-h-screen flex flex-col">
       <Header />
       
-      <main className="flex-grow pt-24 pb-16">
+      <main className="flex-grow pt-16 pb-16" data-lov-name="main">
         <div className="container max-w-6xl mx-auto px-4">
-          {/* Back button and share */}
-          <EventHeaderActions />
-          
           {/* Error state */}
           {error && <EventError error={error} />}
           
