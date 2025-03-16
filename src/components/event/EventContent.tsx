@@ -50,9 +50,9 @@ interface EventContentProps {
 
 const EventContent = ({ event, players, tentativePlayers, isJoined, messages, handlers }: EventContentProps) => {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 compact-grid">
-      {/* Left/Main content (2/3 width) */}
-      <div className="md:col-span-2 space-y-4 compact-spacing">
+    <div className="grid grid-cols-1 md:grid-cols-4 gap-3 compact-grid">
+      {/* Main content (75% width) */}
+      <div className="md:col-span-3 space-y-3 compact-spacing">
         {/* About event info button in corner */}
         <div className="flex justify-end">
           <EventAbout description={event.description} />
@@ -76,20 +76,22 @@ const EventContent = ({ event, players, tentativePlayers, isJoined, messages, ha
           onSendMessage={handlers.handleSendMessage}
         />
         
-        {/* Groups - moved below teams and chat */}
+        {/* Groups */}
         <EventGroups 
           groups={event.groups} 
           onPingMember={handlers.handlePingMember}
         />
-      </div>
-      
-      {/* Right sidebar (1/3 width) */}
-      <div className="space-y-4 compact-spacing">
-        {/* Location map */}
+        
+        {/* Map moved below groups */}
         <EventMap 
           location={event.location} 
           locationDetails={event.locationDetails}
         />
+      </div>
+      
+      {/* Smaller right sidebar (25% width) - now empty */}
+      <div className="space-y-3 compact-spacing">
+        {/* This column is now empty but kept for layout purposes */}
       </div>
     </div>
   );
