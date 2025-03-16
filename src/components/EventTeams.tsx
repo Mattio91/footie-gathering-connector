@@ -61,7 +61,7 @@ const EventTeams = ({
   };
   
   return (
-    <div className="space-y-3">
+    <div className="space-y-2 compact-spacing">
       <div className="flex justify-between items-center">
         <h2 className="text-xl font-semibold">Teams</h2>
         <div className="text-sm text-muted-foreground">
@@ -69,7 +69,7 @@ const EventTeams = ({
         </div>
       </div>
       
-      <div className="flex justify-center mb-3">
+      <div className="flex justify-center mb-2">
         {isJoined ? (
           <Button 
             className="w-64 bg-destructive hover:bg-destructive/90"
@@ -112,20 +112,21 @@ const EventTeams = ({
           <TabsTrigger value="field">Field View</TabsTrigger>
         </TabsList>
         
-        <TabsContent value="teams" className="pt-3">
-          {/* Home Team */}
-          <TeamCard
-            teamName="Home Team"
-            teamPlayers={teamA}
-            teamColor="team-home"
-            maxTeamSize={Math.ceil(maxPlayers/2)}
-            onDragStart={handleDragStart}
-            onDragOver={handleDragOver}
-            onDrop={handleDrop}
-          />
-          
-          {/* Reserve Players - now between Home and Away teams */}
-          <div className="my-3">
+        <TabsContent value="teams" className="pt-2">
+          {/* Teams side by side */}
+          <div className="grid grid-cols-3 gap-2 compact-grid">
+            {/* Home Team */}
+            <TeamCard
+              teamName="Home Team"
+              teamPlayers={teamA}
+              teamColor="team-home"
+              maxTeamSize={Math.ceil(maxPlayers/2)}
+              onDragStart={handleDragStart}
+              onDragOver={handleDragOver}
+              onDrop={handleDrop}
+            />
+            
+            {/* Reserve Players - now between Home and Away teams */}
             <TeamReserve
               reservePlayers={reservePlayers}
               onDragStart={handleDragStart}
@@ -133,26 +134,26 @@ const EventTeams = ({
               onDrop={handleDrop}
               onAddFriend={handleAddFriend}
             />
+            
+            {/* Away Team */}
+            <TeamCard
+              teamName="Away Team"
+              teamPlayers={teamB}
+              teamColor="team-away"
+              maxTeamSize={Math.floor(maxPlayers/2)}
+              onDragStart={handleDragStart}
+              onDragOver={handleDragOver}
+              onDrop={handleDrop}
+            />
           </div>
           
-          {/* Away Team */}
-          <TeamCard
-            teamName="Away Team"
-            teamPlayers={teamB}
-            teamColor="team-away"
-            maxTeamSize={Math.floor(maxPlayers/2)}
-            onDragStart={handleDragStart}
-            onDragOver={handleDragOver}
-            onDrop={handleDrop}
-          />
-          
           {/* Tentative Players */}
-          <div className="mt-3">
+          <div className="mt-2">
             <TentativePlayers tentativePlayers={tentativePlayers} />
           </div>
         </TabsContent>
         
-        <TabsContent value="field" className="pt-3">
+        <TabsContent value="field" className="pt-2">
           <div className="rounded-xl border p-4 bg-muted/10">
             <FootballField 
               teamAPlayers={teamA.length} 

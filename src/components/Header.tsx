@@ -19,7 +19,7 @@ const Header = () => {
         <div className="mr-4 flex">
           <Link to="/" className="mr-6 flex items-center space-x-2">
             <span className="font-bold text-xl text-black">
-              Gather <span className="text-sm font-medium text-emerald-500">To Play</span>
+              Gather <span className="text-sm font-medium gather-play">To Play</span>
             </span>
           </Link>
           <nav className="flex items-center space-x-6 text-sm font-medium">
