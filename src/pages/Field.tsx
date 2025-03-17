@@ -1,13 +1,13 @@
-
 import React from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { Calendar, MapPin, Flag, ChevronLeft } from 'lucide-react';
+import { Calendar, MapPin, ChevronLeft } from 'lucide-react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import EventCard from '@/components/EventCard';
 import { mockFields } from '@/data/mockFieldsData';
 import { Card } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { format } from 'date-fns';
 
 const Field = () => {
   const { id } = useParams<{ id: string }>();
@@ -101,7 +101,22 @@ const Field = () => {
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {field.events.map((event) => (
-                  <EventCard key={event.id} event={event} />
+                  <div key={event.id} className="event-card-container">
+                    <EventCard
+                      id={event.id}
+                      title={event.title}
+                      location={event.location}
+                      date={event.date}
+                      time={event.time}
+                      duration={event.duration}
+                      format={event.format}
+                      playerCount={4}
+                      maxPlayers={event.maxPlayers}
+                      price={event.price}
+                      isPrivate={event.isPrivate}
+                      imageUrl={event.imageUrl}
+                    />
+                  </div>
                 ))}
               </div>
             )}
