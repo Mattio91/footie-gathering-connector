@@ -8,9 +8,10 @@ import { useToast } from '@/hooks/use-toast';
 
 interface AddFriendFormProps {
   onAddFriend: (name: string) => void;
+  onClose?: () => void;
 }
 
-const AddFriendForm = ({ onAddFriend }: AddFriendFormProps) => {
+const AddFriendForm = ({ onAddFriend, onClose }: AddFriendFormProps) => {
   const { t } = useTranslation();
   const [friendName, setFriendName] = useState('');
   const { toast } = useToast();
@@ -25,6 +26,10 @@ const AddFriendForm = ({ onAddFriend }: AddFriendFormProps) => {
         title: t('event.friendAdded'),
         description: t('event.friendLinkedToAccount', { name: friendName.trim() }),
       });
+      
+      if (onClose) {
+        onClose();
+      }
     }
   };
 

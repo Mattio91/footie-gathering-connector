@@ -3,9 +3,10 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { format } from 'date-fns';
-import { MessageCircle, Send } from 'lucide-react';
+import { MessageCircle, Send, Smile } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { cn } from '@/lib/utils';
 
 interface ChatMessage {
   id: string;
@@ -46,14 +47,35 @@ const EventChat = ({ messages, onSendMessage }: EventChatProps) => {
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages.length]);
+
+  // Generate a color based on username for consistent chat colors
+  const getUserColor = (name: string) => {
+    const colors = [
+      'text-violet-500',
+      'text-blue-500',
+      'text-sky-500',
+      'text-teal-500',
+      'text-emerald-500',
+      'text-amber-500',
+      'text-rose-500',
+      'text-pink-500'
+    ];
+    
+    // Simple hash function to get consistent color for a username
+    const hash = name.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+    return colors[hash % colors.length];
+  };
   
   return (
     <div className="border rounded-xl overflow-hidden bg-card shadow-sm">
-      <div className="p-3 border-b bg-muted/30">
+      <div className="p-3 border-b bg-muted/30 flex items-center justify-between">
         <h3 className="text-sm font-medium flex items-center gap-2">
-          <MessageCircle className="h-4 w-4 text-muted-foreground" />
+          <MessageCircle className="h-4 w-4 text-primary" />
           {t('event.eventChat')}
         </h3>
+        <span className="text-xs text-muted-foreground">
+          {messages.length} {messages.length === 1 ? 'message' : 'messages'}
+        </span>
       </div>
       
       {/* Chat messages container */}
@@ -65,25 +87,41 @@ const EventChat = ({ messages, onSendMessage }: EventChatProps) => {
             <p className="text-sm">{t('event.beFirst')}</p>
           </div>
         ) : (
-          <div className="space-y-1.5">
-            {messages.map((message) => (
-              <div key={message.id} className="flex items-start gap-2 group py-0.5">
-                <div className="flex-grow">
-                  <div className="flex items-baseline gap-2 mb-0.5">
-                    <span className="font-medium text-xs">
-                      {message.author.name}
-                    </span>
-                    <span className="text-[10px] text-muted-foreground">
-                      {format(message.timestamp, 'p')}
-                    </span>
-                  </div>
+          <div className="space-y-2">
+            {messages.map((message, index) => {
+              const isFirstOfTheDay = index === 0 || 
+                new Date(message.timestamp).toDateString() !== new Date(messages[index - 1].timestamp).toDateString();
+              
+              return (
+                <React.Fragment key={message.id}>
+                  {isFirstOfTheDay && (
+                    <div className="flex items-center my-3">
+                      <div className="flex-grow h-px bg-muted"></div>
+                      <span className="px-3 text-xs text-muted-foreground">
+                        {format(message.timestamp, 'MMMM d')}
+                      </span>
+                      <div className="flex-grow h-px bg-muted"></div>
+                    </div>
+                  )}
                   
-                  <div className="px-2.5 py-1 rounded-lg bg-muted/40 text-sm inline-block max-w-[calc(100%-8px)]">
-                    {message.text}
+                  <div className="flex group">
+                    <div className="flex-grow">
+                      <div className="rounded-lg p-2.5 bg-muted/30 hover:bg-muted/50 transition-colors">
+                        <div className="flex justify-between items-start mb-1">
+                          <span className={cn("text-xs font-semibold", getUserColor(message.author.name))}>
+                            {message.author.name}
+                          </span>
+                          <span className="text-[10px] text-muted-foreground ml-2">
+                            {format(message.timestamp, 'p')}
+                          </span>
+                        </div>
+                        <p className="text-sm whitespace-pre-wrap break-words">{message.text}</p>
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </div>
-            ))}
+                </React.Fragment>
+              );
+            })}
             <div ref={messagesEndRef} />
           </div>
         )}
@@ -97,12 +135,12 @@ const EventChat = ({ messages, onSendMessage }: EventChatProps) => {
             onChange={(e) => setNewMessage(e.target.value)}
             onKeyDown={handleKeyDown}
             placeholder={t('event.typeMessage')}
-            className="flex-grow text-sm h-9 focus-visible:ring-1"
+            className="flex-grow text-sm h-10 rounded-full focus-visible:ring-1"
           />
           <Button 
             size="sm"
-            variant="secondary"
-            className="aspect-square p-0 w-9 h-9"
+            variant="default"
+            className="rounded-full aspect-square p-0 w-10 h-10"
             onClick={handleSendMessage}
             disabled={!newMessage.trim()}
           >

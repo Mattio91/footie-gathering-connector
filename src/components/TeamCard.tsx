@@ -14,7 +14,7 @@ interface TeamCardProps {
   teamPlayers: Player[];
   teamColor: string;
   maxTeamSize: number;
-  onDragStart: (e: React.DragEvent, playerId: string, source: string) => void;
+  onDragStart: (e: React.DragEvent, player: Player, source: string) => void;
   onDragOver: (e: React.DragEvent) => void;
   onDrop: (e: React.DragEvent, target: string) => void;
 }
@@ -45,7 +45,7 @@ const TeamCard = ({
               key={player.id} 
               className="flex items-center p-2 rounded-md bg-background/80 cursor-move"
               draggable
-              onDragStart={(e) => onDragStart(e, player.id, teamId)}
+              onDragStart={(e) => onDragStart(e, player, teamId)}
               onDragOver={onDragOver}
               onDrop={(e) => onDrop(e, teamId)}
             >

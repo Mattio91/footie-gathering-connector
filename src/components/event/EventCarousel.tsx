@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { ChevronLeft, Calendar, Clock, MapPin, Users, ImagePlus, Share2 } from 'lucide-react';
@@ -47,14 +48,14 @@ const EventCarousel = ({ images, event, playerCount, maxPlayers, onImageUpload }
     }
   };
 
-  // Pan effect - slowly move from top to bottom with bounce
+  // Pan effect - slower and wider movement with bounce
   useEffect(() => {
     if (images.length === 0) return;
     
-    const panDuration = 60000; // 60 seconds for full pan cycle (slower)
+    const panDuration = 120000; // 120 seconds for full pan cycle (much slower)
     const panInterval = 50; // Update every 50ms
     const totalSteps = panDuration / panInterval;
-    const stepSize = 10 / totalSteps; // 10% total pan range
+    const stepSize = 20 / totalSteps; // 20% total pan range (wider)
     
     const interval = setInterval(() => {
       setPanPosition(prev => {
@@ -62,9 +63,9 @@ const EventCarousel = ({ images, event, playerCount, maxPlayers, onImageUpload }
         const newPos = panDirection === 'down' ? prev + stepSize : prev - stepSize;
         
         // Check if we need to change direction (bounce effect)
-        if (newPos >= 0.1) {
+        if (newPos >= 0.2) {
           setPanDirection('up');
-          return 0.1; // Max bottom position
+          return 0.2; // Max bottom position (increased for wider range)
         } else if (newPos <= 0) {
           setPanDirection('down');
           return 0; // Max top position

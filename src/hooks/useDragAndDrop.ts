@@ -21,8 +21,8 @@ export function useDragAndDrop(initialPlayers: Player[], maxPlayers: number) {
     setReservePlayers(initialPlayers.filter(p => !p.isConfirmed));
   }, [initialPlayers]);
 
-  const handleDragStart = (e: React.DragEvent, playerId: string, source: TeamSource) => {
-    e.dataTransfer.setData('playerId', playerId);
+  const handleDragStart = (e: React.DragEvent, player: Player, source: TeamSource) => {
+    e.dataTransfer.setData('playerId', player.id);
     e.dataTransfer.setData('source', source);
   };
 

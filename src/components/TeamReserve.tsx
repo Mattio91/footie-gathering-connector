@@ -5,14 +5,13 @@ import { Player } from '@/types/player';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { PlusCircle, UserPlus } from 'lucide-react';
+import { UserPlus } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import AddFriendForm from '@/components/AddFriendForm';
 
 interface TeamReserveProps {
   reservePlayers: Player[];
-  onDragStart: (e: React.DragEvent<HTMLDivElement>, player: Player) => void;
+  onDragStart: (e: React.DragEvent<HTMLDivElement>, player: Player, source: string) => void;
   onDragOver: (e: React.DragEvent<HTMLDivElement>) => void;
   onDrop: (e: React.DragEvent<HTMLDivElement>, destination: string) => void;
   onAddFriend?: (name: string) => void;
@@ -27,15 +26,6 @@ const TeamReserve = ({
 }: TeamReserveProps) => {
   const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
-  const [friendName, setFriendName] = useState('');
-  
-  const handleAddFriend = () => {
-    if (friendName.trim() && onAddFriend) {
-      onAddFriend(friendName.trim());
-      setFriendName('');
-      setIsOpen(false);
-    }
-  };
   
   return (
     <div 
@@ -57,7 +47,7 @@ const TeamReserve = ({
                 player.isConfirmed ? "animate-pulse" : ""
               )}
               draggable
-              onDragStart={(e) => onDragStart(e, player)}
+              onDragStart={(e) => onDragStart(e, player, 'reserve')}
             >
               <Avatar className="h-14 w-14 border-2 border-transparent hover:border-primary transition-all">
                 <AvatarImage 
@@ -90,7 +80,7 @@ const TeamReserve = ({
               <DialogHeader>
                 <DialogTitle>{t('event.addFriendTitle')}</DialogTitle>
               </DialogHeader>
-              <AddFriendForm onAddFriend={onAddFriend} onClose={() => setIsOpen(false)} />
+              <AddFriendForm onAddFriend={onAddFriend} />
             </DialogContent>
           </Dialog>
         </div>
