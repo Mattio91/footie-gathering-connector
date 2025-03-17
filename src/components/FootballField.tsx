@@ -1,15 +1,13 @@
+
 import React from 'react';
 import { cn } from '@/lib/utils';
 import Field from '@/components/football/Field';
 
 interface FootballFieldProps {
-  teamAPlayers?: number;
-  teamBPlayers?: number;
-  maxPlayers?: number;
   className?: string;
 }
 
-// This component is kept minimal as it's not used in the main UI anymore
+// This component isn't actively used in the UI anymore
 const FootballField: React.FC<FootballFieldProps> = ({ 
   className 
 }) => {

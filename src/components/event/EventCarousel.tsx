@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { ChevronLeft, Calendar, Clock, MapPin, Users, ImagePlus, Share2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -18,8 +18,6 @@ interface EventCarouselProps {
 
 const EventCarousel = ({ images, event, playerCount, maxPlayers, onImageUpload }: EventCarouselProps) => {
   const [activeImageIndex, setActiveImageIndex] = useState(0);
-  const [panPosition, setPanPosition] = useState(0);
-  const [panDirection, setPanDirection] = useState<'down' | 'up'>('down');
   
   // Format date
   const formattedDate = format(new Date(event.date), 'EEEE, MMMM d, yyyy');
@@ -29,16 +27,12 @@ const EventCarousel = ({ images, event, playerCount, maxPlayers, onImageUpload }
     setActiveImageIndex((prevIndex) => 
       prevIndex === images.length - 1 ? 0 : prevIndex + 1
     );
-    // Reset pan position when changing images
-    setPanPosition(0);
   };
   
   const handlePrevImage = () => {
     setActiveImageIndex((prevIndex) => 
       prevIndex === 0 ? images.length - 1 : prevIndex - 1
     );
-    // Reset pan position when changing images
-    setPanPosition(0);
   };
 
   // Handle image upload
@@ -48,38 +42,8 @@ const EventCarousel = ({ images, event, playerCount, maxPlayers, onImageUpload }
     }
   };
 
-  // Pan effect - slower and wider movement with bounce
-  useEffect(() => {
-    if (images.length === 0) return;
-    
-    const panDuration = 120000; // 120 seconds for full pan cycle (much slower)
-    const panInterval = 50; // Update every 50ms
-    const totalSteps = panDuration / panInterval;
-    const stepSize = 20 / totalSteps; // 20% total pan range (wider)
-    
-    const interval = setInterval(() => {
-      setPanPosition(prev => {
-        // Calculate new position based on direction
-        const newPos = panDirection === 'down' ? prev + stepSize : prev - stepSize;
-        
-        // Check if we need to change direction (bounce effect)
-        if (newPos >= 0.2) {
-          setPanDirection('up');
-          return 0.2; // Max bottom position (increased for wider range)
-        } else if (newPos <= 0) {
-          setPanDirection('down');
-          return 0; // Max top position
-        }
-        
-        return newPos;
-      });
-    }, panInterval);
-    
-    return () => clearInterval(interval);
-  }, [activeImageIndex, images.length, panDirection]);
-
   return (
-    <div className="relative rounded-xl overflow-hidden aspect-[21/9] bg-muted animate-fade-in mb-4">
+    <div className="relative rounded-xl overflow-hidden aspect-[21/9.5] bg-muted animate-fade-in mb-4">
       {/* Navigation Buttons directly on the image */}
       <div className="absolute top-0 left-0 right-0 flex justify-between items-center p-2 z-20">
         <Link to="/" className="text-white hover:text-white/80 transition-colors inline-flex items-center bg-black/40 px-2 py-1 rounded-md">
@@ -101,12 +65,7 @@ const EventCarousel = ({ images, event, playerCount, maxPlayers, onImageUpload }
           <img 
             src={images[activeImageIndex]} 
             alt="Event image" 
-            className="w-full object-cover transition-transform duration-1000"
-            style={{ 
-              objectPosition: `center ${panPosition * 100}%`, 
-              transform: `translateY(${panPosition * -10}%)`,
-              height: '120%' // Extra height for the panning effect
-            }}
+            className="w-full h-full object-cover"
           />
         </div>
       ) : (
