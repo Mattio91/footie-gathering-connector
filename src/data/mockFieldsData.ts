@@ -7,7 +7,7 @@ export const mockFields: Field[] = [
     id: '1',
     name: 'Hackney Marshes',
     location: 'Hackney Marshes, London E9 5PF',
-    description: 'Hackney Marshes is an area of open space in London's Lower Lea Valley, with 88 full-size football pitches.',
+    description: 'Hackney Marshes is an area of open space in London\'s Lower Lea Valley, with 88 full-size football pitches.',
     images: [
       { id: '1', url: '/images/fields/hackney-marshes-1.jpg', alt: 'Hackney Marshes main field' },
       { id: '2', url: 'https://images.unsplash.com/photo-1575361204480-aadea25e6e68?q=80&w=1000', alt: 'Football field aerial view' },
