@@ -5,11 +5,17 @@ import Field from '@/components/football/Field';
 
 interface FootballFieldProps {
   className?: string;
+  teamAPlayers?: number;
+  teamBPlayers?: number;
+  maxPlayers?: number;
 }
 
 // This component isn't actively used in the UI anymore
 const FootballField: React.FC<FootballFieldProps> = ({ 
-  className 
+  className,
+  teamAPlayers,
+  teamBPlayers,
+  maxPlayers
 }) => {
   return (
     <div 

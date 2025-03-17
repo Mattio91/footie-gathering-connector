@@ -1,8 +1,6 @@
 
-import { useState } from 'react';
 import { Users, UserPlus, Clock, UserX } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
 import { Player } from '@/types/player';
 import TeamCard from '@/components/TeamCard';
