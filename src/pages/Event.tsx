@@ -31,7 +31,7 @@ const Event = () => {
     <div className="min-h-screen flex flex-col">
       <Header />
       
-      <main className="flex-grow pt-16 pb-16" data-lov-name="main">
+      <main className="flex-grow pt-14 pb-16" data-lov-name="main">
         <div className="container max-w-6xl mx-auto px-4">
           {/* Error state */}
           {error && <EventError error={error} />}

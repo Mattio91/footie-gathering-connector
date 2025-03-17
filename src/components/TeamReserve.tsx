@@ -1,74 +1,101 @@
 
-import { Card, CardContent } from '@/components/ui/card';
-import { GripVertical, UserPlus } from 'lucide-react';
+import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Player } from '@/types/player';
-import AddFriendForm from './AddFriendForm';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { PlusCircle, UserPlus } from 'lucide-react';
+import { cn } from '@/lib/utils';
+import AddFriendForm from '@/components/AddFriendForm';
 
 interface TeamReserveProps {
   reservePlayers: Player[];
-  onDragStart: (e: React.DragEvent, playerId: string, source: string) => void;
-  onDragOver: (e: React.DragEvent) => void;
-  onDrop: (e: React.DragEvent, target: string) => void;
+  onDragStart: (e: React.DragEvent<HTMLDivElement>, player: Player) => void;
+  onDragOver: (e: React.DragEvent<HTMLDivElement>) => void;
+  onDrop: (e: React.DragEvent<HTMLDivElement>, destination: string) => void;
   onAddFriend?: (name: string) => void;
 }
 
 const TeamReserve = ({ 
-  reservePlayers,
-  onDragStart,
-  onDragOver,
+  reservePlayers, 
+  onDragStart, 
+  onDragOver, 
   onDrop,
-  onAddFriend
+  onAddFriend 
 }: TeamReserveProps) => {
+  const { t } = useTranslation();
+  const [isOpen, setIsOpen] = useState(false);
+  const [friendName, setFriendName] = useState('');
+  
+  const handleAddFriend = () => {
+    if (friendName.trim() && onAddFriend) {
+      onAddFriend(friendName.trim());
+      setFriendName('');
+      setIsOpen(false);
+    }
+  };
+  
   return (
-    <Card className="border-muted/20 bg-muted/5 h-full">
-      <CardContent className="p-3">
-        <h3 className="text-lg font-semibold mb-2">Reserve Players</h3>
-        <div className="space-y-2"
-          onDragOver={onDragOver}
-          onDrop={(e) => onDrop(e, 'reserve')}
-        >
-          {reservePlayers.length > 0 ? (
-            reservePlayers.map(player => (
-              <div 
-                key={player.id} 
-                className="flex items-center p-2 rounded-md bg-background/80 cursor-move"
-                draggable
-                onDragStart={(e) => onDragStart(e, player.id, 'reserve')}
-              >
-                <div className="w-8 h-8 rounded-full overflow-hidden mr-3">
-                  <img 
-                    src={player.avatar || `https://ui-avatars.com/api/?name=${player.name}`} 
-                    alt={player.name} 
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-                <div className="flex-grow">
-                  <div className="font-medium text-sm flex items-center">
-                    {player.name}
-                    <GripVertical className="h-4 w-4 ml-2 text-muted-foreground" />
-                  </div>
-                </div>
-              </div>
-            ))
-          ) : (
-            <div className="text-muted-foreground text-sm text-center py-2">
-              No reserve players
+    <div 
+      className="bg-muted/30 rounded-lg border p-3 border-dashed h-full flex flex-col"
+      onDragOver={onDragOver} 
+      onDrop={(e) => onDrop(e, 'reserve')}
+    >
+      <div className="text-sm font-medium mb-2">Reserve ({reservePlayers.length})</div>
+      
+      {/* Player list */}
+      <div className="flex-1 overflow-auto">
+        {/* Player slots */}
+        <div className="flex flex-wrap justify-center gap-2 mb-4">
+          {reservePlayers.map((player) => (
+            <div 
+              key={player.id} 
+              className={cn(
+                "flex flex-col items-center cursor-grab active:cursor-grabbing",
+                player.isConfirmed ? "animate-pulse" : ""
+              )}
+              draggable
+              onDragStart={(e) => onDragStart(e, player)}
+            >
+              <Avatar className="h-14 w-14 border-2 border-transparent hover:border-primary transition-all">
+                <AvatarImage 
+                  src={player.avatar || `https://ui-avatars.com/api/?name=${player.name}`} 
+                  alt={player.name} 
+                />
+                <AvatarFallback>{player.name.substring(0, 2)}</AvatarFallback>
+              </Avatar>
+              <span className="text-xs mt-1 font-medium">{player.name}</span>
             </div>
-          )}
+          ))}
         </div>
-        
-        {/* Add friend form */}
-        {onAddFriend && (
-          <div className="mt-3 pt-3 border-t">
-            <h4 className="text-sm font-medium mb-2 flex items-center">
-              <UserPlus className="h-4 w-4 mr-2" />
-              Add Friends
-            </h4>
-            <AddFriendForm onAddFriend={onAddFriend} />
-          </div>
-        )}
-      </CardContent>
-    </Card>
+      </div>
+      
+      {/* Add friend button - Now aligned to bottom */}
+      {onAddFriend && (
+        <div className="mt-auto pt-2">
+          <Dialog open={isOpen} onOpenChange={setIsOpen}>
+            <DialogTrigger asChild>
+              <Button 
+                variant="outline" 
+                size="sm" 
+                className="w-full text-xs h-8 border-dashed"
+              >
+                <UserPlus className="h-3 w-3 mr-1" />
+                {t('event.addFriend')}
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-md">
+              <DialogHeader>
+                <DialogTitle>{t('event.addFriendTitle')}</DialogTitle>
+              </DialogHeader>
+              <AddFriendForm onAddFriend={onAddFriend} onClose={() => setIsOpen(false)} />
+            </DialogContent>
+          </Dialog>
+        </div>
+      )}
+    </div>
   );
 };
 

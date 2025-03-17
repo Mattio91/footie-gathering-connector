@@ -56,7 +56,7 @@ const EventChat = ({ messages, onSendMessage }: EventChatProps) => {
         </h3>
       </div>
       
-      {/* Chat messages container - taller now (90px → 320px) */}
+      {/* Chat messages container */}
       <ScrollArea className="h-[320px] p-3">
         {messages.length === 0 ? (
           <div className="h-full flex flex-col items-center justify-center text-center text-muted-foreground">
@@ -65,45 +65,25 @@ const EventChat = ({ messages, onSendMessage }: EventChatProps) => {
             <p className="text-sm">{t('event.beFirst')}</p>
           </div>
         ) : (
-          <div className="space-y-2">
-            {messages.map((message, index) => {
-              const isConsecutive = index > 0 && messages[index - 1].author.id === message.author.id;
-              
-              return (
-                <div key={message.id} className="flex items-start gap-1.5 group">
-                  {/* Only show avatar if it's a new author */}
-                  {!isConsecutive ? (
-                    <div className="flex-shrink-0 w-6 h-6 rounded-full overflow-hidden mt-0.5">
-                      <img 
-                        src={message.author.avatar || `https://ui-avatars.com/api/?name=${message.author.name}`} 
-                        alt={message.author.name} 
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                  ) : (
-                    <div className="w-6 flex-shrink-0"></div>
-                  )}
+          <div className="space-y-1.5">
+            {messages.map((message) => (
+              <div key={message.id} className="flex items-start gap-2 group py-0.5">
+                <div className="flex-grow">
+                  <div className="flex items-baseline gap-2 mb-0.5">
+                    <span className="font-medium text-xs">
+                      {message.author.name}
+                    </span>
+                    <span className="text-[10px] text-muted-foreground">
+                      {format(message.timestamp, 'p')}
+                    </span>
+                  </div>
                   
-                  <div className="flex-grow space-y-0.5">
-                    {/* Only show name for first message from an author */}
-                    {!isConsecutive && (
-                      <div className="flex items-baseline gap-2">
-                        <span className="font-medium text-xs">
-                          {message.author.name}
-                        </span>
-                        <span className="text-[10px] text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity">
-                          {format(message.timestamp, 'p')}
-                        </span>
-                      </div>
-                    )}
-                    
-                    <div className="px-2.5 py-1.5 rounded-lg bg-muted/40 text-sm inline-block max-w-[calc(100%-8px)]">
-                      {message.text}
-                    </div>
+                  <div className="px-2.5 py-1 rounded-lg bg-muted/40 text-sm inline-block max-w-[calc(100%-8px)]">
+                    {message.text}
                   </div>
                 </div>
-              );
-            })}
+              </div>
+            ))}
             <div ref={messagesEndRef} />
           </div>
         )}
