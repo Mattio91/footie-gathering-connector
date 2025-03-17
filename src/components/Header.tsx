@@ -10,7 +10,7 @@ const Header = () => {
   const location = useLocation();
 
   const isActive = (path: string) => {
-    return location.pathname === path;
+    return location.pathname === path || location.pathname.startsWith(`${path}/`);
   };
 
   return (
@@ -26,7 +26,9 @@ const Header = () => {
             <Link
               to="/"
               className={`transition-colors hover:text-foreground/80 ${
-                isActive("/") ? "text-foreground" : "text-foreground/60"
+                isActive("/") && !isActive("/events") && !isActive("/groups") && !isActive("/fields") 
+                  ? "text-foreground" 
+                  : "text-foreground/60"
               }`}
             >
               {t("header.home")}
@@ -38,6 +40,14 @@ const Header = () => {
               }`}
             >
               {t("header.events")}
+            </Link>
+            <Link
+              to="/fields"
+              className={`transition-colors hover:text-foreground/80 ${
+                isActive("/fields") ? "text-foreground" : "text-foreground/60"
+              }`}
+            >
+              Fields
             </Link>
             <Link
               to="/groups"

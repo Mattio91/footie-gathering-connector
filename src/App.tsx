@@ -8,6 +8,8 @@ import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import Event from "./pages/Event";
 import Events from "./pages/Events";
+import Fields from "./pages/Fields"; 
+import Field from "./pages/Field";
 import Groups from "./pages/Groups";
 import CreateEvent from "./pages/CreateEvent";
 import Login from "./pages/Login";
@@ -23,6 +25,8 @@ const App = () => (
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/events" element={<Events />} />
+          <Route path="/fields" element={<Fields />} />
+          <Route path="/fields/:id" element={<Field />} />
           <Route path="/groups" element={<Groups />} />
           <Route path="/event/:id" element={<Event />} />
           <Route path="/create-event" element={<CreateEvent />} />
