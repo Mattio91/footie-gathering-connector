@@ -1,5 +1,5 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Search, Plus, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -25,19 +25,39 @@ const EventsSection = ({
   tableEvents
 }: EventsSectionProps) => {
   const { t } = useTranslation();
-  const [currentPage, setCurrentPage] = useState(1);
+  const [userRelatedCurrentPage, setUserRelatedCurrentPage] = useState(1);
+  const [openEventsCurrentPage, setOpenEventsCurrentPage] = useState(1);
   const pageSize = 5; // Number of events per page
+  
+  // Split events into user-related and open events
+  const [userRelatedEvents, setUserRelatedEvents] = useState<typeof tableEvents>([]);
+  const [openEvents, setOpenEvents] = useState<typeof tableEvents>([]);
   
   // Reset to page 1 when search query changes
   const handleSearch = (query: string) => {
-    setCurrentPage(1);
+    setUserRelatedCurrentPage(1);
+    setOpenEventsCurrentPage(1);
     onSearch(query);
   };
   
-  // Handle page change
-  const handlePageChange = (page: number) => {
-    setCurrentPage(page);
-  };
+  // Filter events into two categories when tableEvents change
+  useEffect(() => {
+    // User-related events: events where the user has a participation status
+    const related = tableEvents.filter(event => 
+      event.participationStatus === 'joined' || 
+      event.participationStatus === 'tentative' || 
+      event.participationStatus === 'skipping'
+    );
+    
+    // Open events: events that are not private and not related to the user
+    const open = tableEvents.filter(event => 
+      !event.isPrivate && 
+      (event.participationStatus === 'none' || event.participationStatus === undefined)
+    );
+    
+    setUserRelatedEvents(related);
+    setOpenEvents(open);
+  }, [tableEvents]);
 
   return (
     <section className="py-16 px-4 bg-slate-50 dark:bg-slate-900/30">
@@ -62,12 +82,27 @@ const EventsSection = ({
         
         <FeaturedEvents events={featuredEvents} />
         
-        <EventsTable 
-          events={tableEvents} 
-          currentPage={currentPage}
-          pageSize={pageSize}
-          onPageChange={handlePageChange}
-        />
+        {/* User-related events table */}
+        {userRelatedEvents.length > 0 && (
+          <EventsTable 
+            events={userRelatedEvents} 
+            currentPage={userRelatedCurrentPage}
+            pageSize={pageSize}
+            onPageChange={setUserRelatedCurrentPage}
+            title="Your Upcoming Events"
+          />
+        )}
+        
+        {/* Open events table */}
+        {openEvents.length > 0 && (
+          <EventsTable 
+            events={openEvents} 
+            currentPage={openEventsCurrentPage}
+            pageSize={pageSize}
+            onPageChange={setOpenEventsCurrentPage}
+            title="Open Events Looking for Players"
+          />
+        )}
         
         {filteredEvents.length === 0 && (
           <FeaturedEvents events={[]} showEmptyState={true} />

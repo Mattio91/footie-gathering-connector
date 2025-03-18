@@ -24,9 +24,10 @@ interface EventsTableProps {
   currentPage: number;
   pageSize: number;
   onPageChange: (page: number) => void;
+  title?: string;
 }
 
-const EventsTable = ({ events, currentPage, pageSize, onPageChange }: EventsTableProps) => {
+const EventsTable = ({ events, currentPage, pageSize, onPageChange, title }: EventsTableProps) => {
   if (events.length === 0) return null;
   
   // Calculate pagination values
@@ -36,8 +37,12 @@ const EventsTable = ({ events, currentPage, pageSize, onPageChange }: EventsTabl
   const currentEvents = events.slice(startIndex, endIndex);
   
   return (
-    <div id="events-table">
-      <Card className="mt-8 overflow-hidden">
+    <div id={`events-table-${title ? title.toLowerCase().replace(/\s+/g, '-') : 'default'}`} className="mb-8">
+      {title && (
+        <h3 className="text-xl font-medium mb-3">{title}</h3>
+      )}
+      
+      <Card className="overflow-hidden">
         <Table>
           <TableHeader>
             <TableRow>
@@ -105,7 +110,7 @@ const EventsTable = ({ events, currentPage, pageSize, onPageChange }: EventsTabl
         currentPage={currentPage}
         totalPages={totalPages}
         onPageChange={onPageChange}
-        tableId="events-table"
+        tableId={`events-table-${title ? title.toLowerCase().replace(/\s+/g, '-') : 'default'}`}
       />
     </div>
   );
