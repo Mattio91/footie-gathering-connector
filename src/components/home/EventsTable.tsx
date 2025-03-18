@@ -1,4 +1,3 @@
-
 import { format } from 'date-fns';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -23,9 +22,13 @@ import {
   PaginationEllipsis
 } from '@/components/ui/pagination';
 import { useToast } from '@/hooks/use-toast';
+import ParticipationStatus from '@/components/groups/member/ParticipationStatus';
 
 interface EventsTableProps {
-  events: EventCardProps[];
+  events: (EventCardProps & {
+    participationStatus?: 'joined' | 'tentative' | 'skipping' | 'none';
+    instanceDate?: Date;
+  })[];
   currentPage: number;
   pageSize: number;
   onPageChange: (page: number) => void;
@@ -124,6 +127,7 @@ const EventsTable = ({ events, currentPage, pageSize, onPageChange }: EventsTabl
               <TableHead>Format</TableHead>
               <TableHead>Players</TableHead>
               <TableHead>Price</TableHead>
+              <TableHead>Status</TableHead>
               <TableHead className="text-right">Action</TableHead>
             </TableRow>
           </TableHeader>
@@ -131,7 +135,9 @@ const EventsTable = ({ events, currentPage, pageSize, onPageChange }: EventsTabl
             {currentEvents.map((event) => (
               <TableRow key={event.id}>
                 <TableCell>
-                  <div className="font-medium">{format(event.date, 'EEE, MMM d')}</div>
+                  <div className="font-medium">
+                    {format(event.instanceDate || event.date, 'EEE, MMM d')}
+                  </div>
                   <div className="text-sm text-muted-foreground flex items-center">
                     <Clock className="h-3 w-3 mr-1" />
                     {event.time}
@@ -156,6 +162,12 @@ const EventsTable = ({ events, currentPage, pageSize, onPageChange }: EventsTabl
                 </TableCell>
                 <TableCell>
                   {event.price > 0 ? `£${event.price}` : 'Free'}
+                </TableCell>
+                <TableCell>
+                  <ParticipationStatus 
+                    status={event.participationStatus} 
+                    memberId={event.id} 
+                  />
                 </TableCell>
                 <TableCell className="text-right">
                   <Link to={`/event/${event.id}`}>
