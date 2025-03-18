@@ -5,7 +5,7 @@ import Footer from '@/components/Footer';
 import EventSkeleton from '@/components/event/EventSkeleton';
 import EventError from '@/components/event/EventError';
 import EventView from '@/components/event/EventView';
-import { useEventData } from '@/hooks/useEventData';
+import { useEventDetail } from '@/hooks/useEventDetail';
 
 const Event = () => {
   const { id } = useParams<{ id: string }>();
@@ -25,7 +25,7 @@ const Event = () => {
     handleSendMessage,
     handleImageUpload,
     handlePingMember
-  } = useEventData(id || '');
+  } = useEventDetail(id || '');
   
   return (
     <div className="min-h-screen flex flex-col">

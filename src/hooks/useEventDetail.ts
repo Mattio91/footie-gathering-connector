@@ -3,7 +3,7 @@ import { EventData } from '@/types/event';
 import { useEventState } from '@/hooks/useEventState';
 import { useEventActions } from '@/hooks/useEventActions';
 
-export const useEventData = (eventId: string) => {
+export const useEventDetail = (eventId: string) => {
   // Get state from useEventState
   const {
     isLoading,

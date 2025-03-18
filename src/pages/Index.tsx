@@ -1,5 +1,5 @@
 
-import { useEventData } from '@/hooks/useEventData';
+import { useEventData } from '@/hooks/useEventData.tsx'; // Using explicit .tsx extension to avoid ambiguity
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import HeroSection from '@/components/home/HeroSection';
