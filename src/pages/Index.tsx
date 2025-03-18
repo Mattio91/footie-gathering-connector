@@ -177,19 +177,6 @@ const Index = () => {
               <p className="text-muted-foreground text-lg max-w-md mb-10 animate-fade-in" style={{ animationDelay: '300ms' }}>
                 {t('index.heroSubtitle')}
               </p>
-              
-              <div className="flex flex-col sm:flex-row gap-4 animate-fade-in" style={{ animationDelay: '450ms' }}>
-                <Link to="/create-event">
-                  <Button size="lg" className="w-full sm:w-auto">
-                    <Plus className="h-4 w-4 mr-2" />
-                    {t('common.createEvent')}
-                  </Button>
-                </Link>
-                <Button variant="outline" size="lg" className="w-full sm:w-auto">
-                  <MapPin className="h-4 w-4 mr-2" />
-                  {t('common.findLocalGames')}
-                </Button>
-              </div>
             </div>
             
             <div className="hidden md:flex md:justify-center md:items-center">
