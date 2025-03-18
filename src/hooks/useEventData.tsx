@@ -50,20 +50,18 @@ export const useEventData = ({ initialSearchQuery = '' }: UseEventDataProps = {}
         })
       : sortedEvents;
     
-    // Set filtered events
     setFilteredEvents(filtered);
     
-    // For featured events, prioritize events the user has joined or is tentative for
-    const userEvents = filtered.filter(
-      event => event.participationStatus === 'joined' || event.participationStatus === 'tentative'
-    ).slice(0, 3);
+    // For featured events, only show the closest event that user has joined, is tentative for, or hasn't decided on
+    const relevantEvents = filtered.filter(
+      event => event.participationStatus === 'joined' || 
+               event.participationStatus === 'tentative' || 
+               event.participationStatus === 'none' ||
+               event.participationStatus === undefined
+    );
     
-    // If we don't have 3 user events, fill with other events
-    const featured = userEvents.length === 3 
-      ? userEvents 
-      : [...userEvents, ...filtered.filter(
-          event => event.participationStatus !== 'joined' && event.participationStatus !== 'tentative'
-        )].slice(0, 3);
+    // Just take the closest (first) relevant event
+    const featured = relevantEvents.length > 0 ? [relevantEvents[0]] : [];
     
     setFeaturedEvents(featured);
     
