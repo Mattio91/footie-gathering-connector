@@ -24,6 +24,19 @@ const EventsSection = ({
   tableEvents
 }: EventsSectionProps) => {
   const { t } = useTranslation();
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 5; // Number of events per page
+  
+  // Reset to page 1 when search query changes
+  const handleSearch = (query: string) => {
+    setCurrentPage(1);
+    onSearch(query);
+  };
+  
+  // Handle page change
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
 
   return (
     <section className="py-16 px-4 bg-slate-50 dark:bg-slate-900/30">
@@ -41,7 +54,7 @@ const EventsSection = ({
               placeholder={t('index.searchPlaceholder')}
               className="pl-10 pr-4 w-full"
               value={searchQuery}
-              onChange={(e) => onSearch(e.target.value)}
+              onChange={(e) => handleSearch(e.target.value)}
             />
           </div>
         </div>
@@ -57,7 +70,12 @@ const EventsSection = ({
           </div>
         )}
         
-        <EventsTable events={tableEvents} />
+        <EventsTable 
+          events={tableEvents} 
+          currentPage={currentPage}
+          pageSize={pageSize}
+          onPageChange={handlePageChange}
+        />
         
         {filteredEvents.length === 0 && (
           <div className="text-center py-12">
