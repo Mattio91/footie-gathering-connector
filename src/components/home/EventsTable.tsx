@@ -4,7 +4,6 @@ import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Clock, MapPin, Users } from 'lucide-react';
 import { Card } from '@/components/ui/card';
-import { EventCardProps } from '@/components/EventCard';
 import {
   Table,
   TableBody,
@@ -15,12 +14,10 @@ import {
 } from '@/components/ui/table';
 import ParticipationStatus from '@/components/groups/member/ParticipationStatus';
 import TablePagination from './TablePagination';
+import { EventWithParticipation } from '@/types/event-instance';
 
 interface EventsTableProps {
-  events: (EventCardProps & {
-    participationStatus?: 'joined' | 'tentative' | 'skipping' | 'none';
-    instanceDate?: Date;
-  })[];
+  events: EventWithParticipation[];
   currentPage: number;
   pageSize: number;
   onPageChange: (page: number) => void;

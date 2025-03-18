@@ -3,10 +3,11 @@ import { Link } from 'react-router-dom';
 import { Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useTranslation } from 'react-i18next';
-import EventCard, { EventCardProps } from '@/components/EventCard';
+import EventCard from '@/components/EventCard';
+import { EventWithParticipation } from '@/types/event-instance';
 
 interface FeaturedEventsProps {
-  events: EventCardProps[];
+  events: EventWithParticipation[];
   showEmptyState?: boolean;
 }
 

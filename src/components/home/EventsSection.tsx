@@ -6,15 +6,16 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useTranslation } from 'react-i18next';
 import { EventCardProps } from '@/components/EventCard';
+import { EventWithParticipation } from '@/types/event-instance';
 import EventsTable from './EventsTable';
 import FeaturedEvents from './FeaturedEvents';
 
 interface EventsSectionProps {
-  filteredEvents: EventCardProps[];
+  filteredEvents: EventWithParticipation[];
   searchQuery: string;
   onSearch: (query: string) => void;
-  featuredEvents: EventCardProps[];
-  tableEvents: EventCardProps[];
+  featuredEvents: EventWithParticipation[];
+  tableEvents: EventWithParticipation[];
 }
 
 const EventsSection = ({
@@ -30,8 +31,8 @@ const EventsSection = ({
   const pageSize = 5; // Number of events per page
   
   // Split events into user-related and open events
-  const [userRelatedEvents, setUserRelatedEvents] = useState<typeof tableEvents>([]);
-  const [openEvents, setOpenEvents] = useState<typeof tableEvents>([]);
+  const [userRelatedEvents, setUserRelatedEvents] = useState<EventWithParticipation[]>([]);
+  const [openEvents, setOpenEvents] = useState<EventWithParticipation[]>([]);
   
   // Reset to page 1 when search query changes
   const handleSearch = (query: string) => {
