@@ -173,10 +173,6 @@ const Index = () => {
                 <span className="block">GATHER</span>
                 <span className="text-emerald-500">to play</span>
               </h1>
-              
-              <p className="text-muted-foreground text-lg max-w-md mb-10 animate-fade-in" style={{ animationDelay: '300ms' }}>
-                {t('index.heroSubtitle')}
-              </p>
             </div>
             
             <div className="hidden md:flex md:justify-center md:items-center">
