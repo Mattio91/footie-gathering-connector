@@ -5,8 +5,9 @@ import { Search, Plus, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useTranslation } from 'react-i18next';
-import EventCard, { EventCardProps } from '@/components/EventCard';
+import { EventCardProps } from '@/components/EventCard';
 import EventsTable from './EventsTable';
+import FeaturedEvents from './FeaturedEvents';
 
 interface EventsSectionProps {
   filteredEvents: EventCardProps[];
@@ -59,16 +60,7 @@ const EventsSection = ({
           </div>
         </div>
         
-        {featuredEvents.length > 0 && (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
-            {featuredEvents.map((event) => (
-              <EventCard 
-                key={event.id} 
-                {...event} 
-              />
-            ))}
-          </div>
-        )}
+        <FeaturedEvents events={featuredEvents} />
         
         <EventsTable 
           events={tableEvents} 
@@ -78,15 +70,7 @@ const EventsSection = ({
         />
         
         {filteredEvents.length === 0 && (
-          <div className="text-center py-12">
-            <p className="text-muted-foreground mb-4">{t('index.noEventsFound')}</p>
-            <Link to="/create-event">
-              <Button>
-                <Plus className="h-4 w-4 mr-2" />
-                {t('index.createNewEvent')}
-              </Button>
-            </Link>
-          </div>
+          <FeaturedEvents events={[]} showEmptyState={true} />
         )}
         
         {filteredEvents.length > 0 && (
