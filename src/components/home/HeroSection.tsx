@@ -6,23 +6,23 @@ const HeroSection = () => {
   const { t } = useTranslation();
   
   return (
-    <section className="pt-28 pb-14 px-4 relative overflow-hidden">
+    <section className="pt-16 pb-8 px-4 relative overflow-hidden">
       <div className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-primary/5 via-background to-background"></div>
       
       <div className="container max-w-6xl mx-auto">
-        <div className="grid md:grid-cols-2 gap-8 items-center">
+        <div className="grid md:grid-cols-2 gap-4 items-center">
           <div className="text-left">
-            <span className="tag bg-primary/10 text-primary mb-4 animate-fade-in">
+            <span className="tag bg-primary/10 text-primary mb-2 inline-flex items-center text-sm px-2 py-1 rounded-full animate-fade-in">
               <CalendarClock className="h-3 w-3 mr-1" />
               {t('index.heroSubtitle')}
             </span>
             
-            <h1 className="font-oswald text-5xl md:text-6xl lg:text-7xl uppercase tracking-tight mb-6 animate-fade-in leading-none" style={{ animationDelay: '150ms' }}>
+            <h1 className="font-oswald text-4xl md:text-5xl lg:text-6xl uppercase tracking-tight mb-4 animate-fade-in leading-none" style={{ animationDelay: '150ms' }}>
               <span className="block">GATHER</span>
               <span className="text-emerald-500">to play</span>
             </h1>
             
-            <p className="text-muted-foreground text-lg max-w-md mb-10 animate-fade-in" style={{ animationDelay: '300ms' }}>
+            <p className="text-muted-foreground text-base max-w-md mb-4 animate-fade-in" style={{ animationDelay: '300ms' }}>
               {t('index.heroSubtitle')}
             </p>
           </div>
