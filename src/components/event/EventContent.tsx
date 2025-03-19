@@ -1,6 +1,5 @@
 
 import EventTeams from '@/components/EventTeams';
-import EventAbout from '@/components/EventAbout';
 import EventMap from '@/components/EventMap';
 import EventChat from '@/components/EventChat';
 import EventGroups from '@/components/EventGroups';
@@ -28,6 +27,8 @@ interface EventContentProps {
   players: Player[];
   tentativePlayers: Player[];
   isJoined: boolean;
+  isHost: boolean;
+  eventStatus: 'upcoming' | 'in-progress' | 'completed';
   messages: {
     id: string;
     author: { 
@@ -45,13 +46,24 @@ interface EventContentProps {
     handleAddFriend: (name: string) => void;
     handleSendMessage: (message: string) => void;
     handlePingMember?: (memberId: string) => void;
+    handleCallPlayers?: () => void;
+    handleCancelEvent?: () => void;
   };
 }
 
-const EventContent = ({ event, players, tentativePlayers, isJoined, messages, handlers }: EventContentProps) => {
+const EventContent = ({ 
+  event, 
+  players, 
+  tentativePlayers, 
+  isJoined, 
+  isHost,
+  eventStatus,
+  messages, 
+  handlers 
+}: EventContentProps) => {
   return (
     <div className="space-y-3 compact-spacing">
-      {/* Teams & Field visualization section with join button */}
+      {/* Teams section with join button */}
       <EventTeams 
         players={players} 
         tentativePlayers={tentativePlayers}

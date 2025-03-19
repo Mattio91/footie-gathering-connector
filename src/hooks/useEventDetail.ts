@@ -29,7 +29,9 @@ export const useEventDetail = (eventId: string) => {
     handleAddFriend,
     handleSendMessage,
     handleImageUpload,
-    handlePingMember
+    handlePingMember,
+    handleCallPlayers,
+    handleCancelEvent
   } = useEventActions({
     players,
     setPlayers,
@@ -58,6 +60,8 @@ export const useEventDetail = (eventId: string) => {
     handleAddFriend,
     handleSendMessage,
     handleImageUpload,
-    handlePingMember
+    handlePingMember,
+    handleCallPlayers,
+    handleCancelEvent
   };
 };

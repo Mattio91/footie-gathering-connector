@@ -19,6 +19,8 @@ interface EventViewProps {
     handleSendMessage: (message: string) => void;
     handleImageUpload: (file: File) => void;
     handlePingMember?: (memberId: string) => void;
+    handleCallPlayers?: () => void;
+    handleCancelEvent?: () => void;
   };
 }
 
@@ -31,6 +33,28 @@ const EventView = ({
   messages, 
   handlers 
 }: EventViewProps) => {
+  // Determine if current user is a host or co-host
+  const currentUserId = 'current-user'; // In a real app, this would come from auth
+  const isHost = event.host.id === currentUserId || event.coHosts.some(host => host.id === currentUserId);
+  
+  // Determine event status (would come from backend in real app)
+  const now = new Date();
+  const eventDate = new Date(event.date);
+  let eventStatus: 'upcoming' | 'in-progress' | 'completed' = 'upcoming';
+  
+  if (now > eventDate) {
+    const eventEndTime = new Date(eventDate);
+    // Add duration in minutes to get end time
+    const durationInMinutes = parseInt(event.duration.replace(/\D/g, ''));
+    eventEndTime.setMinutes(eventEndTime.getMinutes() + durationInMinutes);
+    
+    if (now > eventEndTime) {
+      eventStatus = 'completed';
+    } else {
+      eventStatus = 'in-progress';
+    }
+  }
+  
   return (
     <>
       {/* Field Image with title and details */}
@@ -40,14 +64,20 @@ const EventView = ({
         playerCount={players.length}
         maxPlayers={event.maxPlayers}
         onImageUpload={handlers.handleImageUpload}
+        isHost={isHost}
+        status={eventStatus}
+        onCallPlayers={handlers.handleCallPlayers}
+        onCancelEvent={handlers.handleCancelEvent}
       />
       
-      {/* Main content grid layout */}
+      {/* Main content */}
       <EventContent 
         event={event}
         players={players}
         tentativePlayers={tentativePlayers}
         isJoined={isJoined}
+        isHost={isHost}
+        eventStatus={eventStatus}
         messages={messages}
         handlers={{
           handleJoinEvent: handlers.handleJoinEvent,
@@ -55,7 +85,9 @@ const EventView = ({
           handleSkipEvent: handlers.handleSkipEvent,
           handleAddFriend: handlers.handleAddFriend,
           handleSendMessage: handlers.handleSendMessage,
-          handlePingMember: handlers.handlePingMember
+          handlePingMember: handlers.handlePingMember,
+          handleCallPlayers: handlers.handleCallPlayers,
+          handleCancelEvent: handlers.handleCancelEvent
         }}
       />
     </>

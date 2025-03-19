@@ -1,7 +1,7 @@
 
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { ChevronLeft, Calendar, Clock, MapPin, Users, ImagePlus, Share2 } from 'lucide-react';
+import { ChevronLeft, Calendar, Clock, MapPin, Users, ImagePlus, Share2, PhoneCall, X, CheckCircle } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
 import EventAbout from '@/components/EventAbout';
@@ -14,9 +14,23 @@ interface EventCarouselProps {
   playerCount: number;
   maxPlayers: number;
   onImageUpload: (file: File) => void;
+  isHost?: boolean;
+  status?: 'upcoming' | 'in-progress' | 'completed';
+  onCallPlayers?: () => void;
+  onCancelEvent?: () => void;
 }
 
-const EventCarousel = ({ images, event, playerCount, maxPlayers, onImageUpload }: EventCarouselProps) => {
+const EventCarousel = ({ 
+  images, 
+  event, 
+  playerCount, 
+  maxPlayers, 
+  onImageUpload, 
+  isHost = false,
+  status = 'upcoming',
+  onCallPlayers,
+  onCancelEvent
+}: EventCarouselProps) => {
   const [activeImageIndex, setActiveImageIndex] = useState(0);
   
   // Format date
@@ -42,16 +56,55 @@ const EventCarousel = ({ images, event, playerCount, maxPlayers, onImageUpload }
     }
   };
 
+  // Status indicator
+  const getStatusIndicator = () => {
+    switch(status) {
+      case 'in-progress':
+        return <div className="bg-amber-500 text-white px-2 py-1 rounded-md flex items-center text-xs"><Clock className="h-3 w-3 mr-1" /> In Progress</div>;
+      case 'completed':
+        return <div className="bg-green-600 text-white px-2 py-1 rounded-md flex items-center text-xs"><CheckCircle className="h-3 w-3 mr-1" /> Completed</div>;
+      default:
+        return <div className="bg-blue-600 text-white px-2 py-1 rounded-md flex items-center text-xs"><Calendar className="h-3 w-3 mr-1" /> Upcoming</div>;
+    }
+  };
+
   return (
-    <div className="relative rounded-xl overflow-hidden aspect-[21/14] bg-muted animate-fade-in mb-2">
+    <div className="relative rounded-xl overflow-hidden aspect-[21/5] bg-muted animate-fade-in mb-1">
       {/* Navigation Buttons directly on the image */}
       <div className="absolute top-0 left-0 right-0 flex justify-between items-center p-2 z-20">
-        <Link to="/" className="text-white hover:text-white/80 transition-colors inline-flex items-center bg-black/40 px-2 py-1 rounded-md">
-          <ChevronLeft className="h-4 w-4 mr-1" />
-          Back
-        </Link>
+        <div className="flex items-center gap-2">
+          <Link to="/" className="text-white hover:text-white/80 transition-colors inline-flex items-center bg-black/40 px-2 py-1 rounded-md">
+            <ChevronLeft className="h-4 w-4 mr-1" />
+            Back
+          </Link>
+          {getStatusIndicator()}
+        </div>
         
         <div className="flex space-x-2">
+          {isHost && (
+            <>
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                className="text-white bg-black/40 hover:bg-black/60"
+                onClick={onCallPlayers}
+              >
+                <PhoneCall className="h-4 w-4 mr-1" />
+                Call
+              </Button>
+              
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                className="text-white bg-black/40 hover:bg-black/60"
+                onClick={onCancelEvent}
+              >
+                <X className="h-4 w-4 mr-1" />
+                Cancel
+              </Button>
+            </>
+          )}
+          
           <EventAbout description={event.description} />
           
           <label htmlFor="image-upload" className="cursor-pointer">
@@ -114,7 +167,12 @@ const EventCarousel = ({ images, event, playerCount, maxPlayers, onImageUpload }
             
             <div className="flex items-center">
               <Users className="h-4 w-4 mr-2 flex-shrink-0" />
-              <span>{playerCount}/{maxPlayers} players</span>
+              <span className={cn(
+                playerCount < maxPlayers ? "text-amber-300 font-medium" : ""
+              )}>
+                {playerCount}/{maxPlayers} players
+                {playerCount < maxPlayers && " (need more)"}
+              </span>
             </div>
           </div>
           
