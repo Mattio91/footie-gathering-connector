@@ -6,6 +6,7 @@ import { CalendarHeader } from './calendar/CalendarHeader';
 import { HourSlots } from './calendar/HourSlots';
 import { EventItem } from './calendar/EventItem';
 import { Skeleton } from '@/components/ui/skeleton';
+import { useIsMobile } from '@/hooks/use-mobile';
 import { 
   getWeekStart,
   generateWeekDays,
@@ -25,12 +26,17 @@ export const WeeklyEventCalendar: React.FC<WeeklyEventCalendarProps> = ({
   isLoading = false 
 }) => {
   const navigate = useNavigate();
+  const isMobile = useIsMobile();
   
   // Get the current week starting from Monday
   const startDate = useMemo(() => getWeekStart(), []);
   
   // Create an array of the 7 days of the week
-  const weekDays = useMemo(() => generateWeekDays(startDate), [startDate]);
+  const weekDays = useMemo(() => {
+    // For mobile, only show 3 days
+    const days = generateWeekDays(startDate);
+    return isMobile ? days.slice(0, 3) : days;
+  }, [startDate, isMobile]);
   
   // Calculate the minimum and maximum hours for events
   const hourRange = useMemo(() => calculateHourRange(events), [events]);
@@ -62,9 +68,9 @@ export const WeeklyEventCalendar: React.FC<WeeklyEventCalendarProps> = ({
     return (
       <div className="rounded-lg border overflow-hidden">
         {/* Skeleton for header */}
-        <div className="grid grid-cols-8 border-b bg-muted/20">
+        <div className={`grid ${isMobile ? 'grid-cols-4' : 'grid-cols-8'} border-b bg-muted/20`}>
           <Skeleton className="h-12 m-2" />
-          {Array.from({ length: 7 }).map((_, i) => (
+          {Array.from({ length: isMobile ? 3 : 7 }).map((_, i) => (
             <Skeleton key={i} className="h-12 m-2" />
           ))}
         </div>
@@ -72,9 +78,9 @@ export const WeeklyEventCalendar: React.FC<WeeklyEventCalendarProps> = ({
         {/* Skeleton for hour slots */}
         <div className="relative">
           {Array.from({ length: 8 }).map((_, hourIndex) => (
-            <div key={hourIndex} className="grid grid-cols-8 border-b last:border-b-0">
+            <div key={hourIndex} className={`grid ${isMobile ? 'grid-cols-4' : 'grid-cols-8'} border-b last:border-b-0`}>
               <Skeleton className="h-12 m-2" />
-              {Array.from({ length: 7 }).map((_, dayIndex) => (
+              {Array.from({ length: isMobile ? 3 : 7 }).map((_, dayIndex) => (
                 <Skeleton key={dayIndex} className="h-12 m-2" />
               ))}
             </div>
@@ -87,11 +93,11 @@ export const WeeklyEventCalendar: React.FC<WeeklyEventCalendarProps> = ({
   return (
     <div className="rounded-lg border overflow-hidden">
       {/* Day headers */}
-      <CalendarHeader startDate={startDate} />
+      <CalendarHeader startDate={startDate} isMobile={isMobile} />
       
       {/* Hour rows */}
       <div className="relative">
-        <HourSlots hourSlots={hourSlots} weekDays={weekDays} />
+        <HourSlots hourSlots={hourSlots} weekDays={weekDays} isMobile={isMobile} />
         
         {/* Events as position-absolute rectangles */}
         {weekDays.map((day, dayIndex) => {
@@ -104,6 +110,7 @@ export const WeeklyEventCalendar: React.FC<WeeklyEventCalendarProps> = ({
               dayIndex={dayIndex}
               minHour={hourRange.minHour}
               onClick={handleEventClick}
+              isMobile={isMobile}
             />
           ));
         })}

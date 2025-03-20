@@ -9,6 +9,7 @@ interface EventItemProps {
   dayIndex: number;
   minHour: number;
   onClick: (eventId: string) => void;
+  isMobile?: boolean;
 }
 
 // Convert string time (HH:MM) to a Date object for proper comparison
@@ -30,7 +31,7 @@ const getEndTime = (startTimeStr: string, duration: string): Date => {
   return addMinutes(startTime, durationMins);
 };
 
-export const EventItem: React.FC<EventItemProps> = ({ event, dayIndex, minHour, onClick }) => {
+export const EventItem: React.FC<EventItemProps> = ({ event, dayIndex, minHour, onClick, isMobile = false }) => {
   // Calculate event position and height in the grid
   const getEventStyle = () => {
     const startTime = event.startTime ? timeToDate(event.startTime) : timeToDate(event.time);
@@ -47,10 +48,19 @@ export const EventItem: React.FC<EventItemProps> = ({ event, dayIndex, minHour, 
     // Calculate height based on duration
     const height = ((endHour - startHour) * 60 + (endMinutes - startMinutes)) / 60;
     
+    // For mobile, adjust column width
+    const colPercentage = isMobile ? 25 : 12.5;
+    const leftPosition = `calc(${dayIndex + 1} * ${colPercentage}%)`;
+    const widthPercentage = isMobile ? 20 : 10;
+    const marginLeftPercentage = isMobile ? 2.5 : 1;
+    
     return {
       top: `${top * 3}rem`, // Each hour is 3rem tall
       height: `${height * 3}rem`,
       backgroundColor: event.color || '#3b82f6',
+      left: leftPosition,
+      width: `${widthPercentage}%`,
+      marginLeft: `${marginLeftPercentage}%`,
     };
   };
 
@@ -60,18 +70,15 @@ export const EventItem: React.FC<EventItemProps> = ({ event, dayIndex, minHour, 
         <TooltipTrigger asChild>
           <div
             className="absolute rounded text-white text-xs p-1 overflow-hidden cursor-pointer"
-            style={{
-              ...getEventStyle(),
-              left: `calc(${dayIndex + 1} * 12.5%)`, // Position based on day column
-              width: '10%', // Slightly narrower than the cell
-              marginLeft: '1%', // Centering within the cell
-            }}
+            style={getEventStyle()}
             onClick={() => onClick(event.id)}
           >
             <div className="font-medium truncate">{event.title}</div>
-            <div className="text-[10px]">
-              {event.startTime || event.time} - {event.endTime || format(getEndTime(event.time, event.duration), 'HH:mm')}
-            </div>
+            {!isMobile && (
+              <div className="text-[10px]">
+                {event.startTime || event.time} - {event.endTime || format(getEndTime(event.time, event.duration), 'HH:mm')}
+              </div>
+            )}
           </div>
         </TooltipTrigger>
         <TooltipContent>
