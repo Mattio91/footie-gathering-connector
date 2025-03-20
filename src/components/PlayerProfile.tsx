@@ -14,7 +14,8 @@ import {
   UserCheck, 
   Users, 
   PieChart, 
-  Calendar 
+  Calendar,
+  Trophy 
 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { cn } from '@/lib/utils';
@@ -24,9 +25,8 @@ import { Group } from '@/types/group';
 const playerStats = {
   gamesPlayed: 28,
   gamesWon: 15,
-  goalsScored: 12,
-  assists: 8,
   winRate: 53.6,
+  manOfTheMatch: 3,
 };
 
 // Sample groups data - in a real app, this would come from an API
@@ -83,7 +83,7 @@ const PlayerProfile = ({ player }: PlayerProfileProps) => {
         </CardHeader>
         
         <CardContent>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-6">
             <div className="bg-muted/30 p-4 rounded-lg border">
               <div className="text-muted-foreground text-sm mb-1 flex items-center">
                 <Calendar className="h-3.5 w-3.5 mr-1.5" />
@@ -101,17 +101,11 @@ const PlayerProfile = ({ player }: PlayerProfileProps) => {
             </div>
             
             <div className="bg-muted/30 p-4 rounded-lg border">
-              <div className="text-muted-foreground text-sm mb-1">
-                {t('players.goalsScored', 'Goals Scored')}
+              <div className="text-muted-foreground text-sm mb-1 flex items-center">
+                <Trophy className="h-3.5 w-3.5 mr-1.5" />
+                {t('players.manOfTheMatch', 'Man of the Match')}
               </div>
-              <div className="text-2xl font-semibold">{playerStats.goalsScored}</div>
-            </div>
-            
-            <div className="bg-muted/30 p-4 rounded-lg border">
-              <div className="text-muted-foreground text-sm mb-1">
-                {t('players.assists', 'Assists')}
-              </div>
-              <div className="text-2xl font-semibold">{playerStats.assists}</div>
+              <div className="text-2xl font-semibold">{playerStats.manOfTheMatch}</div>
             </div>
           </div>
           

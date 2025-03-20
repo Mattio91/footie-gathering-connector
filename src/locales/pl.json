@@ -143,5 +143,22 @@
     "googleLoginFailed": "Logowanie przez Google nie powiodło się. Spróbuj ponownie.",
     "facebookLoginFailed": "Logowanie przez Facebook nie powiodło się. Spróbuj ponownie.",
     "invalidCredentials": "Nieprawidłowy email lub hasło"
+  },
+  "players": {
+    "title": "Gracze",
+    "searchPlaceholder": "Szukaj graczy...",
+    "searchResults": "Gracze",
+    "noResults": "Nie znaleziono graczy",
+    "admin": "Admin",
+    "player": "Gracz",
+    "confirmed": "Potwierdzony",
+    "pending": "Oczekujący",
+    "gamesPlayed": "Rozegrane mecze",
+    "winRate": "Współczynnik wygranych",
+    "manOfTheMatch": "Najlepszy gracz meczu",
+    "groups": "Grupy",
+    "members": "członków",
+    "selectPrompt": "Wybierz gracza",
+    "selectDescription": "Wybierz gracza z listy, aby zobaczyć jego profil"
   }
 }

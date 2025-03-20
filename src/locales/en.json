@@ -143,5 +143,22 @@
     "googleLoginFailed": "Google login failed. Please try again.",
     "facebookLoginFailed": "Facebook login failed. Please try again.",
     "invalidCredentials": "Invalid email or password"
+  },
+  "players": {
+    "title": "Players",
+    "searchPlaceholder": "Search players...",
+    "searchResults": "Players",
+    "noResults": "No players found",
+    "admin": "Admin",
+    "player": "Player",
+    "confirmed": "Confirmed",
+    "pending": "Pending",
+    "gamesPlayed": "Games Played",
+    "winRate": "Win Rate",
+    "manOfTheMatch": "Man of the Match",
+    "groups": "Groups",
+    "members": "members",
+    "selectPrompt": "Select a player",
+    "selectDescription": "Choose a player from the list to view their profile"
   }
 }

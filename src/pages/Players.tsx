@@ -15,7 +15,13 @@ const samplePlayers: Player[] = [
     isConfirmed: true,
     isAdmin: false,
     avatar: "https://ui-avatars.com/api/?name=John+Smith&background=0D8ABC&color=fff",
-    participationStatus: "joined"
+    participationStatus: "joined",
+    statistics: {
+      gamesPlayed: 28,
+      gamesWon: 15,
+      winRate: 53.6,
+      manOfTheMatch: 3
+    }
   },
   {
     id: "p2",
@@ -23,7 +29,13 @@ const samplePlayers: Player[] = [
     isConfirmed: true,
     isAdmin: true,
     avatar: "https://ui-avatars.com/api/?name=Sarah+Johnson&background=1D8A3C&color=fff",
-    participationStatus: "joined"
+    participationStatus: "joined",
+    statistics: {
+      gamesPlayed: 42,
+      gamesWon: 30,
+      winRate: 71.4,
+      manOfTheMatch: 8
+    }
   },
   {
     id: "p3",
@@ -31,7 +43,13 @@ const samplePlayers: Player[] = [
     isConfirmed: false,
     isAdmin: false,
     avatar: "https://ui-avatars.com/api/?name=Mike+Wilson&background=8A1D3C&color=fff",
-    participationStatus: "tentative"
+    participationStatus: "tentative",
+    statistics: {
+      gamesPlayed: 15,
+      gamesWon: 5,
+      winRate: 33.3,
+      manOfTheMatch: 1
+    }
   }
 ];
 
