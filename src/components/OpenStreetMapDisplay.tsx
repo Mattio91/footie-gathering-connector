@@ -13,6 +13,8 @@ const OpenStreetMapDisplay = ({ location, className = '' }: OpenStreetMapDisplay
   useEffect(() => {
     if (!mapRef.current) return;
     
+    let mapInstance: any = null;
+    
     // Import Leaflet dynamically
     import('leaflet').then((L) => {
       // Fix the icon paths issue
@@ -31,16 +33,16 @@ const OpenStreetMapDisplay = ({ location, className = '' }: OpenStreetMapDisplay
             const { lat, lon } = data[0];
             
             // Initialize map with the location coordinates
-            const map = L.map(mapRef.current!).setView([parseFloat(lat), parseFloat(lon)], 15);
+            mapInstance = L.map(mapRef.current!).setView([parseFloat(lat), parseFloat(lon)], 15);
             
             // Add OpenStreetMap tile layer
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
               attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-            }).addTo(map);
+            }).addTo(mapInstance);
             
             // Add a marker at the location
             const marker = L.marker([parseFloat(lat), parseFloat(lon)]);
-            marker.addTo(map);
+            marker.addTo(mapInstance);
             
             // Add a popup with the location name
             marker.bindPopup(location).openPopup();
@@ -65,8 +67,8 @@ const OpenStreetMapDisplay = ({ location, className = '' }: OpenStreetMapDisplay
     
     // Cleanup function
     return () => {
-      if (mapRef.current && mapRef.current.__leaflet_events) {
-        mapRef.current.__leaflet_events = null;
+      if (mapInstance) {
+        mapInstance.remove();
       }
     };
   }, [location]);
