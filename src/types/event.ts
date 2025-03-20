@@ -25,6 +25,8 @@ export interface EventData {
   imageUrl: string;
   groups: Group[];
   color: string;
+  startTime?: string; // Optional for explicit start time display
+  endTime?: string;   // Optional for explicit end time display
 }
 
 export interface ChatMessage {

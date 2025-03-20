@@ -1,29 +1,38 @@
 
 import { Field } from '@/types/field';
 import { getMockEvent } from './mockEventData';
-import { addDays } from 'date-fns';
+import { addDays, format } from 'date-fns';
 
 // Create an array of mock events for a field ensuring they don't overlap
 const createMockEventsForField = (fieldName: string, count: number = 3) => {
+  if (count === 0) return [];
+  
   return Array.from({ length: count }, (_, i) => {
     // Create base event
     const event = getMockEvent(`${fieldName}-${i + 1}`);
     
-    // Set different day of week for first two events (Monday and Tuesday)
-    // For third event, use a different time on Monday
+    // Set different day of week for each event
     const today = new Date();
-    const dayOfWeek = i < 2 ? i : 0; // Use Monday (0), Tuesday (1), Monday (0) for 3 events
+    const dayOfWeek = i % 5; // Use Monday (0) through Friday (4)
     const daysToAdd = dayOfWeek + (8 - today.getDay()); // Next week starting Monday
     
-    // Set different times to avoid overlaps
-    const times = ['10:00', '15:30', '19:00']; // Morning, afternoon, evening times
+    // Set different times to avoid overlaps (2-hour blocks)
+    const startHours = [10, 14, 18]; // Morning, afternoon, evening times
+    const startHour = startHours[i % startHours.length];
+    const endHour = startHour + 2;
+    
+    const eventDate = addDays(today, daysToAdd);
     
     return {
       ...event,
       location: `${fieldName}, London`,
-      date: addDays(today, daysToAdd),
-      time: times[i % times.length],
-      duration: i % 2 === 0 ? '90 mins' : '120 mins', // Alternate between 1.5 and 2 hours
+      date: eventDate,
+      time: `${startHour}:00`,
+      duration: '2 hours',
+      color: i === 0 ? '#3b82f6' : i === 1 ? '#10b981' : '#f59e0b', // Blue, green, amber
+      // Add explicit start and end times for calendar display
+      startTime: `${startHour}:00`,
+      endTime: `${endHour}:00`,
     };
   });
 };
@@ -49,7 +58,7 @@ export const mockFields: Field[] = [
       { id: '1', url: 'https://images.unsplash.com/photo-1589487391730-58f20eb2c308?q=80&w=1000', alt: 'Regent\'s Park football field' },
       { id: '2', url: 'https://images.unsplash.com/photo-1494778696781-8f23fd5553c4?q=80&w=1000', alt: 'Football match at Regent\'s Park' },
     ],
-    events: createMockEventsForField('Regent\'s Park', 3)
+    events: createMockEventsForField('Regent\'s Park', 2)
   },
   {
     id: '3',
@@ -60,7 +69,7 @@ export const mockFields: Field[] = [
       { id: '1', url: 'https://images.unsplash.com/photo-1542144582-1f02695554ac?q=80&w=1000', alt: 'Victoria Park field' },
       { id: '2', url: 'https://images.unsplash.com/photo-1579952363873-27f3bade9f55?q=80&w=1000', alt: 'Football pitch at Victoria Park' },
     ],
-    events: createMockEventsForField('Victoria Park', 2)
+    events: createMockEventsForField('Victoria Park', 1)
   },
   {
     id: '4',
@@ -71,6 +80,6 @@ export const mockFields: Field[] = [
       { id: '1', url: 'https://images.unsplash.com/photo-1508098682722-e99c643e7f0b?q=80&w=1000', alt: 'Wormwood Scrubs field' },
       { id: '2', url: 'https://images.unsplash.com/photo-1626248801386-6a5463d42e4e?q=80&w=1000', alt: 'Football at Wormwood Scrubs' },
     ],
-    events: createMockEventsForField('Wormwood Scrubs', 1)
+    events: createMockEventsForField('Wormwood Scrubs', 0) // This field has no events to test the empty state
   },
 ];

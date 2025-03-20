@@ -12,6 +12,9 @@ interface FieldCardProps {
 }
 
 const FieldCard: React.FC<FieldCardProps> = ({ field }) => {
+  // Check if there are any events
+  const hasEvents = field.events && field.events.length > 0;
+  
   return (
     <Card className="overflow-hidden hover:shadow-lg transition-shadow w-full mb-8">
       <div className="flex flex-col md:flex-row">
@@ -42,7 +45,7 @@ const FieldCard: React.FC<FieldCardProps> = ({ field }) => {
             </p>
             
             {/* Only show calendar if there are events */}
-            {field.events.length > 0 && (
+            {hasEvents ? (
               <div className="mb-4">
                 <div className="flex items-center mb-3">
                   <Calendar className="w-4 h-4 mr-2" />
@@ -50,10 +53,7 @@ const FieldCard: React.FC<FieldCardProps> = ({ field }) => {
                 </div>
                 <WeeklyEventCalendar events={field.events} />
               </div>
-            )}
-            
-            {/* Show a message if no events */}
-            {field.events.length === 0 && (
+            ) : (
               <div className="text-center py-4 bg-muted/10 rounded-md mb-4">
                 <Calendar className="w-8 h-8 mx-auto text-muted-foreground mb-2" />
                 <p className="text-sm text-muted-foreground">No events scheduled for this field</p>
