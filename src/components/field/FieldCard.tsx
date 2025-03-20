@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { MapPin, Calendar } from 'lucide-react';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
@@ -14,6 +14,16 @@ interface FieldCardProps {
 const FieldCard: React.FC<FieldCardProps> = ({ field }) => {
   // Check if there are any events
   const hasEvents = field.events && field.events.length > 0;
+  const [eventsLoading, setEventsLoading] = useState(true);
+  
+  // Simulate loading events
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setEventsLoading(false);
+    }, 1000);
+    
+    return () => clearTimeout(timer);
+  }, []);
   
   return (
     <Card className="overflow-hidden hover:shadow-lg transition-shadow w-full mb-8">
@@ -44,21 +54,14 @@ const FieldCard: React.FC<FieldCardProps> = ({ field }) => {
               {field.description || 'No description available.'}
             </p>
             
-            {/* Only show calendar if there are events */}
-            {hasEvents ? (
-              <div className="mb-4">
-                <div className="flex items-center mb-3">
-                  <Calendar className="w-4 h-4 mr-2" />
-                  <h4 className="font-medium">Events Schedule</h4>
-                </div>
-                <WeeklyEventCalendar events={field.events} />
+            {/* Show calendar with loading state */}
+            <div className="mb-4">
+              <div className="flex items-center mb-3">
+                <Calendar className="w-4 h-4 mr-2" />
+                <h4 className="font-medium">Events Schedule</h4>
               </div>
-            ) : (
-              <div className="text-center py-4 bg-muted/10 rounded-md mb-4">
-                <Calendar className="w-8 h-8 mx-auto text-muted-foreground mb-2" />
-                <p className="text-sm text-muted-foreground">No events scheduled for this field</p>
-              </div>
-            )}
+              <WeeklyEventCalendar events={field.events} isLoading={eventsLoading} />
+            </div>
           </CardContent>
           <CardFooter className="px-6 pb-6 pt-0 flex justify-between items-center">
             <div className="text-sm">

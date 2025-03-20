@@ -5,6 +5,7 @@ import { EventData } from '@/types/event';
 import { CalendarHeader } from './calendar/CalendarHeader';
 import { HourSlots } from './calendar/HourSlots';
 import { EventItem } from './calendar/EventItem';
+import { Skeleton } from '@/components/ui/skeleton';
 import { 
   getWeekStart,
   generateWeekDays,
@@ -16,9 +17,13 @@ import {
 
 interface WeeklyEventCalendarProps {
   events: EventData[];
+  isLoading?: boolean;
 }
 
-export const WeeklyEventCalendar: React.FC<WeeklyEventCalendarProps> = ({ events }) => {
+export const WeeklyEventCalendar: React.FC<WeeklyEventCalendarProps> = ({ 
+  events, 
+  isLoading = false 
+}) => {
   const navigate = useNavigate();
   
   // Get the current week starting from Monday
@@ -47,9 +52,36 @@ export const WeeklyEventCalendar: React.FC<WeeklyEventCalendarProps> = ({ events
     [weekDays, events]
   );
 
-  // If there are no events, don't render the calendar
-  if (!eventsVisible) {
+  // If there are no events and we're not loading, don't render the calendar
+  if (!eventsVisible && !isLoading) {
     return null;
+  }
+
+  // If we're still loading, show a skeleton
+  if (isLoading) {
+    return (
+      <div className="rounded-lg border overflow-hidden">
+        {/* Skeleton for header */}
+        <div className="grid grid-cols-8 border-b bg-muted/20">
+          <Skeleton className="h-12 m-2" />
+          {Array.from({ length: 7 }).map((_, i) => (
+            <Skeleton key={i} className="h-12 m-2" />
+          ))}
+        </div>
+        
+        {/* Skeleton for hour slots */}
+        <div className="relative">
+          {Array.from({ length: 8 }).map((_, hourIndex) => (
+            <div key={hourIndex} className="grid grid-cols-8 border-b last:border-b-0">
+              <Skeleton className="h-12 m-2" />
+              {Array.from({ length: 7 }).map((_, dayIndex) => (
+                <Skeleton key={dayIndex} className="h-12 m-2" />
+              ))}
+            </div>
+          ))}
+        </div>
+      </div>
+    );
   }
 
   return (

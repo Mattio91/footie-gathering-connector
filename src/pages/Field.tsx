@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { Calendar, MapPin, ChevronLeft } from 'lucide-react';
 import Header from '@/components/Header';
@@ -15,6 +15,16 @@ import OpenStreetMapDisplay from '@/components/OpenStreetMapDisplay';
 const Field = () => {
   const { id } = useParams<{ id: string }>();
   const field = mockFields.find(field => field.id === id);
+  const [eventsLoading, setEventsLoading] = useState(true);
+  
+  // Simulate loading events
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setEventsLoading(false);
+    }, 1500);
+    
+    return () => clearTimeout(timer);
+  }, []);
   
   if (!field) {
     return (
@@ -89,12 +99,10 @@ const Field = () => {
         </Card>
         
         {/* Weekly Event Calendar */}
-        {field.events.length > 0 && (
-          <Card className="p-6 mb-8">
-            <h2 className="text-xl font-semibold mb-4">Event Schedule</h2>
-            <WeeklyEventCalendar events={field.events} />
-          </Card>
-        )}
+        <Card className="p-6 mb-8">
+          <h2 className="text-xl font-semibold mb-4">Event Schedule</h2>
+          <WeeklyEventCalendar events={field.events} isLoading={eventsLoading} />
+        </Card>
         
         {/* Field Events */}
         <Tabs defaultValue="upcoming" className="mb-8">
