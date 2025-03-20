@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { Calendar, MapPin, ChevronLeft } from 'lucide-react';
@@ -8,6 +9,8 @@ import { mockFields } from '@/data/mockFieldsData';
 import { Card } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { format } from 'date-fns';
+import { WeeklyEventCalendar } from '@/components/field/WeeklyEventCalendar';
+import OpenStreetMapDisplay from '@/components/OpenStreetMapDisplay';
 
 const Field = () => {
   const { id } = useParams<{ id: string }>();
@@ -75,6 +78,23 @@ const Field = () => {
           <h2 className="text-xl font-semibold mb-4">About this Field</h2>
           <p className="text-muted-foreground">{field.description}</p>
         </Card>
+        
+        {/* Field Location Map */}
+        <Card className="p-6 mb-8">
+          <h2 className="text-xl font-semibold mb-4">Location</h2>
+          <OpenStreetMapDisplay 
+            location={field.location} 
+            className="h-[300px] rounded-md overflow-hidden"
+          />
+        </Card>
+        
+        {/* Weekly Event Calendar */}
+        {field.events.length > 0 && (
+          <Card className="p-6 mb-8">
+            <h2 className="text-xl font-semibold mb-4">Event Schedule</h2>
+            <WeeklyEventCalendar events={field.events} />
+          </Card>
+        )}
         
         {/* Field Events */}
         <Tabs defaultValue="upcoming" className="mb-8">
