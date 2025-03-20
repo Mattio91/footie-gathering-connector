@@ -1,16 +1,19 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { MapPin } from 'lucide-react';
+import { MapPin, Calendar, ChevronDown, ChevronUp } from 'lucide-react';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import { Field } from '@/types/field';
 import { Button } from '@/components/ui/button';
+import { WeeklyEventCalendar } from './WeeklyEventCalendar';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 
 interface FieldCardProps {
   field: Field;
 }
 
 const FieldCard: React.FC<FieldCardProps> = ({ field }) => {
+  const [showCalendar, setShowCalendar] = useState(false);
   // Check if there are any events
   const hasEvents = field.events && field.events.length > 0;
   
@@ -47,9 +50,32 @@ const FieldCard: React.FC<FieldCardProps> = ({ field }) => {
             <div className="text-sm">
               <span className="font-medium">{field.events.length}</span> {field.events.length === 1 ? 'event' : 'events'} scheduled
             </div>
+            
+            {hasEvents && (
+              <Collapsible 
+                open={showCalendar} 
+                onOpenChange={setShowCalendar}
+                className="w-full"
+              >
+                <CollapsibleTrigger asChild>
+                  <Button variant="ghost" size="sm" className="flex items-center gap-1">
+                    <Calendar className="h-4 w-4" />
+                    <span>Event Schedule</span>
+                    {showCalendar ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+                  </Button>
+                </CollapsibleTrigger>
+              </Collapsible>
+            )}
           </CardFooter>
         </div>
       </div>
+      
+      {/* Collapsible Calendar */}
+      {hasEvents && (
+        <CollapsibleContent className="px-6 pb-6">
+          <WeeklyEventCalendar events={field.events} />
+        </CollapsibleContent>
+      )}
     </Card>
   );
 };
