@@ -41,14 +41,24 @@ const FieldCard: React.FC<FieldCardProps> = ({ field }) => {
               {field.description || 'No description available.'}
             </p>
             
-            {/* Weekly Calendar View */}
-            <div className="mb-4">
-              <div className="flex items-center mb-3">
-                <Calendar className="w-4 h-4 mr-2" />
-                <h4 className="font-medium">Events Schedule</h4>
+            {/* Only show calendar if there are events */}
+            {field.events.length > 0 && (
+              <div className="mb-4">
+                <div className="flex items-center mb-3">
+                  <Calendar className="w-4 h-4 mr-2" />
+                  <h4 className="font-medium">Events Schedule</h4>
+                </div>
+                <WeeklyEventCalendar events={field.events} />
               </div>
-              <WeeklyEventCalendar events={field.events} />
-            </div>
+            )}
+            
+            {/* Show a message if no events */}
+            {field.events.length === 0 && (
+              <div className="text-center py-4 bg-muted/10 rounded-md mb-4">
+                <Calendar className="w-8 h-8 mx-auto text-muted-foreground mb-2" />
+                <p className="text-sm text-muted-foreground">No events scheduled for this field</p>
+              </div>
+            )}
           </CardContent>
           <CardFooter className="px-6 pb-6 pt-0 flex justify-between items-center">
             <div className="text-sm">
