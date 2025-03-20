@@ -1,15 +1,18 @@
 
 import React, { useMemo } from 'react';
-import { format, startOfWeek, addDays, isSameDay, set, addMinutes, parseISO } from 'date-fns';
+import { format, startOfWeek, addDays, isSameDay, set, addMinutes } from 'date-fns';
 import { EventData } from '@/types/event';
-import { Link } from 'react-router-dom';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { TooltipProvider, Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip';
+import { Button } from '@/components/ui/button';
+import { useNavigate } from 'react-router-dom';
 
 interface WeeklyEventCalendarProps {
   events: EventData[];
 }
 
 export const WeeklyEventCalendar: React.FC<WeeklyEventCalendarProps> = ({ events }) => {
+  const navigate = useNavigate();
+  
   // Get the current week starting from Monday
   const startDate = startOfWeek(new Date(), { weekStartsOn: 1 });
   
@@ -94,8 +97,8 @@ export const WeeklyEventCalendar: React.FC<WeeklyEventCalendarProps> = ({ events
 
   // Calculate event position and height in the grid
   const getEventStyle = (event: EventData) => {
-    const startTime = timeToDate(event.time);
-    const endTime = getEndTime(event.time, event.duration);
+    const startTime = event.startTime ? timeToDate(event.startTime) : timeToDate(event.time);
+    const endTime = event.endTime ? timeToDate(event.endTime) : getEndTime(event.time, event.duration);
     
     const startHour = startTime.getHours();
     const startMinutes = startTime.getMinutes();
@@ -114,6 +117,21 @@ export const WeeklyEventCalendar: React.FC<WeeklyEventCalendarProps> = ({ events
       backgroundColor: event.color || '#3b82f6',
     };
   };
+
+  // Handle navigating to the event detail page
+  const handleEventClick = (eventId: string) => {
+    navigate(`/event/${eventId}`);
+  };
+
+  // Check if there are any events displayed in the calendar
+  const hasVisibleEvents = useMemo(() => {
+    return weekDays.some(day => getEventsForDay(day).length > 0);
+  }, [weekDays, events]);
+
+  // If there are no events, don't render the calendar
+  if (!hasVisibleEvents) {
+    return null;
+  }
 
   return (
     <div className="rounded-lg border overflow-hidden">
@@ -154,26 +172,26 @@ export const WeeklyEventCalendar: React.FC<WeeklyEventCalendarProps> = ({ events
             <TooltipProvider key={`${dayIndex}-${event.id}`}>
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <Link 
-                    to={`/event/${event.id}`}
-                    className="absolute rounded text-white text-xs p-1 overflow-hidden"
+                  <div
+                    className="absolute rounded text-white text-xs p-1 overflow-hidden cursor-pointer"
                     style={{
                       ...getEventStyle(event),
                       left: `calc(${dayIndex + 1} * 12.5%)`, // Position based on day column
                       width: '10%', // Slightly narrower than the cell
                       marginLeft: '1%', // Centering within the cell
                     }}
+                    onClick={() => handleEventClick(event.id)}
                   >
                     <div className="font-medium truncate">{event.title}</div>
                     <div className="text-[10px]">
-                      {event.time} - {format(getEndTime(event.time, event.duration), 'HH:mm')}
+                      {event.startTime || event.time} - {event.endTime || format(getEndTime(event.time, event.duration), 'HH:mm')}
                     </div>
-                  </Link>
+                  </div>
                 </TooltipTrigger>
                 <TooltipContent>
                   <div className="text-xs p-1">
                     <div className="font-medium">{event.title}</div>
-                    <div>{event.time} - {format(getEndTime(event.time, event.duration), 'HH:mm')}</div>
+                    <div>{event.startTime || event.time} - {event.endTime || format(getEndTime(event.time, event.duration), 'HH:mm')}</div>
                     <div>{event.duration}</div>
                   </div>
                 </TooltipContent>
