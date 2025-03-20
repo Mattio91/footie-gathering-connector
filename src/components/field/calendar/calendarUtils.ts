@@ -1,5 +1,5 @@
 
-import { addMinutes, set, isSameDay, startOfWeek } from 'date-fns';
+import { addDays, addMinutes, set, isSameDay, startOfWeek } from 'date-fns';
 import { EventData } from '@/types/event';
 
 // Convert string time (HH:MM) to a Date object for proper comparison
@@ -39,13 +39,6 @@ export const getEventsForDay = (day: Date, events: EventData[]): EventData[] => 
     return isSameDay(eventDate, day);
   });
 };
-
-// Helper function to add days to a date
-function addDays(date: Date, days: number): Date {
-  const result = new Date(date);
-  result.setDate(date.getDate() + days);
-  return result;
-}
 
 // Calculate hour range for displaying events
 export const calculateHourRange = (events: EventData[]): { minHour: number; maxHour: number } => {

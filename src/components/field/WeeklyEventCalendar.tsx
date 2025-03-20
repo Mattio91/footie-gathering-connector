@@ -31,7 +31,7 @@ export const WeeklyEventCalendar: React.FC<WeeklyEventCalendarProps> = ({
   // Get the current week starting from Monday
   const startDate = useMemo(() => getWeekStart(), []);
   
-  // Create an array of the 7 days of the week
+  // Create an array of the days of the week
   const weekDays = useMemo(() => {
     // For mobile, only show 3 days
     const days = generateWeekDays(startDate);
