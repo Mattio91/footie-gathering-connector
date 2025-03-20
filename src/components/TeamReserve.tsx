@@ -29,16 +29,16 @@ const TeamReserve = ({
   
   return (
     <div 
-      className="bg-muted/30 rounded-lg border p-3 border-dashed h-full flex flex-col"
+      className="bg-muted/30 rounded-md border p-2 border-dashed h-full flex flex-col"
       onDragOver={onDragOver} 
       onDrop={(e) => onDrop(e, 'reserve')}
     >
-      <div className="text-sm font-medium mb-2">Reserve ({reservePlayers.length})</div>
+      <div className="text-sm font-medium mb-1">Reserve ({reservePlayers.length})</div>
       
       {/* Player list */}
       <div className="flex-1 overflow-auto">
         {/* Player slots */}
-        <div className="flex flex-wrap justify-center gap-2 mb-4">
+        <div className="flex flex-wrap justify-center gap-1 mb-2">
           {reservePlayers.map((player) => (
             <div 
               key={player.id} 
@@ -49,7 +49,7 @@ const TeamReserve = ({
               draggable
               onDragStart={(e) => onDragStart(e, player, 'reserve')}
             >
-              <Avatar className="h-14 w-14 border-2 border-transparent hover:border-primary transition-all">
+              <Avatar className="h-12 w-12 border-2 border-transparent hover:border-primary transition-all">
                 <AvatarImage 
                   src={player.avatar || `https://ui-avatars.com/api/?name=${player.name}`} 
                   alt={player.name} 
@@ -62,15 +62,15 @@ const TeamReserve = ({
         </div>
       </div>
       
-      {/* Add friend button - Now aligned to bottom */}
+      {/* Add friend button */}
       {onAddFriend && (
-        <div className="mt-auto pt-2">
+        <div className="mt-auto pt-1">
           <Dialog open={isOpen} onOpenChange={setIsOpen}>
             <DialogTrigger asChild>
               <Button 
                 variant="outline" 
                 size="sm" 
-                className="w-full text-xs h-8 border-dashed"
+                className="w-full text-xs h-7 border-dashed"
               >
                 <UserPlus className="h-3 w-3 mr-1" />
                 {t('event.addFriend')}

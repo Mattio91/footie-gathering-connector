@@ -1,15 +1,6 @@
 
-import { useState } from 'react';
 import { Users, UserPlus, Clock, UserX } from 'lucide-react';
-import { 
-  Tabs, 
-  TabsContent, 
-  TabsList, 
-  TabsTrigger 
-} from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
-import FootballField from '@/components/FootballField';
-import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
 import { Player } from '@/types/player';
 import TeamCard from '@/components/TeamCard';
@@ -38,7 +29,6 @@ const EventTeams = ({
   onSkipEvent,
   onAddFriend
 }: EventTeamsProps) => {
-  const [activeTab, setActiveTab] = useState("teams");
   const { toast } = useToast();
   
   const {
@@ -61,15 +51,15 @@ const EventTeams = ({
   };
   
   return (
-    <div className="space-y-2 compact-spacing">
-      <div className="flex justify-between items-center">
+    <div className="space-y-1 compact-spacing">
+      <div className="flex justify-between items-center mb-1">
         <h2 className="text-xl font-semibold">Teams</h2>
         <div className="text-sm text-muted-foreground">
           <span className="font-medium">{players.length}/{maxPlayers}</span> players
         </div>
       </div>
       
-      <div className="flex justify-center mb-2">
+      <div className="flex justify-center mb-1">
         {isJoined ? (
           <Button 
             className="w-64 bg-destructive hover:bg-destructive/90"
@@ -78,7 +68,7 @@ const EventTeams = ({
             Leave Event
           </Button>
         ) : (
-          <div className="grid grid-cols-3 gap-2 w-full">
+          <div className="grid grid-cols-3 gap-1 w-full">
             <Button 
               className="bg-green-600 hover:bg-green-700"
               onClick={onJoinEvent}
@@ -106,63 +96,47 @@ const EventTeams = ({
         )}
       </div>
       
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-2">
-          <TabsTrigger value="teams">Teams</TabsTrigger>
-          <TabsTrigger value="field">Field View</TabsTrigger>
-        </TabsList>
-        
-        <TabsContent value="teams" className="pt-2">
-          {/* Teams side by side */}
-          <div className="grid grid-cols-3 gap-2 compact-grid">
-            {/* Home Team */}
-            <TeamCard
-              teamName="Home Team"
-              teamPlayers={teamA}
-              teamColor="team-home"
-              maxTeamSize={Math.ceil(maxPlayers/2)}
-              onDragStart={handleDragStart}
-              onDragOver={handleDragOver}
-              onDrop={handleDrop}
-            />
-            
-            {/* Reserve Players - now between Home and Away teams */}
-            <TeamReserve
-              reservePlayers={reservePlayers}
-              onDragStart={handleDragStart}
-              onDragOver={handleDragOver}
-              onDrop={handleDrop}
-              onAddFriend={handleAddFriend}
-            />
-            
-            {/* Away Team */}
-            <TeamCard
-              teamName="Away Team"
-              teamPlayers={teamB}
-              teamColor="team-away"
-              maxTeamSize={Math.floor(maxPlayers/2)}
-              onDragStart={handleDragStart}
-              onDragOver={handleDragOver}
-              onDrop={handleDrop}
-            />
-          </div>
+      {/* Teams section - no tabs */}
+      <div className="pt-1">
+        {/* Teams side by side */}
+        <div className="grid grid-cols-3 gap-1 compact-grid">
+          {/* Home Team */}
+          <TeamCard
+            teamName="Home Team"
+            teamPlayers={teamA}
+            teamColor="team-home"
+            maxTeamSize={Math.ceil(maxPlayers/2)}
+            onDragStart={handleDragStart}
+            onDragOver={handleDragOver}
+            onDrop={handleDrop}
+          />
           
-          {/* Tentative Players */}
-          <div className="mt-2">
-            <TentativePlayers tentativePlayers={tentativePlayers} />
-          </div>
-        </TabsContent>
+          {/* Reserve Players */}
+          <TeamReserve
+            reservePlayers={reservePlayers}
+            onDragStart={handleDragStart}
+            onDragOver={handleDragOver}
+            onDrop={handleDrop}
+            onAddFriend={handleAddFriend}
+          />
+          
+          {/* Away Team */}
+          <TeamCard
+            teamName="Away Team"
+            teamPlayers={teamB}
+            teamColor="team-away"
+            maxTeamSize={Math.floor(maxPlayers/2)}
+            onDragStart={handleDragStart}
+            onDragOver={handleDragOver}
+            onDrop={handleDrop}
+          />
+        </div>
         
-        <TabsContent value="field" className="pt-2">
-          <div className="rounded-xl border p-4 bg-muted/10">
-            <FootballField 
-              teamAPlayers={teamA.length} 
-              teamBPlayers={teamB.length}
-              maxPlayers={maxPlayers}
-            />
-          </div>
-        </TabsContent>
-      </Tabs>
+        {/* Tentative Players */}
+        <div className="mt-1">
+          <TentativePlayers tentativePlayers={tentativePlayers} />
+        </div>
+      </div>
     </div>
   );
 };
