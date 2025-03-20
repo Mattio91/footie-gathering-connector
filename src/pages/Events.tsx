@@ -1,7 +1,6 @@
 
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { ArrowLeft, Plus, Search } from 'lucide-react';
+import { Search } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import Header from '@/components/Header';
@@ -96,27 +95,10 @@ const Events = () => {
       
       <main className="flex-1 pt-24 pb-16">
         <div className="container max-w-6xl mx-auto px-4">
-          <div className="flex flex-col md:flex-row md:items-center justify-between mb-6">
-            <div className="flex items-center">
-              <Link to="/" className="mr-4">
-                <Button variant="ghost" size="sm">
-                  <ArrowLeft className="h-4 w-4 mr-2" />
-                  Back
-                </Button>
-              </Link>
-              <h1 className="text-3xl font-oswald uppercase tracking-tight">
-                {t('common.events')}
-              </h1>
-            </div>
-            
-            <div className="flex items-center mt-4 md:mt-0 gap-2">
-              <Link to="/create-event">
-                <Button>
-                  <Plus className="h-4 w-4 mr-2" />
-                  {t('common.createEvent')}
-                </Button>
-              </Link>
-            </div>
+          <div className="mb-6">
+            <h1 className="text-3xl font-oswald uppercase tracking-tight">
+              {t('common.events')}
+            </h1>
           </div>
           
           <Card className="mb-8">
@@ -169,13 +151,7 @@ const Events = () => {
           {isLoaded && !selectedEvent && filteredEvents.length === 0 && (
             <div className="text-center py-12 bg-muted/20 rounded-lg">
               <h3 className="text-lg font-medium mb-2">No events found</h3>
-              <p className="text-muted-foreground mb-6">Try adjusting your search or create a new event.</p>
-              <Link to="/create-event">
-                <Button>
-                  <Plus className="h-4 w-4 mr-2" />
-                  Create New Event
-                </Button>
-              </Link>
+              <p className="text-muted-foreground">Try adjusting your search or create a new event.</p>
             </div>
           )}
         </div>
