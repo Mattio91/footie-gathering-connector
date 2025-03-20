@@ -26,7 +26,7 @@ const Header = () => {
             <Link
               to="/"
               className={`transition-colors hover:text-foreground/80 ${
-                isActive("/") && !isActive("/events") && !isActive("/groups") && !isActive("/fields") 
+                isActive("/") && !isActive("/events") && !isActive("/groups") && !isActive("/fields") && !isActive("/players")
                   ? "text-foreground" 
                   : "text-foreground/60"
               }`}
@@ -56,6 +56,14 @@ const Header = () => {
               }`}
             >
               {t("header.groups")}
+            </Link>
+            <Link
+              to="/players"
+              className={`transition-colors hover:text-foreground/80 ${
+                isActive("/players") ? "text-foreground" : "text-foreground/60"
+              }`}
+            >
+              Players
             </Link>
           </nav>
         </div>
