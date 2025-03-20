@@ -1,14 +1,29 @@
 
 import { Field } from '@/types/field';
 import { getMockEvent } from './mockEventData';
+import { addDays } from 'date-fns';
 
-// Create an array of mock events using the getMockEvent function
+// Create an array of mock events for a field ensuring they don't overlap
 const createMockEventsForField = (fieldName: string, count: number = 3) => {
   return Array.from({ length: count }, (_, i) => {
+    // Create base event
     const event = getMockEvent(`${fieldName}-${i + 1}`);
+    
+    // Set different day of week for first two events (Monday and Tuesday)
+    // For third event, use a different time on Monday
+    const today = new Date();
+    const dayOfWeek = i < 2 ? i : 0; // Use Monday (0), Tuesday (1), Monday (0) for 3 events
+    const daysToAdd = dayOfWeek + (8 - today.getDay()); // Next week starting Monday
+    
+    // Set different times to avoid overlaps
+    const times = ['10:00', '15:30', '19:00']; // Morning, afternoon, evening times
+    
     return {
       ...event,
       location: `${fieldName}, London`,
+      date: addDays(today, daysToAdd),
+      time: times[i % times.length],
+      duration: i % 2 === 0 ? '90 mins' : '120 mins', // Alternate between 1.5 and 2 hours
     };
   });
 };
@@ -23,7 +38,7 @@ export const mockFields: Field[] = [
       { id: '1', url: '/images/fields/hackney-marshes-1.jpg', alt: 'Hackney Marshes main field' },
       { id: '2', url: 'https://images.unsplash.com/photo-1575361204480-aadea25e6e68?q=80&w=1000', alt: 'Football field aerial view' },
     ],
-    events: createMockEventsForField('Hackney Marshes', 2)
+    events: createMockEventsForField('Hackney Marshes', 3)
   },
   {
     id: '2',
