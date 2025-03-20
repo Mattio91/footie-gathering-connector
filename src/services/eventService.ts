@@ -6,7 +6,7 @@ export const getMockEvents = (): EventWithParticipation[] => [
   {
     id: '1',
     title: 'Saturday Morning Kickabout',
-    location: 'Hackney Marshes, London',
+    location: 'Stadion Energa Gdańsk, Poland',
     date: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000),
     instanceDate: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000), // Same as date for now
     time: '09:00',
@@ -22,7 +22,7 @@ export const getMockEvents = (): EventWithParticipation[] => [
   {
     id: '2',
     title: 'Sunday League Match',
-    location: 'Regent\'s Park, London',
+    location: 'Boisko MOSiR Gdańsk, Poland',
     date: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000),
     instanceDate: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000), // Same as date for now
     time: '14:30',
@@ -38,7 +38,7 @@ export const getMockEvents = (): EventWithParticipation[] => [
   {
     id: '3',
     title: 'After Work 5-a-side',
-    location: 'Victoria Park, London',
+    location: 'Boisko przy Politechnice Gdańskiej, Poland',
     date: new Date(Date.now() + 1 * 24 * 60 * 60 * 1000),
     instanceDate: new Date(Date.now() + 1 * 24 * 60 * 60 * 1000), // Same as date for now
     time: '18:00',
@@ -54,7 +54,7 @@ export const getMockEvents = (): EventWithParticipation[] => [
   {
     id: '4',
     title: 'Friendly Match',
-    location: 'Wormwood Scrubs, London',
+    location: 'Orlik Gdańsk Przymorze, Poland',
     date: new Date(Date.now() + 4 * 24 * 60 * 60 * 1000),
     instanceDate: new Date(Date.now() + 4 * 24 * 60 * 60 * 1000), // Same as date for now
     time: '11:00',
@@ -71,7 +71,7 @@ export const getMockEvents = (): EventWithParticipation[] => [
   {
     id: '5a', // This is an instance of event 5
     title: 'Weekend Tournament - Week 1',
-    location: 'Greenwich Park, London',
+    location: 'AWFiS Gdańsk, Poland',
     date: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000), // Original event date
     instanceDate: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000), // Instance date
     time: '10:00',
@@ -87,7 +87,7 @@ export const getMockEvents = (): EventWithParticipation[] => [
   {
     id: '5b', // Second instance of event 5
     title: 'Weekend Tournament - Week 2',
-    location: 'Greenwich Park, London',
+    location: 'AWFiS Gdańsk, Poland',
     date: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000), // Original event date
     instanceDate: new Date(Date.now() + 12 * 24 * 60 * 60 * 1000), // Week 2
     time: '10:00',
@@ -103,7 +103,7 @@ export const getMockEvents = (): EventWithParticipation[] => [
   {
     id: '6',
     title: 'Charity Football Match',
-    location: 'Finsbury Park, London',
+    location: 'Stadion Energa Gdańsk, Poland',
     date: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
     instanceDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // Same as date for now
     time: '13:00',
@@ -119,7 +119,7 @@ export const getMockEvents = (): EventWithParticipation[] => [
   {
     id: '7',
     title: 'Community Cup',
-    location: 'Hampstead Heath, London',
+    location: 'Boisko MOSiR Gdańsk, Poland',
     date: new Date(Date.now() + 8 * 24 * 60 * 60 * 1000),
     instanceDate: new Date(Date.now() + 8 * 24 * 60 * 60 * 1000), // Same as date for now
     time: '15:00',
@@ -133,3 +133,4 @@ export const getMockEvents = (): EventWithParticipation[] => [
     imageUrl: 'https://images.unsplash.com/photo-1516731415730-0c607149933a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
   }
 ];
+

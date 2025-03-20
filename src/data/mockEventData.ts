@@ -18,8 +18,8 @@ const eventColors = [
 export const getMockEvent = (eventId: string): EventData => ({
   id: eventId || '1',
   title: 'Saturday Morning Kickabout',
-  location: 'Hackney Marshes, London',
-  locationDetails: 'Meet at pitch 3, near the car park entrance',
+  location: 'Stadion Energa Gdańsk, Gdańsk',
+  locationDetails: 'Meet at pitch 3, near the main entrance',
   date: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000), // 2 days from now
   time: '09:00',
   duration: '90 mins',
@@ -104,3 +104,4 @@ export const getMockMessages = (): ChatMessage[] => [
     timestamp: new Date(Date.now() - 5 * 60 * 60 * 1000),
   }
 ];
+

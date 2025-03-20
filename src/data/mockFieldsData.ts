@@ -25,7 +25,7 @@ const createMockEventsForField = (fieldName: string, count: number = 3) => {
     
     return {
       ...event,
-      location: `${fieldName}, London`,
+      location: `${fieldName}, Gdańsk`,
       date: eventDate,
       time: `${startHour}:00`,
       duration: '2 hours',
@@ -40,46 +40,47 @@ const createMockEventsForField = (fieldName: string, count: number = 3) => {
 export const mockFields: Field[] = [
   {
     id: '1',
-    name: 'Hackney Marshes',
-    location: 'Hackney Marshes, London E9 5PF',
-    description: 'Hackney Marshes is an area of open space in London\'s Lower Lea Valley, with 88 full-size football pitches.',
+    name: 'Stadion Energa Gdańsk',
+    location: 'Pokoleń Lechii Gdańsk 1, 80-560 Gdańsk, Poland',
+    description: 'The Energa Gdańsk Stadium is a multi-purpose stadium in Gdańsk, Poland. It hosts football matches and various sports events with a capacity of 41,620 spectators.',
     images: [
-      { id: '1', url: '/images/fields/hackney-marshes-1.jpg', alt: 'Hackney Marshes main field' },
+      { id: '1', url: 'https://images.unsplash.com/photo-1577223625816-7546f13df25d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80', alt: 'Stadion Energa Gdańsk main field' },
       { id: '2', url: 'https://images.unsplash.com/photo-1575361204480-aadea25e6e68?q=80&w=1000', alt: 'Football field aerial view' },
     ],
-    events: createMockEventsForField('Hackney Marshes', 3)
+    events: createMockEventsForField('Stadion Energa Gdańsk', 3)
   },
   {
     id: '2',
-    name: 'Regent\'s Park',
-    location: 'Regent\'s Park, London NW1 4NR',
-    description: 'The Hub is home to the largest outdoor sports facility in London, with over 40 pitches catering for football, rugby, cricket and more.',
+    name: 'Boisko MOSiR Gdańsk',
+    location: 'Traugutta 29, 80-221 Gdańsk, Poland',
+    description: 'A well-maintained sports facility with several football pitches available for both professional teams and casual players.',
     images: [
-      { id: '1', url: 'https://images.unsplash.com/photo-1589487391730-58f20eb2c308?q=80&w=1000', alt: 'Regent\'s Park football field' },
-      { id: '2', url: 'https://images.unsplash.com/photo-1494778696781-8f23fd5553c4?q=80&w=1000', alt: 'Football match at Regent\'s Park' },
+      { id: '1', url: 'https://images.unsplash.com/photo-1589487391730-58f20eb2c308?q=80&w=1000', alt: 'MOSiR Gdańsk football field' },
+      { id: '2', url: 'https://images.unsplash.com/photo-1494778696781-8f23fd5553c4?q=80&w=1000', alt: 'Football match at MOSiR' },
     ],
-    events: createMockEventsForField('Regent\'s Park', 2)
+    events: createMockEventsForField('Boisko MOSiR Gdańsk', 2)
   },
   {
     id: '3',
-    name: 'Victoria Park',
-    location: 'Victoria Park, London E9 7DD',
-    description: 'Victoria Park has excellent sports facilities including football pitches that can be booked for matches or casual games.',
+    name: 'Boisko przy Politechnice Gdańskiej',
+    location: 'Narutowicza 11/12, 80-233 Gdańsk, Poland',
+    description: 'Sports facilities at the Gdańsk University of Technology offering football pitches for students and local community games.',
     images: [
-      { id: '1', url: 'https://images.unsplash.com/photo-1542144582-1f02695554ac?q=80&w=1000', alt: 'Victoria Park field' },
-      { id: '2', url: 'https://images.unsplash.com/photo-1579952363873-27f3bade9f55?q=80&w=1000', alt: 'Football pitch at Victoria Park' },
+      { id: '1', url: 'https://images.unsplash.com/photo-1542144582-1f02695554ac?q=80&w=1000', alt: 'Polytechnic field' },
+      { id: '2', url: 'https://images.unsplash.com/photo-1579952363873-27f3bade9f55?q=80&w=1000', alt: 'Football pitch at Polytechnic' },
     ],
-    events: createMockEventsForField('Victoria Park', 1)
+    events: createMockEventsForField('Boisko przy Politechnice Gdańskiej', 1)
   },
   {
     id: '4',
-    name: 'Wormwood Scrubs',
-    location: 'Wormwood Scrubs, London W12 0DF',
-    description: 'Wormwood Scrubs offers several football pitches available for booking, popular among local teams and casual players.',
+    name: 'Orlik Gdańsk Przymorze',
+    location: 'Obrońców Wybrzeża 1, 80-398 Gdańsk, Poland',
+    description: 'A public sports facility with artificial turf offering free access to football pitches as part of the national Orlik program.',
     images: [
-      { id: '1', url: 'https://images.unsplash.com/photo-1508098682722-e99c643e7f0b?q=80&w=1000', alt: 'Wormwood Scrubs field' },
-      { id: '2', url: 'https://images.unsplash.com/photo-1626248801386-6a5463d42e4e?q=80&w=1000', alt: 'Football at Wormwood Scrubs' },
+      { id: '1', url: 'https://images.unsplash.com/photo-1508098682722-e99c643e7f0b?q=80&w=1000', alt: 'Orlik field' },
+      { id: '2', url: 'https://images.unsplash.com/photo-1626248801386-6a5463d42e4e?q=80&w=1000', alt: 'Football at Orlik' },
     ],
-    events: createMockEventsForField('Wormwood Scrubs', 0) // This field has no events to test the empty state
+    events: createMockEventsForField('Orlik Gdańsk Przymorze', 0) // This field has no events to test the empty state
   },
 ];
+

@@ -29,8 +29,8 @@ const FieldsMap: React.FC<FieldsMapProps> = ({ fields }) => {
         shadowUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png',
       });
       
-      // Initialize the map
-      mapInstance = L.map(mapRef.current!).setView([51.505, -0.09], 12); // Default to London
+      // Initialize the map - center on Gdańsk, Poland
+      mapInstance = L.map(mapRef.current!).setView([54.352, 18.6466], 12); // Coordinates for Gdańsk
       
       // Add OpenStreetMap tile layer
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -134,3 +134,4 @@ const FieldsMap: React.FC<FieldsMapProps> = ({ fields }) => {
 };
 
 export default FieldsMap;
+
