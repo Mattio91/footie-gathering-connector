@@ -49,7 +49,7 @@ const TeamCard = ({
               onDragOver={onDragOver}
               onDrop={(e) => onDrop(e, teamId)}
             >
-              <div className="w-8 h-8 rounded-full overflow-hidden mr-3">
+              <div className="w-8 h-8 rounded-lg overflow-hidden mr-3">
                 <img 
                   src={player.avatar || `https://ui-avatars.com/api/?name=${player.name}`} 
                   alt={player.name} 
@@ -72,7 +72,7 @@ const TeamCard = ({
               onDragOver={onDragOver}
               onDrop={(e) => onDrop(e, teamId)}
             >
-              <div className="w-8 h-8 rounded-full bg-muted/50 flex items-center justify-center mr-3">
+              <div className="w-8 h-8 rounded-lg bg-muted/50 flex items-center justify-center mr-3">
                 <Users className="h-4 w-4 text-muted-foreground/50" />
               </div>
               <div className="flex-grow text-sm text-muted-foreground">

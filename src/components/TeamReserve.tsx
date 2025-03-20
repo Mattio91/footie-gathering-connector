@@ -49,12 +49,13 @@ const TeamReserve = ({
               draggable
               onDragStart={(e) => onDragStart(e, player, 'reserve')}
             >
-              <Avatar className="h-12 w-12 border-2 border-transparent hover:border-primary transition-all">
+              <Avatar className="h-12 w-12 border-2 rounded-lg border-transparent hover:border-primary transition-all">
                 <AvatarImage 
                   src={player.avatar || `https://ui-avatars.com/api/?name=${player.name}`} 
                   alt={player.name} 
+                  className="rounded-lg"
                 />
-                <AvatarFallback>{player.name.substring(0, 2)}</AvatarFallback>
+                <AvatarFallback className="rounded-lg">{player.name.substring(0, 2)}</AvatarFallback>
               </Avatar>
               <span className="text-xs mt-1 font-medium">{player.name}</span>
             </div>
