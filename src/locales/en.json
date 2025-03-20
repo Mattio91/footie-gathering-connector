@@ -50,6 +50,24 @@
     "ctaDesc": "Create an event, invite players, and get ready for kickoff. It only takes a few minutes to set up.",
     "ctaButton": "Create Your First Event"
   },
+  "events": {
+    "findEvents": "Find Events",
+    "searchAndFilterEvents": "Search and filter events you're interested in",
+    "searchEvents": "Search events...",
+    "myEvents": "My Events",
+    "joined": "Joined",
+    "tentative": "Tentative",
+    "history": "History",
+    "otherEvents": "Other Events",
+    "noJoinedEvents": "No joined events",
+    "noJoinedEventsDesc": "You haven't joined any events yet. Browse other events or create a new one.",
+    "noTentativeEvents": "No tentative events",
+    "noTentativeEventsDesc": "You don't have any events you're tentatively joining.",
+    "noEventHistory": "No event history",
+    "noEventHistoryDesc": "You don't have any past events to show yet.",
+    "noOtherEvents": "No other events",
+    "noOtherEventsDesc": "There are no other events available right now."
+  },
   "createEvent": {
     "title": "Create Football Event",
     "subtitle": "Set up a match and invite players to join your game.",
