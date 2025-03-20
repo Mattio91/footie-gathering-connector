@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { MapPin, Calendar } from 'lucide-react';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import { Field } from '@/types/field';
+import { WeeklyEventCalendar } from './WeeklyEventCalendar';
 
 interface FieldCardProps {
   field: Field;
@@ -11,36 +12,48 @@ interface FieldCardProps {
 
 const FieldCard: React.FC<FieldCardProps> = ({ field }) => {
   return (
-    <Card className="overflow-hidden hover:shadow-lg transition-shadow">
-      <div className="relative h-48 overflow-hidden">
-        <img 
-          src={field.images[0]?.url || '/placeholder.svg'} 
-          alt={field.images[0]?.alt || field.name}
-          className="w-full h-full object-cover"
-        />
+    <Card className="overflow-hidden hover:shadow-lg transition-shadow w-full mb-8">
+      <div className="flex flex-col md:flex-row">
+        <div className="relative h-64 md:w-1/3 overflow-hidden">
+          <img 
+            src={field.images[0]?.url || '/placeholder.svg'} 
+            alt={field.images[0]?.alt || field.name}
+            className="w-full h-full object-cover"
+          />
+        </div>
+        <div className="md:w-2/3">
+          <CardContent className="p-6">
+            <h3 className="text-xl font-semibold mb-2">{field.name}</h3>
+            <div className="flex items-center text-sm text-muted-foreground mb-4">
+              <MapPin className="w-4 h-4 mr-1" />
+              <span>{field.location}</span>
+            </div>
+            <p className="text-sm text-muted-foreground mb-6">
+              {field.description || 'No description available.'}
+            </p>
+            
+            {/* Weekly Calendar View */}
+            <div className="mb-4">
+              <div className="flex items-center mb-3">
+                <Calendar className="w-4 h-4 mr-2" />
+                <h4 className="font-medium">Events This Week</h4>
+              </div>
+              <WeeklyEventCalendar events={field.events} />
+            </div>
+          </CardContent>
+          <CardFooter className="px-6 pb-6 pt-0 flex justify-between items-center">
+            <div className="text-sm">
+              <span className="font-medium">{field.events.length}</span> {field.events.length === 1 ? 'event' : 'events'} scheduled
+            </div>
+            <Link 
+              to={`/fields/${field.id}`} 
+              className="text-sm font-medium text-primary hover:underline"
+            >
+              View Details
+            </Link>
+          </CardFooter>
+        </div>
       </div>
-      <CardContent className="p-4">
-        <h3 className="text-lg font-semibold mb-2">{field.name}</h3>
-        <div className="flex items-center text-sm text-muted-foreground mb-2">
-          <MapPin className="w-4 h-4 mr-1" />
-          <span>{field.location}</span>
-        </div>
-        <p className="text-sm text-muted-foreground line-clamp-2">
-          {field.description || 'No description available.'}
-        </p>
-      </CardContent>
-      <CardFooter className="p-4 pt-0 flex justify-between items-center">
-        <div className="flex items-center text-sm">
-          <Calendar className="w-4 h-4 mr-1" />
-          <span>{field.events.length} {field.events.length === 1 ? 'event' : 'events'}</span>
-        </div>
-        <Link 
-          to={`/fields/${field.id}`} 
-          className="text-sm font-medium text-primary hover:underline"
-        >
-          View Details
-        </Link>
-      </CardFooter>
     </Card>
   );
 };
