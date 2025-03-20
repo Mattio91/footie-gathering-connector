@@ -4,8 +4,10 @@ import { Landmark } from 'lucide-react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import FieldCard from '@/components/field/FieldCard';
+import FieldsMap from '@/components/field/FieldsMap';
 import { mockFields } from '@/data/mockFieldsData';
 import { useTranslation } from 'react-i18next';
+import '@/styles/leaflet.css'; // Import Leaflet CSS
 
 const Fields = () => {
   const { t } = useTranslation();
@@ -21,6 +23,9 @@ const Fields = () => {
             Discover football fields in your area and see upcoming events.
           </p>
         </div>
+        
+        {/* Map of all fields */}
+        <FieldsMap fields={mockFields} />
         
         {mockFields.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-12 text-center">

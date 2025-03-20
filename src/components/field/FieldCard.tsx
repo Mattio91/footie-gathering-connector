@@ -1,10 +1,9 @@
 
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
-import { MapPin, Calendar } from 'lucide-react';
+import { MapPin } from 'lucide-react';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import { Field } from '@/types/field';
-import { WeeklyEventCalendar } from './WeeklyEventCalendar';
 import { Button } from '@/components/ui/button';
 
 interface FieldCardProps {
@@ -14,16 +13,6 @@ interface FieldCardProps {
 const FieldCard: React.FC<FieldCardProps> = ({ field }) => {
   // Check if there are any events
   const hasEvents = field.events && field.events.length > 0;
-  const [eventsLoading, setEventsLoading] = useState(true);
-  
-  // Simulate loading events
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setEventsLoading(false);
-    }, 1000);
-    
-    return () => clearTimeout(timer);
-  }, []);
   
   return (
     <Card className="overflow-hidden hover:shadow-lg transition-shadow w-full mb-8">
@@ -53,15 +42,6 @@ const FieldCard: React.FC<FieldCardProps> = ({ field }) => {
             <p className="text-sm text-muted-foreground mb-6">
               {field.description || 'No description available.'}
             </p>
-            
-            {/* Show calendar with loading state */}
-            <div className="mb-4">
-              <div className="flex items-center mb-3">
-                <Calendar className="w-4 h-4 mr-2" />
-                <h4 className="font-medium">Events Schedule</h4>
-              </div>
-              <WeeklyEventCalendar events={field.events} isLoading={eventsLoading} />
-            </div>
           </CardContent>
           <CardFooter className="px-6 pb-6 pt-0 flex justify-between items-center">
             <div className="text-sm">

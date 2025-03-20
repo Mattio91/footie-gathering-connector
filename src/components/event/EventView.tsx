@@ -3,6 +3,9 @@ import EventCarousel from '@/components/event/EventCarousel';
 import EventContent from '@/components/event/EventContent';
 import { EventData, ChatMessage } from '@/types/event';
 import { Player } from '@/types/player';
+import { Calendar } from 'lucide-react';
+import { WeeklyEventCalendar } from '@/components/field/WeeklyEventCalendar';
+import { Group } from '@/types/group';
 
 interface EventViewProps {
   event: EventData;
@@ -90,6 +93,15 @@ const EventView = ({
           handleCancelEvent: handlers.handleCancelEvent
         }}
       />
+      
+      {/* Events Schedule */}
+      <div className="mt-6">
+        <div className="flex items-center mb-3">
+          <Calendar className="w-5 h-5 mr-2" />
+          <h3 className="text-lg font-semibold">Events Schedule</h3>
+        </div>
+        <WeeklyEventCalendar events={[event]} />
+      </div>
     </>
   );
 };
