@@ -52,19 +52,16 @@ const FieldCard: React.FC<FieldCardProps> = ({ field }) => {
             </div>
             
             {hasEvents && (
-              <Collapsible 
-                open={showCalendar} 
-                onOpenChange={setShowCalendar}
-                className="w-full"
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                className="flex items-center gap-1"
+                onClick={() => setShowCalendar(!showCalendar)}
               >
-                <CollapsibleTrigger asChild>
-                  <Button variant="ghost" size="sm" className="flex items-center gap-1">
-                    <Calendar className="h-4 w-4" />
-                    <span>Event Schedule</span>
-                    {showCalendar ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
-                  </Button>
-                </CollapsibleTrigger>
-              </Collapsible>
+                <Calendar className="h-4 w-4" />
+                <span>Event Schedule</span>
+                {showCalendar ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+              </Button>
             )}
           </CardFooter>
         </div>
@@ -72,9 +69,11 @@ const FieldCard: React.FC<FieldCardProps> = ({ field }) => {
       
       {/* Collapsible Calendar */}
       {hasEvents && (
-        <CollapsibleContent className="px-6 pb-6">
-          <WeeklyEventCalendar events={field.events} />
-        </CollapsibleContent>
+        <Collapsible open={showCalendar} onOpenChange={setShowCalendar}>
+          <CollapsibleContent className="px-6 pb-6">
+            <WeeklyEventCalendar events={field.events} />
+          </CollapsibleContent>
+        </Collapsible>
       )}
     </Card>
   );

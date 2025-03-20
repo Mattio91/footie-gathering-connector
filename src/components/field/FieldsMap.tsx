@@ -17,6 +17,7 @@ const FieldsMap: React.FC<FieldsMapProps> = ({ fields }) => {
     if (!mapRef.current) return;
     
     let mapInstance: any = null;
+    const markersRef: any[] = [];
     
     // Import Leaflet dynamically
     import('leaflet').then((L) => {
@@ -41,9 +42,8 @@ const FieldsMap: React.FC<FieldsMapProps> = ({ fields }) => {
       let hasValidCoordinates = false;
       
       // Add markers for each field
-      fields.forEach(field => {
-        // Geocode the field location
-        fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(field.location)}`)
+      const geocodePromises = fields.map(field => {
+        return fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(field.location)}`)
           .then(response => response.json())
           .then(data => {
             if (data && data.length > 0) {
@@ -53,6 +53,7 @@ const FieldsMap: React.FC<FieldsMapProps> = ({ fields }) => {
               // Create marker with popup
               const marker = L.marker(position as [number, number]);
               marker.addTo(mapInstance);
+              markersRef.push(marker);
               
               // Add popup with field info and link
               const popupContent = document.createElement('div');
@@ -61,37 +62,42 @@ const FieldsMap: React.FC<FieldsMapProps> = ({ fields }) => {
                 <h3 class="font-semibold mb-1">${field.name}</h3>
                 <p class="text-sm text-muted-foreground mb-2">${field.location}</p>
                 <p class="text-sm mb-2">${field.events.length} event${field.events.length !== 1 ? 's' : ''} scheduled</p>
-                <button class="text-sm text-primary hover:underline view-details-btn">View Details</button>
+                <button class="text-sm text-primary hover:underline view-details-btn" data-field-id="${field.id}">View Details</button>
               `;
               
-              // Add event listener to the button
+              // Create the popup and bind it
               const popup = L.popup().setContent(popupContent);
               marker.bindPopup(popup);
-              
-              // Handle click on view details button
-              marker.on('popupopen', () => {
-                const button = document.querySelector('.view-details-btn');
-                if (button) {
-                  button.addEventListener('click', () => {
-                    navigate(`/fields/${field.id}`);
-                  });
-                }
-              });
               
               // Extend bounds to include this marker
               bounds.extend(position as [number, number]);
               hasValidCoordinates = true;
-              
-              // Fit map to bounds after adding all markers
-              if (hasValidCoordinates) {
-                mapInstance.fitBounds(bounds, { padding: [50, 50] });
-              }
             }
           })
           .catch(error => {
             console.error('Error geocoding location:', error);
           });
       });
+      
+      // Wait for all geocoding requests to complete
+      Promise.all(geocodePromises)
+        .then(() => {
+          // Add click event listeners to all the "View Details" buttons
+          document.addEventListener('click', function(e) {
+            const target = e.target as HTMLElement;
+            if (target && target.classList.contains('view-details-btn')) {
+              const fieldId = target.getAttribute('data-field-id');
+              if (fieldId) {
+                navigate(`/fields/${fieldId}`);
+              }
+            }
+          });
+          
+          // Fit map to bounds after adding all markers
+          if (hasValidCoordinates) {
+            mapInstance.fitBounds(bounds, { padding: [50, 50] });
+          }
+        });
     });
     
     // Cleanup function
