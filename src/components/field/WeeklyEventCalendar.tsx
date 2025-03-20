@@ -1,6 +1,6 @@
 
 import React, { useMemo } from 'react';
-import { format, startOfWeek, addDays, isSameDay, parseISO, set } from 'date-fns';
+import { format, startOfWeek, addDays, isSameDay, set } from 'date-fns';
 import { EventData } from '@/types/event';
 import { Link } from 'react-router-dom';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
@@ -24,15 +24,19 @@ export const WeeklyEventCalendar: React.FC<WeeklyEventCalendarProps> = ({ events
   
   // Calculate the minimum and maximum hours for events
   const hourRange = useMemo(() => {
-    let minHour = 8; // Default minimum hour (8 AM)
-    let maxHour = 22; // Default maximum hour (10 PM)
+    if (events.length === 0) {
+      return { minHour: 9, maxHour: 18 }; // Default range if no events
+    }
+
+    let minHour = 23; // Start with maximum possible hour
+    let maxHour = 0; // Start with minimum possible hour
     
     events.forEach(event => {
       if (event.time) {
         const eventDate = timeToDate(event.time);
         const eventHour = eventDate.getHours();
         
-        // Update min and max hours if needed
+        // Update min and max hours
         minHour = Math.min(minHour, eventHour);
         
         // Estimate end time based on duration (assume format like "90 mins")
@@ -51,14 +55,10 @@ export const WeeklyEventCalendar: React.FC<WeeklyEventCalendarProps> = ({ events
       }
     });
     
-    // Ensure minimum range of at least 3 hours
-    if (maxHour - minHour < 3) {
+    // Ensure minimum range of at least by adding hours if needed
+    if (maxHour <= minHour) {
       maxHour = minHour + 3;
     }
-    
-    // Ensure we don't exceed reasonable hours
-    minHour = Math.max(6, minHour); // Not earlier than 6 AM
-    maxHour = Math.min(23, maxHour); // Not later than 11 PM
     
     return { minHour, maxHour };
   }, [events]);
