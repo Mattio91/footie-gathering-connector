@@ -1,8 +1,23 @@
 
-import { EventCardProps } from '@/components/EventCard';
+import { Group } from './group';
 
-// Extended type to include participation status and instance date
-export type EventWithParticipation = EventCardProps & {
-  participationStatus?: 'joined' | 'tentative' | 'skipping' | 'none';
+export interface EventWithParticipation {
+  id: string;
+  title: string;
+  location: string;
+  description?: string;
+  date: Date;
   instanceDate?: Date;
-};
+  time: string;
+  duration: string;
+  format: string;
+  maxPlayers: number;
+  playerCount: number;
+  price: number;
+  isPrivate?: boolean;
+  imageUrl?: string;
+  participationStatus?: 'joined' | 'tentative' | 'skipping' | 'none';
+  status?: 'upcoming' | 'played' | 'canceled';
+  won?: boolean;
+  groups?: Group[];
+}

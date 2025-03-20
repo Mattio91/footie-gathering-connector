@@ -1,6 +1,7 @@
+
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { CalendarClock, Search, Filter, Plus, MapPin, Clock, Users, ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Plus, Search } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import Header from '@/components/Header';
@@ -13,19 +14,52 @@ import {
   CardTitle,
   CardDescription,
 } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useEventData } from '@/hooks/useEventData';
-import EventsTable from '@/components/home/EventsTable';
+import EventSummary from '@/components/home/EventSummary';
+import EventInstancesList from '@/components/home/EventInstancesList';
+
+// Mock function to get upcoming and historical instances of an event
+const getEventInstances = (event, count = 10) => {
+  const instances = [];
+  const today = new Date();
+  
+  // Create instances in the past (historical)
+  for (let i = 1; i <= Math.floor(count/2); i++) {
+    const pastDate = new Date(today);
+    pastDate.setDate(pastDate.getDate() - (i * 7)); // Weekly in the past
+    
+    instances.push({
+      ...event,
+      id: `${event.id}-past-${i}`,
+      instanceDate: pastDate,
+      status: Math.random() > 0.2 ? 'played' : 'canceled', // 20% chance of canceled
+      won: Math.random() > 0.8, // 20% chance of being MVP
+      participationStatus: Math.random() > 0.3 ? 'joined' : 'skipping' // 70% joined, 30% skipped
+    });
+  }
+  
+  // Create instances in the future (upcoming)
+  for (let i = 0; i < Math.ceil(count/2); i++) {
+    const futureDate = new Date(today);
+    futureDate.setDate(futureDate.getDate() + (i * 7)); // Weekly in the future
+    
+    instances.push({
+      ...event,
+      id: `${event.id}-future-${i}`,
+      instanceDate: futureDate,
+      status: 'upcoming',
+      participationStatus: i === 0 ? 'joined' : (i === 1 ? 'tentative' : 'none') // First upcoming is joined, second is tentative
+    });
+  }
+  
+  return instances;
+};
 
 const Events = () => {
   const { t } = useTranslation();
   const [searchQuery, setSearchQuery] = useState('');
-  const [joinedCurrentPage, setJoinedCurrentPage] = useState(1);
-  const [tentativeCurrentPage, setTentativeCurrentPage] = useState(1);
-  const [historyCurrentPage, setHistoryCurrentPage] = useState(1);
-  const [otherCurrentPage, setOtherCurrentPage] = useState(1);
-  const [activeFilter, setActiveFilter] = useState('joined');
-  const pageSize = 5; // Number of events per page
+  const [selectedEvent, setSelectedEvent] = useState(null);
+  const [eventInstances, setEventInstances] = useState([]);
   
   // Use the shared event data hook
   const { 
@@ -34,37 +68,26 @@ const Events = () => {
     handleSearch
   } = useEventData({ initialSearchQuery: searchQuery });
   
-  // Filter events based on participation status
-  const joinedEvents = filteredEvents.filter(
-    event => event.participationStatus === 'joined'
-  );
-
-  const tentativeEvents = filteredEvents.filter(
-    event => event.participationStatus === 'tentative'
-  );
+  // Select the first event by default when data is loaded
+  useEffect(() => {
+    if (isLoaded && filteredEvents.length > 0 && !selectedEvent) {
+      setSelectedEvent(filteredEvents[0]);
+    }
+  }, [isLoaded, filteredEvents, selectedEvent]);
   
-  // Historical events - for demo purposes, just showing first 3 events as "past"
-  const historyEvents = filteredEvents.slice(0, 3).map(event => ({
-    ...event,
-    instanceDate: new Date(Date.now() - (Math.random() * 30) * 24 * 60 * 60 * 1000) // Random date in the past 30 days
-  }));
-  
-  // Other events (ones you're not participating in)
-  const otherEvents = filteredEvents.filter(
-    event => event.participationStatus !== 'joined' && 
-             event.participationStatus !== 'tentative' && 
-             event.participationStatus !== 'skipping'
-  );
+  // Generate event instances when selected event changes
+  useEffect(() => {
+    if (selectedEvent) {
+      const instances = getEventInstances(selectedEvent, 10);
+      setEventInstances(instances);
+    }
+  }, [selectedEvent]);
   
   // Handle search input changes
-  const handleSearchInput = (query: string) => {
+  const handleSearchInput = (query) => {
     setSearchQuery(query);
     handleSearch(query);
-    // Reset pagination when search changes
-    setJoinedCurrentPage(1);
-    setTentativeCurrentPage(1);
-    setHistoryCurrentPage(1);
-    setOtherCurrentPage(1);
+    setSelectedEvent(null); // Reset selected event when search changes
   };
   
   return (
@@ -102,108 +125,59 @@ const Events = () => {
               <CardDescription>{t('events.searchAndFilterEvents')}</CardDescription>
             </CardHeader>
             <CardContent className="pt-6">
-              <div className="flex flex-col sm:flex-row gap-4">
-                <div className="relative flex-1">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                  <Input
-                    type="text"
-                    placeholder={t('events.searchEvents')}
-                    className="pl-10 pr-4 w-full"
-                    value={searchQuery}
-                    onChange={(e) => handleSearchInput(e.target.value)}
-                  />
-                </div>
-                
-                <Button variant="outline" className="sm:w-auto">
-                  <Filter className="h-4 w-4 mr-2" />
-                  {t('common.filter')}
-                </Button>
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Input
+                  type="text"
+                  placeholder={t('events.searchEvents')}
+                  className="pl-10 pr-4 w-full"
+                  value={searchQuery}
+                  onChange={(e) => handleSearchInput(e.target.value)}
+                />
               </div>
               
-              <div className="mt-4">
-                <Tabs defaultValue="joined" onValueChange={setActiveFilter}>
-                  <TabsList className="w-full sm:w-auto justify-start overflow-auto pb-1">
-                    <TabsTrigger value="joined">Joined</TabsTrigger>
-                    <TabsTrigger value="tentative">Tentative</TabsTrigger>
-                    <TabsTrigger value="history">History</TabsTrigger>
-                    <TabsTrigger value="other">Other Events</TabsTrigger>
-                  </TabsList>
-                  
-                  {/* Joined Events Tab */}
-                  <TabsContent value="joined" className="pt-4">
-                    {joinedEvents.length > 0 ? (
-                      <EventsTable
-                        events={joinedEvents}
-                        currentPage={joinedCurrentPage}
-                        pageSize={pageSize}
-                        onPageChange={setJoinedCurrentPage}
-                        title="Events You've Joined"
-                      />
-                    ) : (
-                      <EmptyEventsState 
-                        title="No joined events"
-                        description="You haven't joined any events yet. Browse other events or create a new one."
-                      />
-                    )}
-                  </TabsContent>
-                  
-                  {/* Tentative Events Tab */}
-                  <TabsContent value="tentative" className="pt-4">
-                    {tentativeEvents.length > 0 ? (
-                      <EventsTable
-                        events={tentativeEvents}
-                        currentPage={tentativeCurrentPage}
-                        pageSize={pageSize}
-                        onPageChange={setTentativeCurrentPage}
-                        title="Events You're Tentative For"
-                      />
-                    ) : (
-                      <EmptyEventsState 
-                        title="No tentative events"
-                        description="You don't have any events you're tentatively joining."
-                      />
-                    )}
-                  </TabsContent>
-                  
-                  {/* History Tab */}
-                  <TabsContent value="history" className="pt-4">
-                    {historyEvents.length > 0 ? (
-                      <EventsTable
-                        events={historyEvents}
-                        currentPage={historyCurrentPage}
-                        pageSize={pageSize}
-                        onPageChange={setHistoryCurrentPage}
-                        title="Your Event History"
-                      />
-                    ) : (
-                      <EmptyEventsState 
-                        title="No event history"
-                        description="You don't have any past events to show yet."
-                      />
-                    )}
-                  </TabsContent>
-                  
-                  {/* Other Events Tab */}
-                  <TabsContent value="other" className="pt-4">
-                    {otherEvents.length > 0 ? (
-                      <EventsTable
-                        events={otherEvents}
-                        currentPage={otherCurrentPage}
-                        pageSize={pageSize}
-                        onPageChange={setOtherCurrentPage}
-                        title="Other Available Events"
-                      />
-                    ) : (
-                      <EmptyEventsState 
-                        title="No other events"
-                        description="There are no other events available right now."
-                      />
-                    )}
-                  </TabsContent>
-                </Tabs>
-              </div>
+              {isLoaded && filteredEvents.length > 0 && (
+                <div className="mt-6 flex flex-wrap gap-3">
+                  {filteredEvents.map(event => (
+                    <Button
+                      key={event.id}
+                      variant={selectedEvent?.id === event.id ? "default" : "outline"}
+                      size="sm"
+                      onClick={() => setSelectedEvent(event)}
+                    >
+                      {event.title}
+                    </Button>
+                  ))}
+                </div>
+              )}
             </CardContent>
           </Card>
+          
+          {selectedEvent && (
+            <>
+              {/* Event Summary */}
+              <EventSummary 
+                event={selectedEvent}
+                groups={selectedEvent.groups || []}
+              />
+              
+              {/* Event Instances */}
+              <EventInstancesList eventInstances={eventInstances} />
+            </>
+          )}
+          
+          {isLoaded && !selectedEvent && filteredEvents.length === 0 && (
+            <div className="text-center py-12 bg-muted/20 rounded-lg">
+              <h3 className="text-lg font-medium mb-2">No events found</h3>
+              <p className="text-muted-foreground mb-6">Try adjusting your search or create a new event.</p>
+              <Link to="/create-event">
+                <Button>
+                  <Plus className="h-4 w-4 mr-2" />
+                  Create New Event
+                </Button>
+              </Link>
+            </div>
+          )}
         </div>
       </main>
       
@@ -211,24 +185,5 @@ const Events = () => {
     </div>
   );
 };
-
-interface EmptyEventsStateProps {
-  title: string;
-  description: string;
-}
-
-const EmptyEventsState = ({ title, description }: EmptyEventsStateProps) => (
-  <div className="text-center py-12 bg-muted/20 rounded-lg">
-    <CalendarClock className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-    <h3 className="text-lg font-medium mb-2">{title}</h3>
-    <p className="text-muted-foreground mb-6">{description}</p>
-    <Link to="/create-event">
-      <Button>
-        <Plus className="h-4 w-4 mr-2" />
-        Create New Event
-      </Button>
-    </Link>
-  </div>
-);
 
 export default Events;

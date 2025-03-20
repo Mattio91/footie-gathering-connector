@@ -26,7 +26,6 @@ const EventCardMobile = ({ event }: EventCardMobileProps) => {
           <ParticipationStatus 
             status={event.participationStatus} 
             memberId={event.id}
-            size="sm"
           />
         </div>
         
