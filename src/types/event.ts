@@ -24,6 +24,7 @@ export interface EventData {
   description: string;
   imageUrl: string;
   groups: Group[];
+  color?: string;
 }
 
 export interface ChatMessage {

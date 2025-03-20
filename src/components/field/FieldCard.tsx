@@ -5,6 +5,7 @@ import { MapPin, Calendar } from 'lucide-react';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import { Field } from '@/types/field';
 import { WeeklyEventCalendar } from './WeeklyEventCalendar';
+import { Button } from '@/components/ui/button';
 
 interface FieldCardProps {
   field: Field;
@@ -23,11 +24,19 @@ const FieldCard: React.FC<FieldCardProps> = ({ field }) => {
         </div>
         <div className="md:w-2/3">
           <CardContent className="p-6">
-            <h3 className="text-xl font-semibold mb-2">{field.name}</h3>
-            <div className="flex items-center text-sm text-muted-foreground mb-4">
-              <MapPin className="w-4 h-4 mr-1" />
-              <span>{field.location}</span>
+            <div className="flex justify-between items-start mb-4">
+              <div>
+                <h3 className="text-xl font-semibold mb-2">{field.name}</h3>
+                <div className="flex items-center text-sm text-muted-foreground">
+                  <MapPin className="w-4 h-4 mr-1" />
+                  <span>{field.location}</span>
+                </div>
+              </div>
+              <Button variant="outline" size="sm" asChild>
+                <Link to={`/fields/${field.id}`}>View Details</Link>
+              </Button>
             </div>
+            
             <p className="text-sm text-muted-foreground mb-6">
               {field.description || 'No description available.'}
             </p>
@@ -36,7 +45,7 @@ const FieldCard: React.FC<FieldCardProps> = ({ field }) => {
             <div className="mb-4">
               <div className="flex items-center mb-3">
                 <Calendar className="w-4 h-4 mr-2" />
-                <h4 className="font-medium">Events This Week</h4>
+                <h4 className="font-medium">Events Schedule</h4>
               </div>
               <WeeklyEventCalendar events={field.events} />
             </div>
@@ -45,12 +54,6 @@ const FieldCard: React.FC<FieldCardProps> = ({ field }) => {
             <div className="text-sm">
               <span className="font-medium">{field.events.length}</span> {field.events.length === 1 ? 'event' : 'events'} scheduled
             </div>
-            <Link 
-              to={`/fields/${field.id}`} 
-              className="text-sm font-medium text-primary hover:underline"
-            >
-              View Details
-            </Link>
           </CardFooter>
         </div>
       </div>

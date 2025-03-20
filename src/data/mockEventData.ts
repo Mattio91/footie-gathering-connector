@@ -2,6 +2,18 @@
 import { EventData, ChatMessage } from '@/types/event';
 import { Player } from '@/types/player';
 
+// Colors for events
+const eventColors = [
+  '#3b82f6', // blue
+  '#10b981', // green
+  '#f59e0b', // amber
+  '#ef4444', // red
+  '#8b5cf6', // purple
+  '#ec4899', // pink
+  '#06b6d4', // cyan
+  '#f97316', // orange
+];
+
 // Mock event data
 export const getMockEvent = (eventId: string): EventData => ({
   id: eventId || '1',
@@ -51,7 +63,8 @@ export const getMockEvent = (eventId: string): EventData => ({
         { id: '6', name: 'Emma Davis', role: 'Member', avatar: 'https://randomuser.me/api/portraits/women/12.jpg' }
       ]
     }
-  ]
+  ],
+  color: eventColors[Math.floor(Math.random() * eventColors.length)],
 });
 
 // Mock images
