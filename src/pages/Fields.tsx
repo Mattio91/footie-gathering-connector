@@ -17,13 +17,6 @@ const Fields = () => {
       <Header />
       
       <main className="flex-1 container py-8">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold mb-2">Football Fields</h1>
-          <p className="text-muted-foreground">
-            Discover football fields in your area and see upcoming events.
-          </p>
-        </div>
-        
         {/* Map of all fields */}
         <FieldsMap fields={mockFields} />
         
