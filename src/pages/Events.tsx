@@ -104,6 +104,11 @@ const Events = () => {
   
   const displayedEvents = getFilteredEventsByType();
   
+  // Handle event selection from dropdown
+  const selectEventFromDropdown = (event) => {
+    setSelectedEvent(event);
+  };
+  
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
@@ -113,7 +118,7 @@ const Events = () => {
           <Card className="mb-8">
             <CardContent className="pt-6 pb-4">
               <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
-                <div className="font-medium text-lg">{t('events.findEvents')}</div>
+                <div className="flex-shrink-0 font-medium">{t('events.findEvents')}</div>
                 
                 <div className="flex flex-1 md:flex-row gap-4 w-full md:w-auto items-center">
                   <div className="relative flex-1">
@@ -130,6 +135,30 @@ const Events = () => {
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                       <Button variant="outline" className="min-w-[120px] justify-between">
+                        {selectedEvent ? selectedEvent.title : 'Select Event'}
+                        <ChevronDown className="h-4 w-4 ml-2 opacity-50" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end" className="max-h-[300px] overflow-y-auto bg-background">
+                      <DropdownMenuItem className="font-medium" onClick={() => setSelectedEvent(null)}>
+                        All Events
+                      </DropdownMenuItem>
+                      
+                      {isLoaded && displayedEvents.length > 0 && displayedEvents.map(event => (
+                        <DropdownMenuItem 
+                          key={event.id} 
+                          className={selectedEvent?.id === event.id ? "bg-accent text-accent-foreground" : ""}
+                          onClick={() => selectEventFromDropdown(event)}
+                        >
+                          {event.title}
+                        </DropdownMenuItem>
+                      ))}
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                  
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="outline" className="min-w-[120px] justify-between">
                         {viewFilter === 'all' && 'All Events'}
                         {viewFilter === 'joined' && 'Joined'}
                         {viewFilter === 'tentative' && 'Tentative'}
@@ -137,7 +166,7 @@ const Events = () => {
                         <ChevronDown className="h-4 w-4 ml-2 opacity-50" />
                       </Button>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
+                    <DropdownMenuContent align="end" className="bg-background">
                       <DropdownMenuItem onClick={() => setViewFilter('all')}>
                         All Events
                       </DropdownMenuItem>
@@ -154,21 +183,6 @@ const Events = () => {
                   </DropdownMenu>
                 </div>
               </div>
-              
-              {isLoaded && displayedEvents.length > 0 && (
-                <div className="mt-6 flex flex-wrap gap-3">
-                  {displayedEvents.map(event => (
-                    <Button
-                      key={event.id}
-                      variant={selectedEvent?.id === event.id ? "default" : "outline"}
-                      size="sm"
-                      onClick={() => setSelectedEvent(event)}
-                    >
-                      {event.title}
-                    </Button>
-                  ))}
-                </div>
-              )}
             </CardContent>
           </Card>
           
