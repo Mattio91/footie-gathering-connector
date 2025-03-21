@@ -1,7 +1,7 @@
 
 import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { ArrowLeft, Users, MapPin, Calendar, Globe, Lock, UserPlus } from 'lucide-react';
+import { ArrowLeft, Users, MapPin, Calendar, Globe, Lock, UserPlus, Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import Header from '@/components/Header';
@@ -11,7 +11,7 @@ import { mockGroups } from '@/data/mockGroupsData';
 import { getMockEvent } from '@/data/mockEventData';
 import { Group } from '@/types/group';
 import { EventWithParticipation } from '@/types/event-instance';
-import { addDays, format } from 'date-fns';
+import { addDays } from 'date-fns';
 
 const GroupDetail = () => {
   const { id } = useParams<{ id: string }>();
@@ -42,11 +42,11 @@ const GroupDetail = () => {
           location: foundGroup.city,
           playerCount: Math.floor(Math.random() * foundGroup.memberCount),
           maxPlayers: 10 + Math.floor(Math.random() * 10),
-          participationStatus: Math.random() > 0.5 ? 'joined' : 'none',
+          participationStatus: Math.random() > 0.5 ? 'joined' : 'none' as 'joined' | 'none',
         };
       });
       
-      setEvents(mockEventsForGroup);
+      setEvents(mockEventsForGroup as EventWithParticipation[]);
     } else {
       setError('Group not found');
     }
@@ -102,15 +102,15 @@ const GroupDetail = () => {
         <div className="relative rounded-xl overflow-hidden mb-8">
           <div 
             className="h-56 bg-cover bg-center"
-            style={{ backgroundImage: `url(${group.image || 'https://images.unsplash.com/photo-1508098682722-e99c643e7f0b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80'})` }}
+            style={{ backgroundImage: `url(${group?.image || 'https://images.unsplash.com/photo-1508098682722-e99c643e7f0b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80'})` }}
           >
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
           </div>
           
           <div className="absolute bottom-0 left-0 p-6 text-white">
             <div className="flex items-center space-x-2 mb-2">
-              <h1 className="text-3xl font-bold">{group.name}</h1>
-              {group.isPrivate ? (
+              <h1 className="text-3xl font-bold">{group?.name}</h1>
+              {group?.isPrivate ? (
                 <Badge variant="outline" className="flex items-center gap-1 border-white text-white">
                   <Lock className="h-3 w-3" />
                   Private
@@ -125,7 +125,7 @@ const GroupDetail = () => {
             
             <div className="flex items-center text-gray-200 mb-4">
               <MapPin className="h-4 w-4 mr-1" />
-              {group.city}
+              {group?.city}
             </div>
             
             <div className="flex items-center gap-3">
