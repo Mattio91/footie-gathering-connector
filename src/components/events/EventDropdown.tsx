@@ -23,11 +23,11 @@ const EventDropdown = ({
   onSelectEvent 
 }: EventDropdownProps) => {
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col w-full md:w-auto">
       <span className="text-sm text-muted-foreground mb-1">Filter by event</span>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button variant="outline" className="min-w-[180px] justify-between bg-background">
+          <Button variant="outline" className="w-full md:min-w-[200px] justify-between bg-background">
             {selectedEvent ? selectedEvent.title : 'Select Event'}
             <ChevronDown className="h-4 w-4 ml-2 opacity-50" />
           </Button>
