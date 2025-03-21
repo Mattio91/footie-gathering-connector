@@ -46,6 +46,8 @@ export const getMockEvent = (eventId: string): EventData => ({
       id: '1', 
       name: 'Sunday League', 
       memberCount: 14,
+      city: 'Gdańsk',
+      isPrivate: true,
       members: [
         { id: '1', name: 'Alex Johnson', role: 'Admin', avatar: 'https://randomuser.me/api/portraits/men/32.jpg' },
         { id: '2', name: 'Sarah Smith', role: 'Co-Admin', avatar: 'https://randomuser.me/api/portraits/women/44.jpg' },
@@ -57,6 +59,8 @@ export const getMockEvent = (eventId: string): EventData => ({
       id: '2', 
       name: 'Neighborhood Crew', 
       memberCount: 8,
+      city: 'Gdańsk',
+      isPrivate: true,
       members: [
         { id: '1', name: 'Alex Johnson', role: 'Admin', avatar: 'https://randomuser.me/api/portraits/men/32.jpg' },
         { id: '5', name: 'David Brown', role: 'Member', avatar: 'https://randomuser.me/api/portraits/men/86.jpg' },

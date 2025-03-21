@@ -31,9 +31,9 @@ const playerStats = {
 
 // Sample groups data - in a real app, this would come from an API
 const playerGroups: Group[] = [
-  { id: "g1", name: "Weekend Warriors", memberCount: 12 },
-  { id: "g2", name: "City League", memberCount: 24 },
-  { id: "g3", name: "Corporate Team", memberCount: 15 }
+  { id: "g1", name: "Weekend Warriors", memberCount: 12, city: "Gdańsk", isPrivate: true },
+  { id: "g2", name: "City League", memberCount: 24, city: "Gdańsk", isPrivate: false },
+  { id: "g3", name: "Corporate Team", memberCount: 15, city: "Gdańsk", isPrivate: true }
 ];
 
 interface PlayerProfileProps {
