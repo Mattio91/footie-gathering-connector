@@ -1,7 +1,7 @@
 
 import { EventData } from '@/types/event';
 import { useEventState } from '@/hooks/useEventState';
-import { useEventActions } from '@/hooks/useEventActions';
+import { useEventActions } from '@/hooks/eventActions';
 
 export const useEventDetail = (eventId: string) => {
   // Get state from useEventState
