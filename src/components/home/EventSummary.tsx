@@ -23,10 +23,9 @@ const EventSummary = ({ event, groups = [] }: EventSummaryProps) => {
             backgroundImage: `url(${event.imageUrl || 'https://images.unsplash.com/photo-1522778119026-d647f0596c20?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80'})` 
           }}
         >
-          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
           
           <div className="absolute bottom-0 left-0 p-4 w-full">
-            <h2 className="text-2xl font-medium text-white mb-1">{event.title}</h2>
             <div className="flex flex-wrap gap-2 mb-2">
               <Badge variant="secondary" className="bg-white/20 text-white hover:bg-white/30 backdrop-blur-sm">
                 {event.format}
@@ -41,6 +40,7 @@ const EventSummary = ({ event, groups = [] }: EventSummaryProps) => {
                 </Badge>
               )}
             </div>
+            <h2 className="text-2xl font-medium text-white mb-1">{event.title}</h2>
           </div>
         </div>
         

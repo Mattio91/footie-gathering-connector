@@ -65,14 +65,22 @@ const Events = () => {
     <div className="min-h-screen flex flex-col">
       <Header />
       
-      <main className="flex-1 pt-24 pb-16">
+      <main className="flex-1 pt-16 pb-16">
         <div className="container max-w-6xl mx-auto px-4">
-          <EventsSearchFilter
-            searchQuery={searchQuery}
-            viewFilter={viewFilter}
-            onSearchChange={handleSearchInput}
-            onViewFilterChange={setViewFilter}
-          />
+          <div className="flex justify-between items-center mb-4 mt-4">
+            <EventsSearchFilter
+              searchQuery={searchQuery}
+              viewFilter={viewFilter}
+              onSearchChange={handleSearchInput}
+              onViewFilterChange={setViewFilter}
+            />
+            
+            <EventDropdown 
+              selectedEvent={selectedEvent}
+              displayedEvents={displayedEvents}
+              onSelectEvent={selectEventFromDropdown}
+            />
+          </div>
           
           {selectedEvent && (
             <>
