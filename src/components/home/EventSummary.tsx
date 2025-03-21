@@ -18,13 +18,15 @@ const EventSummary = ({ event, groups = [] }: EventSummaryProps) => {
       <div className="relative">
         {/* Event Image */}
         <div 
-          className="h-48 bg-cover bg-center"
+          className="h-48 bg-cover bg-center relative"
           style={{ 
             backgroundImage: `url(${event.imageUrl || 'https://images.unsplash.com/photo-1522778119026-d647f0596c20?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80'})` 
           }}
         >
-          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
+          {/* Improved gradient overlay with better spacing */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/60 to-transparent" />
           
+          {/* Contained title area with improved positioning */}
           <div className="absolute bottom-0 left-0 p-4 w-full">
             <div className="flex flex-wrap gap-2 mb-2">
               <Badge variant="secondary" className="bg-white/20 text-white hover:bg-white/30 backdrop-blur-sm">
@@ -40,11 +42,11 @@ const EventSummary = ({ event, groups = [] }: EventSummaryProps) => {
                 </Badge>
               )}
             </div>
-            <h2 className="text-2xl font-medium text-white mb-1">{event.title}</h2>
+            <h2 className="text-2xl font-medium text-white mb-1 line-clamp-1">{event.title}</h2>
           </div>
         </div>
         
-        <CardContent className="p-4">
+        <CardContent className="p-4 pt-5">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-4">
               <div>
