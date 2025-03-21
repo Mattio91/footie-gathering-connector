@@ -65,9 +65,9 @@ const Events = () => {
     <div className="min-h-screen flex flex-col">
       <Header />
       
-      <main className="flex-1 pt-16 pb-16">
+      <main className="flex-1 pt-8 pb-16">
         <div className="container max-w-6xl mx-auto px-4">
-          <div className="flex justify-between items-center mb-4 mt-4">
+          <div className="flex flex-col md:flex-row justify-between items-start mb-6 gap-4">
             <EventsSearchFilter
               searchQuery={searchQuery}
               viewFilter={viewFilter}
