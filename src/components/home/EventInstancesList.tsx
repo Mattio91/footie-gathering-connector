@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import { format } from 'date-fns';
 import { Link } from 'react-router-dom';
-import { Calendar, Clock, MapPin, Users, Check, X, Trophy } from 'lucide-react';
+import { Calendar, Clock, MapPin, Users, Check, X, Trophy, History } from 'lucide-react';
 import { EventWithParticipation } from '@/types/event-instance';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -18,8 +18,7 @@ interface EventInstancesListProps {
 
 const EventInstancesList = ({ eventInstances }: EventInstancesListProps) => {
   const isMobile = useIsMobile();
-  const [showAll, setShowAll] = useState(false);
-  const maxInitialInstances = 10;
+  const [showAllPast, setShowAllPast] = useState(false);
   
   const now = new Date();
   
@@ -42,16 +41,15 @@ const EventInstancesList = ({ eventInstances }: EventInstancesListProps) => {
     return dateB.getTime() - dateA.getTime(); // Sort historical events in reverse order
   });
   
-  // Determine which events to display based on showAll state
-  const displayedUpcoming = showAll 
-    ? upcomingEvents 
-    : upcomingEvents.slice(0, Math.min(5, upcomingEvents.length));
+  // Get only the closest upcoming event
+  const nextEvent = upcomingEvents.length > 0 ? [upcomingEvents[0]] : [];
     
-  const displayedHistorical = showAll 
+  // Show either a limited number of past events or all of them
+  const displayedHistorical = showAllPast 
     ? historicalEvents 
-    : historicalEvents.slice(0, Math.min(5, historicalEvents.length));
+    : historicalEvents.slice(0, 3);
   
-  const hasMore = upcomingEvents.length + historicalEvents.length > maxInitialInstances;
+  const hasMorePastEvents = historicalEvents.length > 3;
   
   const renderEventCard = (instance, index) => {
     const instanceDate = instance.instanceDate || instance.date;
@@ -130,21 +128,21 @@ const EventInstancesList = ({ eventInstances }: EventInstancesListProps) => {
   
   return (
     <div className="space-y-4">
-      {/* Upcoming Events Section */}
-      {displayedUpcoming.length > 0 && (
+      {/* Next Event Section */}
+      {nextEvent.length > 0 && (
         <div className="space-y-2">
           <h3 className="text-md font-medium flex items-center">
             <div className="w-2 h-2 bg-blue-500 rounded-full mr-2"></div>
-            Upcoming Events
+            Next Event
           </h3>
           <div className="space-y-2">
-            {displayedUpcoming.map(renderEventCard)}
+            {nextEvent.map(renderEventCard)}
           </div>
         </div>
       )}
       
       {/* Separator when both sections are present */}
-      {displayedUpcoming.length > 0 && displayedHistorical.length > 0 && (
+      {nextEvent.length > 0 && displayedHistorical.length > 0 && (
         <Separator className="my-4" />
       )}
       
@@ -158,19 +156,21 @@ const EventInstancesList = ({ eventInstances }: EventInstancesListProps) => {
           <div className="space-y-2">
             {displayedHistorical.map(renderEventCard)}
           </div>
-        </div>
-      )}
-      
-      {/* Show more/less button */}
-      {hasMore && (
-        <div className="text-center pt-2">
-          <Button 
-            variant="outline" 
-            size="sm"
-            onClick={() => setShowAll(!showAll)}
-          >
-            {showAll ? "Show Less" : `Show All (${upcomingEvents.length + historicalEvents.length})`}
-          </Button>
+          
+          {/* Load more past events button */}
+          {hasMorePastEvents && (
+            <div className="text-center pt-2">
+              <Button 
+                variant="outline" 
+                size="sm"
+                onClick={() => setShowAllPast(!showAllPast)}
+                className="gap-2"
+              >
+                <History className="h-4 w-4" />
+                {showAllPast ? "Show Less" : `Load Older Events (${historicalEvents.length - 3})`}
+              </Button>
+            </div>
+          )}
         </div>
       )}
     </div>
