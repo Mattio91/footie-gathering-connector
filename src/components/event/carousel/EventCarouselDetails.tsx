@@ -17,15 +17,15 @@ const EventCarouselDetails = ({ event, playerCount, maxPlayers }: EventCarouselD
     <div className="absolute bottom-0 left-0 w-full p-4 text-white">
       <h1 className="text-2xl font-bold mb-2">{event.title}</h1>
       
-      <div className="flex flex-col sm:flex-row sm:items-center gap-3 mb-1">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-x-4 gap-y-1 mb-1 text-sm">
         <div className="flex items-center">
           <Calendar className="h-4 w-4 mr-2 flex-shrink-0" />
-          <span>{formattedDate}</span>
+          <span className="truncate">{formattedDate}</span>
         </div>
         
         <div className="flex items-center">
           <Clock className="h-4 w-4 mr-2 flex-shrink-0" />
-          <span>{event.time} · {event.duration}</span>
+          <span className="truncate">{event.time} · {event.duration}</span>
         </div>
         
         <div className="flex items-center">
@@ -39,11 +39,11 @@ const EventCarouselDetails = ({ event, playerCount, maxPlayers }: EventCarouselD
         </div>
       </div>
       
-      <div className="flex items-start">
-        <MapPin className="h-4 w-4 mr-2 flex-shrink-0 mt-1" />
+      <div className="flex items-start mt-1">
+        <MapPin className="h-4 w-4 mr-2 flex-shrink-0 mt-0.5" />
         <div>
-          <div className="font-medium">{event.location}</div>
-          <div className="text-sm text-white/90">
+          <div className="font-medium truncate">{event.location}</div>
+          <div className="text-sm text-white/90 truncate max-w-full">
             {event.locationDetails}
           </div>
         </div>
