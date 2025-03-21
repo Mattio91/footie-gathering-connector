@@ -14,7 +14,7 @@ const EventCarouselDetails = ({ event, playerCount, maxPlayers }: EventCarouselD
   const formattedDate = format(new Date(event.date), 'EEEE, MMMM d, yyyy');
   
   return (
-    <div className="absolute bottom-0 left-0 w-full p-4 text-white">
+    <div className="absolute bottom-0 left-0 w-full p-4 text-white bg-gradient-to-t from-black/80 to-transparent">
       <h1 className="text-2xl font-bold mb-2">{event.title}</h1>
       
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-x-4 gap-y-1 mb-1 text-sm">
