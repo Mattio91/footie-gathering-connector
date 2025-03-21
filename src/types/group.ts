@@ -10,6 +10,10 @@ export interface GroupMember {
 export interface Group {
   id: string;
   name: string;
+  city: string;
   memberCount: number;
+  isPrivate: boolean;
+  description?: string;
+  image?: string;
   members?: GroupMember[];
 }

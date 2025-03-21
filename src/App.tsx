@@ -11,6 +11,7 @@ import Events from "./pages/Events";
 import Fields from "./pages/Fields"; 
 import Field from "./pages/Field";
 import Groups from "./pages/Groups";
+import GroupDetail from "./pages/GroupDetail";
 import Players from "./pages/Players";
 import CreateEvent from "./pages/CreateEvent";
 import Login from "./pages/Login";
@@ -28,6 +29,7 @@ const App = () => (
         <Route path="/fields" element={<Fields />} />
         <Route path="/fields/:id" element={<Field />} />
         <Route path="/groups" element={<Groups />} />
+        <Route path="/groups/:id" element={<GroupDetail />} />
         <Route path="/players" element={<Players />} />
         <Route path="/event/:id" element={<Event />} />
         <Route path="/create-event" element={<CreateEvent />} />
