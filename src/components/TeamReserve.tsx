@@ -33,7 +33,7 @@ const TeamReserve = ({
       onDragOver={onDragOver} 
       onDrop={(e) => onDrop(e, 'reserve')}
     >
-      <div className="text-xs font-medium mb-1">Reserve ({reservePlayers.length})</div>
+      <div className="font-medium mb-1">Reserve ({reservePlayers.length})</div>
       
       {/* Player list */}
       <div className="flex-1 overflow-auto">
@@ -57,7 +57,7 @@ const TeamReserve = ({
                 />
                 <AvatarFallback className="rounded-lg">{player.name.substring(0, 2)}</AvatarFallback>
               </Avatar>
-              <span className="text-[10px] mt-0.5 font-medium">{player.name}</span>
+              <span className="text-xs mt-0.5 font-medium">{player.name}</span>
             </div>
           ))}
         </div>
@@ -71,7 +71,7 @@ const TeamReserve = ({
               <Button 
                 variant="outline" 
                 size="sm" 
-                className="w-full text-xs h-6 border-dashed"
+                className="w-full h-6 border-dashed"
               >
                 <UserPlus className="h-3 w-3 mr-1" />
                 {t('event.addFriend')}

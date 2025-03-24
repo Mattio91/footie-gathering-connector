@@ -83,16 +83,16 @@ const EventInstancesList = ({ eventInstances }: EventInstancesListProps) => {
             <div className="flex-1 pl-3 pr-2 py-1"> {/* Reduced padding */}
               <div className="flex justify-between items-start gap-2">
                 <div>
-                  <div className="text-xs font-medium flex items-center gap-2"> {/* Reduced text size */}
+                  <div className="font-medium flex items-center gap-2">
                     {format(instanceDate, 'EEE, MMM d, yyyy')}
                     {instance.won && (
-                      <Badge variant="outline" className="bg-yellow-50 text-yellow-700 border-yellow-200 text-xs"> {/* Smaller badge */}
+                      <Badge variant="outline" className="bg-yellow-50 text-yellow-700 border-yellow-200">
                         <Trophy className="h-3 w-3 mr-1 text-yellow-500" />
                         MVP
                       </Badge>
                     )}
                   </div>
-                  <div className="flex flex-wrap gap-x-2 mt-1 text-xs text-muted-foreground"> {/* Reduced gap */}
+                  <div className="flex flex-wrap gap-x-2 mt-1 text-muted-foreground"> {/* Reduced gap */}
                     <div className="flex items-center">
                       <Clock className="h-3 w-3 mr-1" />
                       {instance.time}
@@ -110,7 +110,7 @@ const EventInstancesList = ({ eventInstances }: EventInstancesListProps) => {
                 
                 <div className="flex items-center gap-1"> {/* Reduced gap */}
                   <Link to={`/event/${instance.id}`}>
-                    <Button variant="outline" size="sm" className="h-7 px-2 text-xs">View</Button>
+                    <Button variant="outline" size="sm" className="h-7 px-2">View</Button>
                   </Link>
                 </div>
               </div>
@@ -126,7 +126,7 @@ const EventInstancesList = ({ eventInstances }: EventInstancesListProps) => {
       {/* Next Event Section */}
       {nextEvent.length > 0 && (
         <div className="space-y-1"> {/* Reduced spacing */}
-          <h3 className="text-sm font-medium flex items-center"> {/* Reduced text size */}
+          <h3 className="font-medium flex items-center">
             <div className="w-2 h-2 bg-blue-500 rounded-full mr-2"></div>
             Next Event
           </h3>
@@ -144,7 +144,7 @@ const EventInstancesList = ({ eventInstances }: EventInstancesListProps) => {
       {/* Historical Events Section */}
       {displayedHistorical.length > 0 && (
         <div className="space-y-1"> {/* Reduced spacing */}
-          <h3 className="text-sm font-medium flex items-center"> {/* Reduced text size */}
+          <h3 className="font-medium flex items-center">
             <div className="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
             Past Events
           </h3>
@@ -159,7 +159,7 @@ const EventInstancesList = ({ eventInstances }: EventInstancesListProps) => {
                 variant="outline" 
                 size="sm"
                 onClick={() => setShowAllPast(!showAllPast)}
-                className="gap-1 text-xs" // Reduced gap, smaller text
+                className="gap-1"
               >
                 <History className="h-3 w-3" /> {/* Smaller icon */}
                 {showAllPast ? "Show Less" : `Load Older Events (${historicalEvents.length - 3})`}
@@ -173,4 +173,3 @@ const EventInstancesList = ({ eventInstances }: EventInstancesListProps) => {
 };
 
 export default EventInstancesList;
-

@@ -36,7 +36,7 @@ const TeamCard = ({
     <Card className={borderClass}>
       <CardHeader className="p-2 pb-1">
         <CardTitle className="text-sm">{teamName}</CardTitle>
-        <CardDescription className="text-xs">{teamPlayers.length} players</CardDescription>
+        <CardDescription>{teamPlayers.length} players</CardDescription>
       </CardHeader>
       <CardContent className="p-1">
         <div className="space-y-1">
@@ -57,7 +57,7 @@ const TeamCard = ({
                 />
               </div>
               <div className="flex-grow">
-                <div className="font-medium text-xs">
+                <div className="font-medium">
                   {player.name}
                 </div>
               </div>
@@ -75,7 +75,7 @@ const TeamCard = ({
               <div className="w-6 h-6 rounded-lg bg-muted/50 flex items-center justify-center mr-2">
                 <Users className="h-3 w-3 text-muted-foreground/50" />
               </div>
-              <div className="flex-grow text-xs text-muted-foreground">
+              <div className="flex-grow text-muted-foreground">
                 Available
               </div>
             </div>
