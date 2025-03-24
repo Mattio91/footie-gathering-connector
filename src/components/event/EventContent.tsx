@@ -1,4 +1,5 @@
 
+import { useIsMobile } from '@/hooks/use-mobile';
 import EventTeams from '@/components/event/EventTeams';
 import EventMap from '@/components/EventMap';
 import EventChat from '@/components/EventChat';
@@ -61,6 +62,8 @@ const EventContent = ({
   messages, 
   handlers 
 }: EventContentProps) => {
+  const isMobile = useIsMobile();
+  
   return (
     <div className="space-y-4">
       {/* Teams section with join button */}
@@ -75,23 +78,49 @@ const EventContent = ({
         onAddFriend={handlers.handleAddFriend}
       />
       
-      {/* Chat section */}
-      <EventChat 
-        messages={messages}
-        onSendMessage={handlers.handleSendMessage}
-      />
-      
-      {/* Groups */}
-      <EventGroups 
-        groups={event.groups} 
-        onPingMember={handlers.handlePingMember}
-      />
-      
-      {/* Map moved below groups */}
-      <EventMap 
-        location={event.location} 
-        locationDetails={event.locationDetails}
-      />
+      {isMobile ? (
+        // Mobile layout - vertical stacking
+        <div className="space-y-4">
+          {/* Chat section */}
+          <EventChat 
+            messages={messages}
+            onSendMessage={handlers.handleSendMessage}
+          />
+          
+          {/* Map */}
+          <EventMap 
+            location={event.location} 
+            locationDetails={event.locationDetails}
+          />
+          
+          {/* Groups */}
+          <EventGroups 
+            groups={event.groups} 
+            onPingMember={handlers.handlePingMember}
+          />
+        </div>
+      ) : (
+        // Desktop layout - current layout
+        <>
+          {/* Chat section */}
+          <EventChat 
+            messages={messages}
+            onSendMessage={handlers.handleSendMessage}
+          />
+          
+          {/* Groups */}
+          <EventGroups 
+            groups={event.groups} 
+            onPingMember={handlers.handlePingMember}
+          />
+          
+          {/* Map */}
+          <EventMap 
+            location={event.location} 
+            locationDetails={event.locationDetails}
+          />
+        </>
+      )}
     </div>
   );
 };

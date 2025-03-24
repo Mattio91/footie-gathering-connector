@@ -105,6 +105,31 @@
   .avatar-rounded {
     @apply rounded-lg overflow-hidden;
   }
+  
+  /* Mobile specific styles */
+  @media (max-width: 768px) {
+    .event-carousel {
+      @apply aspect-[16/9] rounded-lg overflow-hidden;
+    }
+    
+    /* Smaller font sizes for mobile */
+    .mobile-text-sm {
+      @apply text-sm;
+    }
+    
+    .mobile-text-xs {
+      @apply text-xs;
+    }
+    
+    /* Reduced padding for mobile */
+    .mobile-p-2 {
+      @apply p-2;
+    }
+    
+    .mobile-p-1 {
+      @apply p-1;
+    }
+  }
 }
 
 @layer utilities {

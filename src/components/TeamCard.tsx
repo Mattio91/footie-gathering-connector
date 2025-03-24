@@ -8,6 +8,7 @@ import {
   CardTitle 
 } from '@/components/ui/card';
 import { Player } from '@/types/player';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface TeamCardProps {
   teamName: string;
@@ -31,14 +32,15 @@ const TeamCard = ({
   const emptySpots = Math.max(0, maxTeamSize - teamPlayers.length);
   const borderClass = teamName === "Home Team" ? "border-team-home/20 bg-team-home/5" : "border-team-away/20 bg-team-away/5";
   const teamId = teamName === "Home Team" ? "teamA" : "teamB";
+  const isMobile = useIsMobile();
   
   return (
     <Card className={borderClass}>
-      <CardHeader className="p-3 pb-2">
+      <CardHeader className={isMobile ? "p-2 pb-1" : "p-3 pb-2"}>
         <CardTitle className="text-sm">{teamName}</CardTitle>
         <CardDescription>{teamPlayers.length} players</CardDescription>
       </CardHeader>
-      <CardContent className="p-2">
+      <CardContent className={isMobile ? "p-1.5" : "p-2"}>
         <div className="space-y-2">
           {teamPlayers.map(player => (
             <div 

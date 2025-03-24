@@ -7,6 +7,7 @@ import TeamCard from '@/components/TeamCard';
 import TeamReserve from '@/components/TeamReserve';
 import { useDragAndDrop } from '@/hooks/useDragAndDrop';
 import TentativePlayers from '@/components/TentativePlayers';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface EventTeamsProps {
   players: Player[];
@@ -30,6 +31,7 @@ const EventTeams = ({
   onAddFriend
 }: EventTeamsProps) => {
   const { toast } = useToast();
+  const isMobile = useIsMobile();
   
   const {
     teamA,
@@ -51,7 +53,7 @@ const EventTeams = ({
   };
   
   return (
-    <div className="space-y-2">
+    <div className="space-y-3">
       <div className="flex justify-between items-center mb-2">
         <h2 className="text-xl font-semibold">Teams</h2>
         <div className="text-sm text-muted-foreground">
@@ -72,24 +74,27 @@ const EventTeams = ({
             <Button 
               className="bg-green-600 hover:bg-green-700"
               onClick={onJoinEvent}
+              size={isMobile ? "sm" : "default"}
             >
-              <UserPlus className="h-4 w-4 mr-2" />
+              <UserPlus className={`${isMobile ? 'h-3 w-3 mr-1' : 'h-4 w-4 mr-2'}`} />
               Join
             </Button>
             
             <Button 
               variant="secondary"
               onClick={onTentativeJoin}
+              size={isMobile ? "sm" : "default"}
             >
-              <Clock className="h-4 w-4 mr-2" />
+              <Clock className={`${isMobile ? 'h-3 w-3 mr-1' : 'h-4 w-4 mr-2'}`} />
               Tentative
             </Button>
             
             <Button 
               variant="destructive" 
               onClick={onSkipEvent}
+              size={isMobile ? "sm" : "default"}
             >
-              <UserX className="h-4 w-4 mr-2" />
+              <UserX className={`${isMobile ? 'h-3 w-3 mr-1' : 'h-4 w-4 mr-2'}`} />
               Can't Join
             </Button>
           </div>
@@ -98,42 +103,81 @@ const EventTeams = ({
       
       {/* Teams section - no tabs */}
       <div className="pt-2">
-        {/* Teams side by side */}
-        <div className="grid grid-cols-3 gap-2">
-          {/* Home Team */}
-          <TeamCard
-            teamName="Home Team"
-            teamPlayers={teamA}
-            teamColor="team-home"
-            maxTeamSize={Math.ceil(maxPlayers/2)}
-            onDragStart={handleDragStart}
-            onDragOver={handleDragOver}
-            onDrop={handleDrop}
-          />
-          
-          {/* Reserve Players */}
-          <TeamReserve
-            reservePlayers={reservePlayers}
-            onDragStart={handleDragStart}
-            onDragOver={handleDragOver}
-            onDrop={handleDrop}
-            onAddFriend={handleAddFriend}
-          />
-          
-          {/* Away Team */}
-          <TeamCard
-            teamName="Away Team"
-            teamPlayers={teamB}
-            teamColor="team-away"
-            maxTeamSize={Math.floor(maxPlayers/2)}
-            onDragStart={handleDragStart}
-            onDragOver={handleDragOver}
-            onDrop={handleDrop}
-          />
+        {/* Teams grid - responsive */}
+        <div className={`grid ${isMobile ? 'grid-cols-1 gap-3' : 'grid-cols-3 gap-2'}`}>
+          {isMobile ? (
+            // Mobile layout - stack vertically
+            <>
+              {/* Home Team */}
+              <TeamCard
+                teamName="Home Team"
+                teamPlayers={teamA}
+                teamColor="team-home"
+                maxTeamSize={Math.ceil(maxPlayers/2)}
+                onDragStart={handleDragStart}
+                onDragOver={handleDragOver}
+                onDrop={handleDrop}
+              />
+              
+              {/* Away Team */}
+              <TeamCard
+                teamName="Away Team"
+                teamPlayers={teamB}
+                teamColor="team-away"
+                maxTeamSize={Math.floor(maxPlayers/2)}
+                onDragStart={handleDragStart}
+                onDragOver={handleDragOver}
+                onDrop={handleDrop}
+              />
+              
+              {/* Reserve Players */}
+              <TeamReserve
+                reservePlayers={reservePlayers}
+                onDragStart={handleDragStart}
+                onDragOver={handleDragOver}
+                onDrop={handleDrop}
+                onAddFriend={handleAddFriend}
+              />
+            </>
+          ) : (
+            // Desktop layout - side by side
+            <>
+              {/* Home Team */}
+              <TeamCard
+                teamName="Home Team"
+                teamPlayers={teamA}
+                teamColor="team-home"
+                maxTeamSize={Math.ceil(maxPlayers/2)}
+                onDragStart={handleDragStart}
+                onDragOver={handleDragOver}
+                onDrop={handleDrop}
+              />
+              
+              {/* Reserve Players */}
+              <TeamReserve
+                reservePlayers={reservePlayers}
+                onDragStart={handleDragStart}
+                onDragOver={handleDragOver}
+                onDrop={handleDrop}
+                onAddFriend={handleAddFriend}
+              />
+              
+              {/* Away Team */}
+              <TeamCard
+                teamName="Away Team"
+                teamPlayers={teamB}
+                teamColor="team-away"
+                maxTeamSize={Math.floor(maxPlayers/2)}
+                onDragStart={handleDragStart}
+                onDragOver={handleDragOver}
+                onDrop={handleDrop}
+              />
+            </>
+          )}
         </div>
         
         {/* Tentative Players */}
-        <div className="mt-2">
+        <div className="mt-3">
           <TentativePlayers tentativePlayers={tentativePlayers} />
         </div>
       </div>
