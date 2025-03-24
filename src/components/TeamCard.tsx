@@ -34,22 +34,22 @@ const TeamCard = ({
   
   return (
     <Card className={borderClass}>
-      <CardHeader className="pb-2">
-        <CardTitle className="text-lg">{teamName}</CardTitle>
-        <CardDescription>{teamPlayers.length} players</CardDescription>
+      <CardHeader className="p-2 pb-1">
+        <CardTitle className="text-sm">{teamName}</CardTitle>
+        <CardDescription className="text-xs">{teamPlayers.length} players</CardDescription>
       </CardHeader>
-      <CardContent>
-        <div className="space-y-2">
+      <CardContent className="p-1">
+        <div className="space-y-1">
           {teamPlayers.map(player => (
             <div 
               key={player.id} 
-              className="flex items-center p-2 rounded-md bg-background/80 cursor-move"
+              className="flex items-center p-1 rounded-md bg-background/80 cursor-move"
               draggable
               onDragStart={(e) => onDragStart(e, player, teamId)}
               onDragOver={onDragOver}
               onDrop={(e) => onDrop(e, teamId)}
             >
-              <div className="w-8 h-8 rounded-lg overflow-hidden mr-3">
+              <div className="w-6 h-6 rounded-lg overflow-hidden mr-2">
                 <img 
                   src={player.avatar || `https://ui-avatars.com/api/?name=${player.name}`} 
                   alt={player.name} 
@@ -57,7 +57,7 @@ const TeamCard = ({
                 />
               </div>
               <div className="flex-grow">
-                <div className="font-medium text-sm flex items-center">
+                <div className="font-medium text-xs">
                   {player.name}
                 </div>
               </div>
@@ -68,15 +68,15 @@ const TeamCard = ({
           {Array.from({length: emptySpots}).map((_, i) => (
             <div 
               key={`empty-${teamId.toLowerCase()}-${i}`} 
-              className="flex items-center p-2 rounded-md border border-dashed border-muted-foreground/30"
+              className="flex items-center p-1 rounded-md border border-dashed border-muted-foreground/30"
               onDragOver={onDragOver}
               onDrop={(e) => onDrop(e, teamId)}
             >
-              <div className="w-8 h-8 rounded-lg bg-muted/50 flex items-center justify-center mr-3">
-                <Users className="h-4 w-4 text-muted-foreground/50" />
+              <div className="w-6 h-6 rounded-lg bg-muted/50 flex items-center justify-center mr-2">
+                <Users className="h-3 w-3 text-muted-foreground/50" />
               </div>
-              <div className="flex-grow text-sm text-muted-foreground">
-                Available spot
+              <div className="flex-grow text-xs text-muted-foreground">
+                Available
               </div>
             </div>
           ))}

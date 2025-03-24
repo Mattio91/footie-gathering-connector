@@ -29,16 +29,16 @@ const TeamReserve = ({
   
   return (
     <div 
-      className="bg-muted/30 rounded-md border p-2 border-dashed h-full flex flex-col"
+      className="bg-muted/30 rounded-md border p-1 border-dashed h-full flex flex-col"
       onDragOver={onDragOver} 
       onDrop={(e) => onDrop(e, 'reserve')}
     >
-      <div className="text-sm font-medium mb-1">Reserve ({reservePlayers.length})</div>
+      <div className="text-xs font-medium mb-1">Reserve ({reservePlayers.length})</div>
       
       {/* Player list */}
       <div className="flex-1 overflow-auto">
         {/* Player slots */}
-        <div className="flex flex-wrap justify-center gap-1 mb-2">
+        <div className="flex flex-wrap justify-center gap-1 mb-1">
           {reservePlayers.map((player) => (
             <div 
               key={player.id} 
@@ -49,7 +49,7 @@ const TeamReserve = ({
               draggable
               onDragStart={(e) => onDragStart(e, player, 'reserve')}
             >
-              <Avatar className="h-12 w-12 border-2 rounded-lg border-transparent hover:border-primary transition-all">
+              <Avatar className="h-8 w-8 border-2 rounded-lg border-transparent hover:border-primary transition-all">
                 <AvatarImage 
                   src={player.avatar || `https://ui-avatars.com/api/?name=${player.name}`} 
                   alt={player.name} 
@@ -57,7 +57,7 @@ const TeamReserve = ({
                 />
                 <AvatarFallback className="rounded-lg">{player.name.substring(0, 2)}</AvatarFallback>
               </Avatar>
-              <span className="text-xs mt-1 font-medium">{player.name}</span>
+              <span className="text-[10px] mt-0.5 font-medium">{player.name}</span>
             </div>
           ))}
         </div>
@@ -71,7 +71,7 @@ const TeamReserve = ({
               <Button 
                 variant="outline" 
                 size="sm" 
-                className="w-full text-xs h-7 border-dashed"
+                className="w-full text-xs h-6 border-dashed"
               >
                 <UserPlus className="h-3 w-3 mr-1" />
                 {t('event.addFriend')}
