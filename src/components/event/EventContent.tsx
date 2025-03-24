@@ -1,5 +1,5 @@
 
-import EventTeams from '@/components/EventTeams';
+import EventTeams from '@/components/event/EventTeams';
 import EventMap from '@/components/EventMap';
 import EventChat from '@/components/EventChat';
 import EventGroups from '@/components/EventGroups';
@@ -62,7 +62,7 @@ const EventContent = ({
   handlers 
 }: EventContentProps) => {
   return (
-    <div className="space-y-3 compact-spacing">
+    <div className="space-y-4">
       {/* Teams section with join button */}
       <EventTeams 
         players={players} 

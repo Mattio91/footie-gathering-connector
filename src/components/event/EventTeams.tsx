@@ -51,15 +51,15 @@ const EventTeams = ({
   };
   
   return (
-    <div className="space-y-1 compact-spacing">
-      <div className="flex justify-between items-center mb-1">
+    <div className="space-y-2">
+      <div className="flex justify-between items-center mb-2">
         <h2 className="text-xl font-semibold">Teams</h2>
         <div className="text-sm text-muted-foreground">
           <span className="font-medium">{players.length}/{maxPlayers}</span> players
         </div>
       </div>
       
-      <div className="flex justify-center mb-1">
+      <div className="flex justify-center mb-2">
         {isJoined ? (
           <Button 
             className="w-64 bg-destructive hover:bg-destructive/90"
@@ -68,7 +68,7 @@ const EventTeams = ({
             Leave Event
           </Button>
         ) : (
-          <div className="grid grid-cols-3 gap-1 w-full">
+          <div className="grid grid-cols-3 gap-2 w-full">
             <Button 
               className="bg-green-600 hover:bg-green-700"
               onClick={onJoinEvent}
@@ -97,9 +97,9 @@ const EventTeams = ({
       </div>
       
       {/* Teams section - no tabs */}
-      <div className="pt-1">
+      <div className="pt-2">
         {/* Teams side by side */}
-        <div className="grid grid-cols-3 gap-1 compact-grid">
+        <div className="grid grid-cols-3 gap-2">
           {/* Home Team */}
           <TeamCard
             teamName="Home Team"
@@ -133,7 +133,7 @@ const EventTeams = ({
         </div>
         
         {/* Tentative Players */}
-        <div className="mt-1">
+        <div className="mt-2">
           <TentativePlayers tentativePlayers={tentativePlayers} />
         </div>
       </div>

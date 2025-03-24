@@ -34,16 +34,16 @@ const TeamCard = ({
   
   return (
     <Card className={borderClass}>
-      <CardHeader className="p-2 pb-1">
+      <CardHeader className="p-3 pb-2">
         <CardTitle className="text-sm">{teamName}</CardTitle>
         <CardDescription>{teamPlayers.length} players</CardDescription>
       </CardHeader>
-      <CardContent className="p-1">
-        <div className="space-y-1">
+      <CardContent className="p-2">
+        <div className="space-y-2">
           {teamPlayers.map(player => (
             <div 
               key={player.id} 
-              className="flex items-center p-1 rounded-md bg-background/80 cursor-move"
+              className="flex items-center p-2 rounded-md bg-background/80 cursor-move"
               draggable
               onDragStart={(e) => onDragStart(e, player, teamId)}
               onDragOver={onDragOver}
@@ -68,7 +68,7 @@ const TeamCard = ({
           {Array.from({length: emptySpots}).map((_, i) => (
             <div 
               key={`empty-${teamId.toLowerCase()}-${i}`} 
-              className="flex items-center p-1 rounded-md border border-dashed border-muted-foreground/30"
+              className="flex items-center p-2 rounded-md border border-dashed border-muted-foreground/30"
               onDragOver={onDragOver}
               onDrop={(e) => onDrop(e, teamId)}
             >

@@ -59,17 +59,17 @@ const EventInstancesList = ({ eventInstances }: EventInstancesListProps) => {
       <Card 
         key={`${instance.id}-${index}`}
         className={cn(
-          "border-l-4 overflow-hidden mb-2", // Reduced margin
+          "border-l-4 overflow-hidden mb-3", 
           status === 'played' && "border-l-green-500",
           status === 'upcoming' && "border-l-blue-500",
           status === 'canceled' && "border-l-red-500"
         )}
       >
-        <CardContent className="p-3"> {/* Reduced padding */}
+        <CardContent className="p-4">
           <div className="flex items-center">
             {/* Status indicator */}
             <div className={cn(
-              "w-10 h-full flex-shrink-0 flex items-center justify-center", // Reduced width
+              "w-12 h-full flex-shrink-0 flex items-center justify-center",
               status === 'played' ? "bg-green-50" : 
               status === 'upcoming' ? "bg-blue-50" : 
               "bg-red-50"
@@ -80,7 +80,7 @@ const EventInstancesList = ({ eventInstances }: EventInstancesListProps) => {
             </div>
             
             {/* Instance details */}
-            <div className="flex-1 pl-3 pr-2 py-1"> {/* Reduced padding */}
+            <div className="flex-1 pl-4 pr-2 py-2">
               <div className="flex justify-between items-start gap-2">
                 <div>
                   <div className="font-medium flex items-center gap-2">
@@ -92,7 +92,7 @@ const EventInstancesList = ({ eventInstances }: EventInstancesListProps) => {
                       </Badge>
                     )}
                   </div>
-                  <div className="flex flex-wrap gap-x-2 mt-1 text-muted-foreground"> {/* Reduced gap */}
+                  <div className="flex flex-wrap gap-x-3 mt-2 text-muted-foreground">
                     <div className="flex items-center">
                       <Clock className="h-3 w-3 mr-1" />
                       {instance.time}
@@ -108,9 +108,9 @@ const EventInstancesList = ({ eventInstances }: EventInstancesListProps) => {
                   </div>
                 </div>
                 
-                <div className="flex items-center gap-1"> {/* Reduced gap */}
+                <div className="flex items-center gap-2">
                   <Link to={`/event/${instance.id}`}>
-                    <Button variant="outline" size="sm" className="h-7 px-2">View</Button>
+                    <Button variant="outline" size="sm">View</Button>
                   </Link>
                 </div>
               </div>
@@ -122,15 +122,15 @@ const EventInstancesList = ({ eventInstances }: EventInstancesListProps) => {
   };
   
   return (
-    <div className="space-y-2"> {/* Reduced spacing */}
+    <div className="space-y-3">
       {/* Next Event Section */}
       {nextEvent.length > 0 && (
-        <div className="space-y-1"> {/* Reduced spacing */}
+        <div className="space-y-2">
           <h3 className="font-medium flex items-center">
             <div className="w-2 h-2 bg-blue-500 rounded-full mr-2"></div>
             Next Event
           </h3>
-          <div className="space-y-1"> {/* Reduced spacing */}
+          <div className="space-y-2">
             {nextEvent.map(renderEventCard)}
           </div>
         </div>
@@ -138,30 +138,30 @@ const EventInstancesList = ({ eventInstances }: EventInstancesListProps) => {
       
       {/* Separator when both sections are present */}
       {nextEvent.length > 0 && displayedHistorical.length > 0 && (
-        <Separator className="my-2" /> // Reduced margin
+        <Separator className="my-3" />
       )}
       
       {/* Historical Events Section */}
       {displayedHistorical.length > 0 && (
-        <div className="space-y-1"> {/* Reduced spacing */}
+        <div className="space-y-2">
           <h3 className="font-medium flex items-center">
             <div className="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
             Past Events
           </h3>
-          <div className="space-y-1"> {/* Reduced spacing */}
+          <div className="space-y-2">
             {displayedHistorical.map(renderEventCard)}
           </div>
           
           {/* Load more past events button */}
           {hasMorePastEvents && (
-            <div className="text-center pt-1"> {/* Reduced padding */}
+            <div className="text-center pt-2">
               <Button 
                 variant="outline" 
                 size="sm"
                 onClick={() => setShowAllPast(!showAllPast)}
                 className="gap-1"
               >
-                <History className="h-3 w-3" /> {/* Smaller icon */}
+                <History className="h-3 w-3" />
                 {showAllPast ? "Show Less" : `Load Older Events (${historicalEvents.length - 3})`}
               </Button>
             </div>

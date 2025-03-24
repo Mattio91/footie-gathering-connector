@@ -29,16 +29,16 @@ const TeamReserve = ({
   
   return (
     <div 
-      className="bg-muted/30 rounded-md border p-1 border-dashed h-full flex flex-col"
+      className="bg-muted/30 rounded-md border p-2 border-dashed h-full flex flex-col"
       onDragOver={onDragOver} 
       onDrop={(e) => onDrop(e, 'reserve')}
     >
-      <div className="font-medium mb-1">Reserve ({reservePlayers.length})</div>
+      <div className="font-medium mb-2">Reserve ({reservePlayers.length})</div>
       
       {/* Player list */}
       <div className="flex-1 overflow-auto">
         {/* Player slots */}
-        <div className="flex flex-wrap justify-center gap-1 mb-1">
+        <div className="flex flex-wrap justify-center gap-2 mb-2">
           {reservePlayers.map((player) => (
             <div 
               key={player.id} 
@@ -65,13 +65,13 @@ const TeamReserve = ({
       
       {/* Add friend button */}
       {onAddFriend && (
-        <div className="mt-auto pt-1">
+        <div className="mt-auto pt-2">
           <Dialog open={isOpen} onOpenChange={setIsOpen}>
             <DialogTrigger asChild>
               <Button 
                 variant="outline" 
                 size="sm" 
-                className="w-full h-6 border-dashed"
+                className="w-full h-8 border-dashed"
               >
                 <UserPlus className="h-3 w-3 mr-1" />
                 {t('event.addFriend')}
