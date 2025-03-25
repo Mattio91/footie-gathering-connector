@@ -1,13 +1,9 @@
 
-import React, { useEffect } from 'react';
-import EventHeader from '@/components/EventHeader';
-import EventContent from '@/components/event/EventContent';
 import EventCarousel from '@/components/event/EventCarousel';
-import EventHostInfo from '@/components/event/EventHostInfo';
-import { EventData } from '@/types/event';
+import EventContent from '@/components/event/EventContent';
+import { EventData, ChatMessage } from '@/types/event';
 import { Player } from '@/types/player';
-import { useIsMobile } from '@/hooks/use-mobile';
-import { Helmet } from 'react-helmet';
+import { Group } from '@/types/group';
 
 interface EventViewProps {
   event: EventData;
@@ -15,16 +11,7 @@ interface EventViewProps {
   tentativePlayers: Player[];
   isJoined: boolean;
   currentImages: string[];
-  messages: {
-    id: string;
-    author: { 
-      id: string; 
-      name: string; 
-      avatar?: string;
-    };
-    text: string;
-    timestamp: Date;
-  }[];
+  messages: ChatMessage[];
   handlers: {
     handleJoinEvent: () => void;
     handleTentativeJoin: () => void;
@@ -43,34 +30,35 @@ const EventView = ({
   players, 
   tentativePlayers,
   isJoined, 
-  currentImages,
-  messages,
-  handlers
+  currentImages, 
+  messages, 
+  handlers 
 }: EventViewProps) => {
-  const isMobile = useIsMobile();
-  const isHost = event.host.id === "current-user-id"; // Replace with actual check
-  const eventStatus = "upcoming"; // This can be dynamic based on event timing
-
-  // Add touch-specific styles when on mobile
-  useEffect(() => {
-    if (isMobile) {
-      document.body.classList.add('touch-device');
-    } else {
-      document.body.classList.remove('touch-device');
-    }
+  // Determine if current user is a host or co-host
+  const currentUserId = 'current-user'; // In a real app, this would come from auth
+  const isHost = event.host.id === currentUserId || event.coHosts.some(host => host.id === currentUserId);
+  
+  // Determine event status (would come from backend in real app)
+  const now = new Date();
+  const eventDate = new Date(event.date);
+  let eventStatus: 'upcoming' | 'in-progress' | 'completed' = 'upcoming';
+  
+  if (now > eventDate) {
+    const eventEndTime = new Date(eventDate);
+    // Add duration in minutes to get end time
+    const durationInMinutes = parseInt(event.duration.replace(/\D/g, ''));
+    eventEndTime.setMinutes(eventEndTime.getMinutes() + durationInMinutes);
     
-    return () => {
-      document.body.classList.remove('touch-device');
-    };
-  }, [isMobile]);
+    if (now > eventEndTime) {
+      eventStatus = 'completed';
+    } else {
+      eventStatus = 'in-progress';
+    }
+  }
   
   return (
-    <div className="space-y-6 animate-fade-in">
-      <Helmet>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-      </Helmet>
-    
-      {/* Event carousel */}
+    <>
+      {/* Field Image with title and details */}
       <EventCarousel 
         images={currentImages}
         event={event}
@@ -83,24 +71,6 @@ const EventView = ({
         onCancelEvent={handlers.handleCancelEvent}
       />
       
-      {/* Event header */}
-      <EventHeader 
-        title={event.title}
-        date={event.date}
-        time={event.time}
-        duration={event.duration}
-        location={event.location}
-        locationDetails={event.locationDetails}
-        format={event.format}
-        price={event.price}
-      />
-      
-      {/* Host info */}
-      <EventHostInfo 
-        host={event.host}
-        coHosts={event.coHosts || []}
-      />
-      
       {/* Main content */}
       <EventContent 
         event={event}
@@ -110,9 +80,18 @@ const EventView = ({
         isHost={isHost}
         eventStatus={eventStatus}
         messages={messages}
-        handlers={handlers}
+        handlers={{
+          handleJoinEvent: handlers.handleJoinEvent,
+          handleTentativeJoin: handlers.handleTentativeJoin,
+          handleSkipEvent: handlers.handleSkipEvent,
+          handleAddFriend: handlers.handleAddFriend,
+          handleSendMessage: handlers.handleSendMessage,
+          handlePingMember: handlers.handlePingMember,
+          handleCallPlayers: handlers.handleCallPlayers,
+          handleCancelEvent: handlers.handleCancelEvent
+        }}
       />
-    </div>
+    </>
   );
 };
 

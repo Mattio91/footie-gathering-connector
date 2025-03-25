@@ -34,29 +34,22 @@ const TeamCard = ({
   const teamId = teamName === "Home Team" ? "teamA" : "teamB";
   const isMobile = useIsMobile();
   
-  // Handle touch start for mobile drag and drop fallback
-  const handleTouchStart = (e: React.TouchEvent, player: Player) => {
-    // This is a placeholder for potential mobile touch handling
-    console.log("Touch start on player", player.name);
-  };
-  
   return (
     <Card className={borderClass}>
-      <CardHeader className={isMobile ? "p-3 pb-1" : "p-3 pb-2"}>
+      <CardHeader className={isMobile ? "p-2 pb-1" : "p-3 pb-2"}>
         <CardTitle className="text-sm">{teamName}</CardTitle>
         <CardDescription>{teamPlayers.length} players</CardDescription>
       </CardHeader>
-      <CardContent className={isMobile ? "p-2" : "p-3"}>
-        <div className="space-y-3">
+      <CardContent className={isMobile ? "p-1.5" : "p-2"}>
+        <div className="space-y-2">
           {teamPlayers.map(player => (
             <div 
               key={player.id} 
-              className="flex items-center p-2 rounded-md bg-background/80 cursor-move active:bg-background/70 touch-manipulation"
+              className="flex items-center p-2 rounded-md bg-background/80 cursor-move"
               draggable
               onDragStart={(e) => onDragStart(e, player, teamId)}
               onDragOver={onDragOver}
               onDrop={(e) => onDrop(e, teamId)}
-              onTouchStart={(e) => handleTouchStart(e, player)}
             >
               <div className="w-6 h-6 rounded-lg overflow-hidden mr-2">
                 <img 
@@ -77,7 +70,7 @@ const TeamCard = ({
           {Array.from({length: emptySpots}).map((_, i) => (
             <div 
               key={`empty-${teamId.toLowerCase()}-${i}`} 
-              className="flex items-center p-2 rounded-md border border-dashed border-muted-foreground/30 min-h-[44px]"
+              className="flex items-center p-2 rounded-md border border-dashed border-muted-foreground/30"
               onDragOver={onDragOver}
               onDrop={(e) => onDrop(e, teamId)}
             >
