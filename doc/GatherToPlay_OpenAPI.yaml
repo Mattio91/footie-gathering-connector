@@ -1,0 +1,1678 @@
+openapi: 3.0.3
+info:
+  title: GatherToPlay API
+  description: Backend API for the GatherToPlay football event management platform.
+  version: 1.0.0
+  contact:
+    name: GatherToPlay Team
+
+servers:
+  - url: https://api.gathertoplay.com/v1
+    description: Production
+  - url: http://localhost:3000/v1
+    description: Local development
+
+security:
+  - BearerAuth: []
+    ApiKeyAuth: []
+
+tags:
+  - name: Auth
+    description: Authentication & user management
+  - name: Events
+    description: Event CRUD and participation
+  - name: Groups
+    description: Group management and membership
+  - name: Fields
+    description: Football fields / venues
+  - name: Players
+    description: Player profiles and statistics
+
+paths:
+  # ──────────────────────────────────────────────
+  # AUTH
+  # ──────────────────────────────────────────────
+  /auth/register:
+    post:
+      tags: [Auth]
+      summary: Register a new user
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterRequest'
+      responses:
+        '201':
+          description: User created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '409':
+          description: Email already registered
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /auth/login:
+    post:
+      tags: [Auth]
+      summary: Login with email & password
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '200':
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /auth/refresh:
+    post:
+      tags: [Auth]
+      summary: Refresh access token
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [refreshToken]
+              properties:
+                refreshToken:
+                  type: string
+      responses:
+        '200':
+          description: Token refreshed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /auth/logout:
+    post:
+      tags: [Auth]
+      summary: Logout / invalidate tokens
+      responses:
+        '204':
+          description: Logged out
+
+  /auth/me:
+    get:
+      tags: [Auth]
+      summary: Get current user profile
+      responses:
+        '200':
+          description: Current user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+    patch:
+      tags: [Auth]
+      summary: Update current user profile
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateUserRequest'
+      responses:
+        '200':
+          description: Updated user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+
+  /auth/password:
+    post:
+      tags: [Auth]
+      summary: Change password
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [currentPassword, newPassword]
+              properties:
+                currentPassword:
+                  type: string
+                newPassword:
+                  type: string
+                  minLength: 8
+      responses:
+        '204':
+          description: Password changed
+        '400':
+          $ref: '#/components/responses/BadRequest'
+
+  /auth/forgot-password:
+    post:
+      tags: [Auth]
+      summary: Request password reset email
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email]
+              properties:
+                email:
+                  type: string
+                  format: email
+      responses:
+        '204':
+          description: Reset email sent (always returns 204 to prevent enumeration)
+
+  # ──────────────────────────────────────────────
+  # EVENTS
+  # ──────────────────────────────────────────────
+  /events:
+    get:
+      tags: [Events]
+      summary: List events with filtering & pagination
+      parameters:
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/LimitParam'
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [upcoming, played, canceled]
+        - name: participationStatus
+          in: query
+          schema:
+            type: string
+            enum: [joined, tentative, skipping, none]
+        - name: search
+          in: query
+          schema:
+            type: string
+        - name: fromDate
+          in: query
+          schema:
+            type: string
+            format: date
+        - name: toDate
+          in: query
+          schema:
+            type: string
+            format: date
+        - name: groupId
+          in: query
+          schema:
+            type: string
+            format: uuid
+        - name: fieldId
+          in: query
+          schema:
+            type: string
+            format: uuid
+        - name: sortBy
+          in: query
+          schema:
+            type: string
+            enum: [date, title, playerCount]
+            default: date
+        - name: sortOrder
+          in: query
+          schema:
+            type: string
+            enum: [asc, desc]
+            default: asc
+      responses:
+        '200':
+          description: Paginated event list
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedEvents'
+
+    post:
+      tags: [Events]
+      summary: Create a new event
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateEventRequest'
+      responses:
+        '201':
+          description: Event created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Event'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+
+  /events/{eventId}:
+    get:
+      tags: [Events]
+      summary: Get event details
+      parameters:
+        - $ref: '#/components/parameters/EventIdParam'
+      responses:
+        '200':
+          description: Event details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EventDetail'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+    patch:
+      tags: [Events]
+      summary: Update event (host only)
+      parameters:
+        - $ref: '#/components/parameters/EventIdParam'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateEventRequest'
+      responses:
+        '200':
+          description: Updated event
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Event'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+
+    delete:
+      tags: [Events]
+      summary: Delete / cancel event (host only)
+      parameters:
+        - $ref: '#/components/parameters/EventIdParam'
+      responses:
+        '204':
+          description: Event deleted
+        '403':
+          $ref: '#/components/responses/Forbidden'
+
+  /events/{eventId}/join:
+    post:
+      tags: [Events]
+      summary: Join an event
+      parameters:
+        - $ref: '#/components/parameters/EventIdParam'
+      responses:
+        '200':
+          description: Joined
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ParticipationResponse'
+        '409':
+          description: Event is full
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /events/{eventId}/leave:
+    post:
+      tags: [Events]
+      summary: Leave an event
+      parameters:
+        - $ref: '#/components/parameters/EventIdParam'
+      responses:
+        '200':
+          description: Left event
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ParticipationResponse'
+
+  /events/{eventId}/tentative:
+    post:
+      tags: [Events]
+      summary: Mark as tentative
+      parameters:
+        - $ref: '#/components/parameters/EventIdParam'
+      responses:
+        '200':
+          description: Marked tentative
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ParticipationResponse'
+
+  /events/{eventId}/skip:
+    post:
+      tags: [Events]
+      summary: Mark as skipping
+      parameters:
+        - $ref: '#/components/parameters/EventIdParam'
+      responses:
+        '200':
+          description: Marked skipping
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ParticipationResponse'
+
+  /events/{eventId}/players:
+    get:
+      tags: [Events]
+      summary: Get event player list
+      parameters:
+        - $ref: '#/components/parameters/EventIdParam'
+      responses:
+        '200':
+          description: Player list
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  confirmed:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/EventPlayer'
+                  tentative:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/EventPlayer'
+                  reserve:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/EventPlayer'
+
+  /events/{eventId}/teams:
+    get:
+      tags: [Events]
+      summary: Get event teams
+      parameters:
+        - $ref: '#/components/parameters/EventIdParam'
+      responses:
+        '200':
+          description: Teams
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  teams:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Team'
+
+    put:
+      tags: [Events]
+      summary: Update team assignments (host only)
+      parameters:
+        - $ref: '#/components/parameters/EventIdParam'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [teams]
+              properties:
+                teams:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/TeamAssignment'
+      responses:
+        '200':
+          description: Teams updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  teams:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Team'
+
+  /events/{eventId}/chat:
+    get:
+      tags: [Events]
+      summary: Get event chat messages
+      parameters:
+        - $ref: '#/components/parameters/EventIdParam'
+        - name: before
+          in: query
+          description: Cursor for pagination (message ID)
+          schema:
+            type: string
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 50
+            maximum: 100
+      responses:
+        '200':
+          description: Chat messages
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  messages:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ChatMessage'
+                  hasMore:
+                    type: boolean
+
+    post:
+      tags: [Events]
+      summary: Send a chat message
+      parameters:
+        - $ref: '#/components/parameters/EventIdParam'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [text]
+              properties:
+                text:
+                  type: string
+                  maxLength: 2000
+      responses:
+        '201':
+          description: Message sent
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChatMessage'
+
+  /events/{eventId}/images:
+    get:
+      tags: [Events]
+      summary: Get event images
+      parameters:
+        - $ref: '#/components/parameters/EventIdParam'
+      responses:
+        '200':
+          description: Image list
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  images:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/EventImage'
+
+    post:
+      tags: [Events]
+      summary: Upload event image
+      parameters:
+        - $ref: '#/components/parameters/EventIdParam'
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [image]
+              properties:
+                image:
+                  type: string
+                  format: binary
+                alt:
+                  type: string
+      responses:
+        '201':
+          description: Image uploaded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EventImage'
+
+  # ──────────────────────────────────────────────
+  # GROUPS
+  # ──────────────────────────────────────────────
+  /groups:
+    get:
+      tags: [Groups]
+      summary: List groups (public + user's private)
+      parameters:
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/LimitParam'
+        - name: search
+          in: query
+          schema:
+            type: string
+        - name: membership
+          in: query
+          description: Filter by user's membership
+          schema:
+            type: string
+            enum: [all, mine]
+            default: all
+      responses:
+        '200':
+          description: Paginated group list
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedGroups'
+
+    post:
+      tags: [Groups]
+      summary: Create a group
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateGroupRequest'
+      responses:
+        '201':
+          description: Group created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Group'
+
+  /groups/{groupId}:
+    get:
+      tags: [Groups]
+      summary: Get group details
+      parameters:
+        - $ref: '#/components/parameters/GroupIdParam'
+      responses:
+        '200':
+          description: Group details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GroupDetail'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+    patch:
+      tags: [Groups]
+      summary: Update group (admin only)
+      parameters:
+        - $ref: '#/components/parameters/GroupIdParam'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateGroupRequest'
+      responses:
+        '200':
+          description: Updated group
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Group'
+
+    delete:
+      tags: [Groups]
+      summary: Delete group (admin only)
+      parameters:
+        - $ref: '#/components/parameters/GroupIdParam'
+      responses:
+        '204':
+          description: Group deleted
+
+  /groups/{groupId}/members:
+    get:
+      tags: [Groups]
+      summary: List group members
+      parameters:
+        - $ref: '#/components/parameters/GroupIdParam'
+      responses:
+        '200':
+          description: Member list
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  members:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/GroupMember'
+
+  /groups/{groupId}/join:
+    post:
+      tags: [Groups]
+      summary: Join a public group
+      parameters:
+        - $ref: '#/components/parameters/GroupIdParam'
+      responses:
+        '200':
+          description: Joined
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GroupMember'
+        '409':
+          description: Already a member
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /groups/{groupId}/leave:
+    post:
+      tags: [Groups]
+      summary: Leave a group
+      parameters:
+        - $ref: '#/components/parameters/GroupIdParam'
+      responses:
+        '204':
+          description: Left group
+
+  /groups/{groupId}/invite:
+    post:
+      tags: [Groups]
+      summary: Invite user to group (admin/co-admin)
+      parameters:
+        - $ref: '#/components/parameters/GroupIdParam'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email]
+              properties:
+                email:
+                  type: string
+                  format: email
+                role:
+                  type: string
+                  enum: [Member, Co-Admin]
+                  default: Member
+      responses:
+        '201':
+          description: Invitation sent
+        '404':
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /groups/{groupId}/members/{memberId}/role:
+    patch:
+      tags: [Groups]
+      summary: Change member role (admin only)
+      parameters:
+        - $ref: '#/components/parameters/GroupIdParam'
+        - name: memberId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [role]
+              properties:
+                role:
+                  type: string
+                  enum: [Admin, Co-Admin, Member]
+      responses:
+        '200':
+          description: Role updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GroupMember'
+
+  # ──────────────────────────────────────────────
+  # FIELDS
+  # ──────────────────────────────────────────────
+  /fields:
+    get:
+      tags: [Fields]
+      summary: List fields with optional geo search
+      parameters:
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/LimitParam'
+        - name: search
+          in: query
+          schema:
+            type: string
+        - name: lat
+          in: query
+          schema:
+            type: number
+            format: double
+        - name: lng
+          in: query
+          schema:
+            type: number
+            format: double
+        - name: radiusKm
+          in: query
+          schema:
+            type: number
+            default: 10
+      responses:
+        '200':
+          description: Paginated field list
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedFields'
+
+  /fields/{fieldId}:
+    get:
+      tags: [Fields]
+      summary: Get field details with upcoming events
+      parameters:
+        - name: fieldId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Field details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FieldDetail'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /fields/{fieldId}/events:
+    get:
+      tags: [Fields]
+      summary: Get events at a specific field
+      parameters:
+        - name: fieldId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: fromDate
+          in: query
+          schema:
+            type: string
+            format: date
+        - name: toDate
+          in: query
+          schema:
+            type: string
+            format: date
+      responses:
+        '200':
+          description: Events at field
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  events:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/EventSummary'
+
+  # ──────────────────────────────────────────────
+  # PLAYERS
+  # ──────────────────────────────────────────────
+  /players:
+    get:
+      tags: [Players]
+      summary: Search players
+      parameters:
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/LimitParam'
+        - name: search
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Paginated player list
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedPlayers'
+
+  /players/{playerId}:
+    get:
+      tags: [Players]
+      summary: Get player profile & statistics
+      parameters:
+        - name: playerId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Player profile
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PlayerProfile'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /players/{playerId}/friends:
+    get:
+      tags: [Players]
+      summary: Get player's friends list
+      parameters:
+        - name: playerId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Friends list
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  friends:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/PlayerSummary'
+
+  /players/friends/add:
+    post:
+      tags: [Players]
+      summary: Send friend request
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [playerId]
+              properties:
+                playerId:
+                  type: string
+                  format: uuid
+      responses:
+        '201':
+          description: Friend request sent
+        '409':
+          description: Already friends or request pending
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /players/friends/{playerId}:
+    delete:
+      tags: [Players]
+      summary: Remove friend
+      parameters:
+        - name: playerId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '204':
+          description: Friend removed
+
+# ────────────────────────────────────────────────
+# COMPONENTS
+# ────────────────────────────────────────────────
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-Api-Key
+      description: Frontend application API key for origin verification
+
+  parameters:
+    PageParam:
+      name: page
+      in: query
+      schema:
+        type: integer
+        minimum: 1
+        default: 1
+    LimitParam:
+      name: limit
+      in: query
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 100
+        default: 20
+    EventIdParam:
+      name: eventId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+    GroupIdParam:
+      name: groupId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+
+  responses:
+    BadRequest:
+      description: Validation error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ValidationError'
+    Unauthorized:
+      description: Not authenticated
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Forbidden:
+      description: Not authorized
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+  schemas:
+    # ── Auth ──
+    RegisterRequest:
+      type: object
+      required: [email, password, name]
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          minLength: 8
+        name:
+          type: string
+          minLength: 2
+          maxLength: 100
+
+    LoginRequest:
+      type: object
+      required: [email, password]
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+
+    AuthResponse:
+      type: object
+      properties:
+        accessToken:
+          type: string
+        refreshToken:
+          type: string
+        expiresIn:
+          type: integer
+          description: Seconds until access token expires
+        user:
+          $ref: '#/components/schemas/User'
+
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        email:
+          type: string
+          format: email
+        name:
+          type: string
+        avatar:
+          type: string
+          format: uri
+          nullable: true
+        createdAt:
+          type: string
+          format: date-time
+
+    UpdateUserRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        avatar:
+          type: string
+          format: uri
+
+    # ── Events ──
+    CreateEventRequest:
+      type: object
+      required: [title, location, date, time, duration, format, maxPlayers]
+      properties:
+        title:
+          type: string
+          maxLength: 200
+        location:
+          type: string
+        locationDetails:
+          type: string
+        date:
+          type: string
+          format: date
+        time:
+          type: string
+          pattern: '^([01]\d|2[0-3]):[0-5]\d$'
+        duration:
+          type: string
+        format:
+          type: string
+          description: e.g. "5v5", "6v6", "11v11"
+        maxPlayers:
+          type: integer
+          minimum: 2
+          maximum: 50
+        price:
+          type: number
+          minimum: 0
+          default: 0
+        isPrivate:
+          type: boolean
+          default: false
+        description:
+          type: string
+          maxLength: 5000
+        fieldId:
+          type: string
+          format: uuid
+          nullable: true
+        groupIds:
+          type: array
+          items:
+            type: string
+            format: uuid
+        coHostIds:
+          type: array
+          items:
+            type: string
+            format: uuid
+        recurrence:
+          $ref: '#/components/schemas/RecurrenceRule'
+
+    UpdateEventRequest:
+      type: object
+      properties:
+        title:
+          type: string
+        location:
+          type: string
+        locationDetails:
+          type: string
+        date:
+          type: string
+          format: date
+        time:
+          type: string
+        duration:
+          type: string
+        format:
+          type: string
+        maxPlayers:
+          type: integer
+        price:
+          type: number
+        isPrivate:
+          type: boolean
+        description:
+          type: string
+        status:
+          type: string
+          enum: [upcoming, canceled]
+
+    RecurrenceRule:
+      type: object
+      properties:
+        frequency:
+          type: string
+          enum: [weekly, biweekly, monthly]
+        endDate:
+          type: string
+          format: date
+          nullable: true
+        count:
+          type: integer
+          nullable: true
+          description: Number of occurrences (alternative to endDate)
+
+    Event:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        title:
+          type: string
+        location:
+          type: string
+        locationDetails:
+          type: string
+        date:
+          type: string
+          format: date-time
+        time:
+          type: string
+        duration:
+          type: string
+        format:
+          type: string
+        maxPlayers:
+          type: integer
+        playerCount:
+          type: integer
+        price:
+          type: number
+        isPrivate:
+          type: boolean
+        status:
+          type: string
+          enum: [upcoming, played, canceled]
+        imageUrl:
+          type: string
+          format: uri
+          nullable: true
+        color:
+          type: string
+          description: Hex color for UI display
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    EventDetail:
+      allOf:
+        - $ref: '#/components/schemas/Event'
+        - type: object
+          properties:
+            description:
+              type: string
+            host:
+              $ref: '#/components/schemas/PlayerSummary'
+            coHosts:
+              type: array
+              items:
+                $ref: '#/components/schemas/PlayerSummary'
+            groups:
+              type: array
+              items:
+                $ref: '#/components/schemas/GroupSummary'
+            field:
+              $ref: '#/components/schemas/FieldSummary'
+            participationStatus:
+              type: string
+              enum: [joined, tentative, skipping, none]
+            startTime:
+              type: string
+            endTime:
+              type: string
+
+    EventSummary:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        title:
+          type: string
+        location:
+          type: string
+        date:
+          type: string
+          format: date-time
+        time:
+          type: string
+        duration:
+          type: string
+        format:
+          type: string
+        maxPlayers:
+          type: integer
+        playerCount:
+          type: integer
+        price:
+          type: number
+        isPrivate:
+          type: boolean
+        status:
+          type: string
+          enum: [upcoming, played, canceled]
+        participationStatus:
+          type: string
+          enum: [joined, tentative, skipping, none]
+        imageUrl:
+          type: string
+          format: uri
+          nullable: true
+        color:
+          type: string
+        startTime:
+          type: string
+        endTime:
+          type: string
+
+    PaginatedEvents:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/EventSummary'
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+
+    ParticipationResponse:
+      type: object
+      properties:
+        eventId:
+          type: string
+          format: uuid
+        status:
+          type: string
+          enum: [joined, tentative, skipping, none]
+        playerCount:
+          type: integer
+
+    EventPlayer:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        avatar:
+          type: string
+          format: uri
+          nullable: true
+        isAdmin:
+          type: boolean
+        participationStatus:
+          type: string
+          enum: [joined, tentative, skipping]
+        joinedAt:
+          type: string
+          format: date-time
+
+    Team:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        color:
+          type: string
+        players:
+          type: array
+          items:
+            $ref: '#/components/schemas/PlayerSummary'
+
+    TeamAssignment:
+      type: object
+      required: [name, playerIds]
+      properties:
+        name:
+          type: string
+        color:
+          type: string
+        playerIds:
+          type: array
+          items:
+            type: string
+            format: uuid
+
+    ChatMessage:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        author:
+          $ref: '#/components/schemas/PlayerSummary'
+        text:
+          type: string
+        timestamp:
+          type: string
+          format: date-time
+
+    EventImage:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        url:
+          type: string
+          format: uri
+        alt:
+          type: string
+          nullable: true
+        uploadedBy:
+          type: string
+          format: uuid
+        createdAt:
+          type: string
+          format: date-time
+
+    # ── Groups ──
+    CreateGroupRequest:
+      type: object
+      required: [name, city]
+      properties:
+        name:
+          type: string
+          maxLength: 100
+        city:
+          type: string
+        description:
+          type: string
+          maxLength: 2000
+        isPrivate:
+          type: boolean
+          default: false
+
+    UpdateGroupRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        city:
+          type: string
+        description:
+          type: string
+        isPrivate:
+          type: boolean
+
+    Group:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        city:
+          type: string
+        description:
+          type: string
+          nullable: true
+        isPrivate:
+          type: boolean
+        memberCount:
+          type: integer
+        createdAt:
+          type: string
+          format: date-time
+
+    GroupSummary:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        memberCount:
+          type: integer
+        isPrivate:
+          type: boolean
+
+    GroupDetail:
+      allOf:
+        - $ref: '#/components/schemas/Group'
+        - type: object
+          properties:
+            members:
+              type: array
+              items:
+                $ref: '#/components/schemas/GroupMember'
+            upcomingEvents:
+              type: array
+              items:
+                $ref: '#/components/schemas/EventSummary'
+
+    GroupMember:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        avatar:
+          type: string
+          format: uri
+          nullable: true
+        role:
+          type: string
+          enum: [Admin, Co-Admin, Member]
+        joinedAt:
+          type: string
+          format: date-time
+
+    PaginatedGroups:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Group'
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+
+    # ── Fields ──
+    FieldSummary:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        location:
+          type: string
+
+    FieldDetail:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        location:
+          type: string
+        description:
+          type: string
+          nullable: true
+        lat:
+          type: number
+          format: double
+        lng:
+          type: number
+          format: double
+        images:
+          type: array
+          items:
+            $ref: '#/components/schemas/FieldImage'
+        upcomingEvents:
+          type: array
+          items:
+            $ref: '#/components/schemas/EventSummary'
+
+    FieldImage:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        url:
+          type: string
+          format: uri
+        alt:
+          type: string
+          nullable: true
+
+    PaginatedFields:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/FieldDetail'
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+
+    # ── Players ──
+    PlayerSummary:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        avatar:
+          type: string
+          format: uri
+          nullable: true
+
+    PlayerProfile:
+      allOf:
+        - $ref: '#/components/schemas/PlayerSummary'
+        - type: object
+          properties:
+            statistics:
+              $ref: '#/components/schemas/PlayerStatistics'
+            groups:
+              type: array
+              items:
+                $ref: '#/components/schemas/GroupSummary'
+            upcomingEvents:
+              type: array
+              items:
+                $ref: '#/components/schemas/EventSummary'
+
+    PlayerStatistics:
+      type: object
+      properties:
+        gamesPlayed:
+          type: integer
+        gamesWon:
+          type: integer
+        winRate:
+          type: number
+          format: double
+        manOfTheMatch:
+          type: integer
+
+    PaginatedPlayers:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/PlayerProfile'
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+
+    # ── Common ──
+    Pagination:
+      type: object
+      properties:
+        page:
+          type: integer
+        limit:
+          type: integer
+        total:
+          type: integer
+        totalPages:
+          type: integer
+
+    Error:
+      type: object
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+
+    ValidationError:
+      type: object
+      properties:
+        code:
+          type: string
+          example: VALIDATION_ERROR
+        message:
+          type: string
+        errors:
+          type: array
+          items:
+            type: object
+            properties:
+              field:
+                type: string
+              message:
+                type: string
